@@ -1,0 +1,18 @@
+version: "3.9"
+services:
+  # postgres
+  stoqu-be-postgres:
+    container_name: stoqu-be-postgres
+    image: postgres:12-alpine
+    environment: 
+      - POSTGRES_USER=stoqu-be-user
+      - POSTGRES_PASSWORD=stoqu-be-pass
+      - POSTGRES_DB=stoqu-be-db
+    volumes: 
+      - stoqu-be-postgres:/var/lib/postgresql
+    ports:
+      - "5432:5432"
+
+volumes:
+  stoqu-be-postgres:
+    driver: local

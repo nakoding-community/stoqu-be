@@ -1,0 +1,36 @@
+app:
+  name: api
+  key: passphrasewhichneedstobe32bytes!
+  port: 3000
+  host: localhost:3000
+  version: 1.0.1
+  connection: stoqu-be-db
+swagger:
+  swaggerhost: localhost:3000
+  swaggerscheme: http
+  swaggerprefix:
+jwt:
+  secret: secretkey
+connection:
+  primary: postgres
+  replica: postgres
+databases:
+  - dbhost: localhost
+    dbuser: stoqu-be-user
+    dbport: 5432
+    dbpass: stoqu-be-pass
+    dbname: stoqu-be-db
+    dbprovider: postgresql
+    dbssl: disable
+    dbtz: Asia/Jakarta
+    dbautomigrate: true
+    dbseeder: true
+driver:
+  firestore:
+    credentials: ""
+    projectid: ""
+  elasticsearch:
+    credentials: ""
+    url: ""
+  sentry:
+    dsn: ""
