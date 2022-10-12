@@ -19,7 +19,7 @@ func GenRandStr(length int) string {
 
 func GenCode(prefix string) string {
 	length := 5
-	return prefix + GenRandStr(length)
+	return prefix + strings.ToUpper(GenRandStr(length))
 }
 
 func FormatDayID(day string) string {
