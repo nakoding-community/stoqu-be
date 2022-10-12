@@ -18,8 +18,8 @@ import (
 )
 
 type Auth interface {
-	Login(ctx context.Context, payload dto.AuthLoginRequest) (dto.AuthLoginResponse, error)
-	Register(ctx context.Context, payload dto.AuthRegisterRequest) (dto.AuthRegisterResponse, error)
+	Login(ctx context.Context, payload dto.LoginAuthRequest) (dto.AuthLoginResponse, error)
+	Register(ctx context.Context, payload dto.RegisterAuthRequest) (dto.AuthRegisterResponse, error)
 }
 
 type auth struct {
@@ -31,7 +31,7 @@ func NewAuth(cfg *config.Configuration, f repository.Factory) Auth {
 	return &auth{f, cfg}
 }
 
-func (u *auth) Login(ctx context.Context, payload dto.AuthLoginRequest) (dto.AuthLoginResponse, error) {
+func (u *auth) Login(ctx context.Context, payload dto.LoginAuthRequest) (dto.AuthLoginResponse, error) {
 	var result dto.AuthLoginResponse
 
 	data, err := u.Repo.User.FindByEmail(ctx, payload.Email)
@@ -56,7 +56,7 @@ func (u *auth) Login(ctx context.Context, payload dto.AuthLoginRequest) (dto.Aut
 	return result, nil
 }
 
-func (u *auth) Register(ctx context.Context, payload dto.AuthRegisterRequest) (dto.AuthRegisterResponse, error) {
+func (u *auth) Register(ctx context.Context, payload dto.RegisterAuthRequest) (dto.AuthRegisterResponse, error) {
 	var result dto.AuthRegisterResponse
 	var user model.UserModel
 	var err error

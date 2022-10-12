@@ -8,7 +8,9 @@ type RoleEntity struct {
 type RoleModel struct {
 	Entity
 	RoleEntity
-	User UserModel `json:"-" gorm:"foreignKey:RoleID"`
+
+	// relations
+	Users []UserModel `json:"-" gorm:"foreignKey:RoleID"`
 }
 
 func (RoleModel) TableName() string {

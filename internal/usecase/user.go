@@ -2,7 +2,7 @@ package usecase
 
 import (
 	"context"
-	"fmt"
+	"strings"
 
 	"github.com/google/uuid"
 	"gitlab.com/stoqu/stoqu-be/internal/config"
@@ -34,7 +34,17 @@ func NewUser(cfg *config.Configuration, f repository.Factory) User {
 }
 
 func (u *user) Find(ctx context.Context, filterParam abstraction.Filter) (result []dto.UserResponse, pagination abstraction.PaginationInfo, err error) {
-	users, info, err := u.Repo.User.Find(ctx, filterParam)
+	var search *abstraction.Search
+	if filterParam.Search != "" {
+		searchQuery := "lower(name) LIKE ? or lower(email) Like ?"
+		searchVal := "%" + strings.ToLower(filterParam.Search) + "%"
+		search = &abstraction.Search{
+			Query: searchQuery,
+			Args:  []interface{}{searchVal, searchVal},
+		}
+	}
+
+	users, info, err := u.Repo.User.Find(ctx, filterParam, search)
 	if err != nil {
 		return nil, pagination, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
 	}
@@ -156,7 +166,6 @@ func (u *user) Create(ctx context.Context, payload dto.CreateUserRequest) (resul
 }
 
 func (u *user) Update(ctx context.Context, payload dto.UpdateUserRequest) (result dto.UserResponse, err error) {
-	fmt.Println("DEBUG HERE", payload)
 	var (
 		userData = &model.UserModel{
 			UserEntity: model.UserEntity{
@@ -178,8 +187,6 @@ func (u *user) Update(ctx context.Context, payload dto.UpdateUserRequest) (resul
 	}
 
 	if err = trxmanager.New(u.Repo.Db).WithTrx(ctx, func(ctx context.Context) error {
-
-		fmt.Println("DEBUG HERE 3", payload.ID, *userData)
 		_, err = u.Repo.User.UpdateByID(ctx, payload.ID, *userData)
 		if err != nil {
 			return err
@@ -201,8 +208,6 @@ func (u *user) Update(ctx context.Context, payload dto.UpdateUserRequest) (resul
 
 		return nil
 	}); err != nil {
-		fmt.Println("DEBUG HERE 2", err)
-
 		return result, err
 	}
 

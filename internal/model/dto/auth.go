@@ -7,11 +7,11 @@ import (
 
 // request
 type (
-	AuthLoginRequest struct {
+	LoginAuthRequest struct {
 		Email    string `json:"email" validate:"required,email" example:"admin@gmail.com"`
 		Password string `json:"password" validate:"required" example:"admin"`
 	}
-	AuthRegisterRequest struct {
+	RegisterAuthRequest struct {
 		model.UserEntity
 	}
 )

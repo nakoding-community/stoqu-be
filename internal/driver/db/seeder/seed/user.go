@@ -2,7 +2,6 @@ package seed
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
@@ -17,7 +16,6 @@ func (s *UserSeed) Run(conn *gorm.DB) error {
 
 	var roles []entity.RoleModel
 	if err := trx.Model(&entity.RoleModel{}).Find(&roles).Error; err != nil {
-		log.Println(err)
 		return err
 	}
 

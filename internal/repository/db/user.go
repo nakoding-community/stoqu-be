@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 
+	abstraction "gitlab.com/stoqu/stoqu-be/internal/model/abstraction"
 	model "gitlab.com/stoqu/stoqu-be/internal/model/entity"
 
 	"gorm.io/gorm"
@@ -10,7 +11,22 @@ import (
 
 type (
 	User interface {
-		Base[model.UserModel]
+		// !TODO mockgen doesn't support embedded interface yet
+		// !TODO but already discussed in this thread https://github.com/golang/mock/issues/621, lets wait for the release
+		// Base[model.UserModel]
+
+		// Base
+		Find(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.UserModel, *abstraction.PaginationInfo, error)
+		FindByID(ctx context.Context, id string) (*model.UserModel, error)
+		FindByCode(ctx context.Context, code string) (*model.UserModel, error)
+		FindByName(ctx context.Context, name string) (*model.UserModel, error)
+		Create(ctx context.Context, data model.UserModel) (model.UserModel, error)
+		Creates(ctx context.Context, data []model.UserModel) ([]model.UserModel, error)
+		UpdateByID(ctx context.Context, id string, data model.UserModel) (model.UserModel, error)
+		DeleteByID(ctx context.Context, id string) error
+		Count(ctx context.Context) (int64, error)
+
+		// Custom
 		FindByEmail(ctx context.Context, email string) (*model.UserModel, error)
 	}
 
@@ -28,11 +44,11 @@ func NewUser(conn *gorm.DB) User {
 }
 
 func (m *user) FindByEmail(ctx context.Context, email string) (*model.UserModel, error) {
-	query := m.getConn(ctx).Model(model.UserModel{})
+	query := m.GetConn(ctx).Model(model.UserModel{})
 	result := new(model.UserModel)
 	err := query.Where("email", email).First(result).Error
 	if err != nil {
-		return nil, m.maskError(err)
+		return nil, m.MaskError(err)
 	}
 	return result, nil
 }

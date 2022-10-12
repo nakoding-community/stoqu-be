@@ -11,17 +11,21 @@ import (
 )
 
 type UserEntity struct {
-	Name         string `json:"name" validate:"required" gorm:"size:50;not null"`
-	Email        string `json:"email" validate:"required,email" gorm:"index:idx_user_email;unique;size:150;not null"`
+	Name         string `json:"name" gorm:"size:50;not null"`
+	Email        string `json:"email" gorm:"index:idx_user_email;unique;size:150;not null"`
 	PasswordHash string `json:"-"`
-	Password     string `json:"password" validate:"required" gorm:"-"`
-	RoleID       string `json:"-" gorm:"not null"`
+	Password     string `json:"password" gorm:"-"`
+
+	// fk
+	RoleID string `json:"role_id" gorm:"not null"`
 }
 
 type UserModel struct {
 	Entity
 	UserEntity
-	UserProfile UserProfileModel `json:"-" gorm:"foreignKey:UserID"`
+
+	// relations
+	UserProfile *UserProfileModel `json:"-" gorm:"foreignKey:UserID"`
 }
 
 func (UserModel) TableName() string {

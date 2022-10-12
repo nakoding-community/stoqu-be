@@ -45,7 +45,7 @@ func (h *user) Route(g *echo.Group) {
 // @Produce json
 // @Security BearerAuth
 // @param request query abstraction.Filter true "request query"
-// @Param name query string false "name"
+// @Param entity query model.UserEntity false "entity query"
 // @Success 200 {object} dto.UserResponseDoc
 // @Failure 400 {object} res.errorResponse
 // @Failure 404 {object} res.errorResponse

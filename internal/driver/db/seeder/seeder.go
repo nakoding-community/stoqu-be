@@ -38,6 +38,10 @@ func Init(cfg *config.Configuration) {
 				Seeds: []seed.Seed{
 					&seed.RoleSeed{},
 					&seed.UserSeed{},
+					&seed.PacketSeed{},
+					&seed.CurrencySeed{},
+					&seed.ReminderStockSeed{},
+					&seed.BrandSeed{},
 				},
 			}
 		}

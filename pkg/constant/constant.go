@@ -10,17 +10,21 @@ const (
 
 // master
 const (
-	CODE_ROLE_PREFIX           = "R-"
-	CODE_TYPE_PREFIX           = "T-"
+	CODE_ROLE_PREFIX            = "R-"
+	CODE_UNIT_PREFIX            = "U-"
+	CODE_PACKET_PREFIX          = "PKT-"
+	CODE_CONVERTION_UNIT_PREFIX = "CVU-"
+	CODE_CURRENCY_PREFIX        = "CUR-"
+	CODE_REMINDER_STOCK_PREFIX  = "RMS-"
+
 	CODE_BRAND_PREFIX          = "B-"
-	CODE_UNIT_PREFIX           = "U-"
-	CODE_VARIANT_BRAND_PREFIX  = "VB-"
+	CODE_VARIANT_PREFIX        = "V-"
 	CODE_PRODUCT_PREFIX        = "P-"
 	CODE_PRODUCT_LOOKUP_PREFIX = "PL-"
 )
 
 // trx
 const (
-	CODE_ORDER_TRX_PREFIX = "O-"
+	CODE_ORDER_TRX_PREFIX = "OT-"
 	CODE_STOCK_TRX_PREFIX = "ST-"
 )

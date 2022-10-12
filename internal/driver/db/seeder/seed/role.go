@@ -13,37 +13,16 @@ type RoleSeed struct{}
 func (s *RoleSeed) Run(conn *gorm.DB) error {
 	trx := conn.Begin()
 
-	var roles = []entity.RoleModel{
-		{
+	roleNames := []string{"admin", "admin-stock", "admin-order", "customer", "supplier"}
+	var roles []entity.RoleModel
+	for _, v := range roleNames {
+		role := entity.RoleModel{
 			RoleEntity: entity.RoleEntity{
-				Code: constant.CODE_ROLE_PREFIX + str.GenRandStr(constant.LENGTH_CODE),
-				Name: "admin",
+				Code: str.GenCode(constant.CODE_ROLE_PREFIX),
+				Name: v,
 			},
-		},
-		{
-			RoleEntity: entity.RoleEntity{
-				Code: constant.CODE_ROLE_PREFIX + str.GenRandStr(constant.LENGTH_CODE),
-				Name: "admin-stock",
-			},
-		},
-		{
-			RoleEntity: entity.RoleEntity{
-				Code: constant.CODE_ROLE_PREFIX + str.GenRandStr(constant.LENGTH_CODE),
-				Name: "admin-order",
-			},
-		},
-		{
-			RoleEntity: entity.RoleEntity{
-				Code: constant.CODE_ROLE_PREFIX + str.GenRandStr(constant.LENGTH_CODE),
-				Name: "customer",
-			},
-		},
-		{
-			RoleEntity: entity.RoleEntity{
-				Code: constant.CODE_ROLE_PREFIX + str.GenRandStr(constant.LENGTH_CODE),
-				Name: "supplier",
-			},
-		},
+		}
+		roles = append(roles, role)
 	}
 
 	if err := trx.Create(&roles).Error; err != nil {

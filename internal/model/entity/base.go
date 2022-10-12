@@ -41,6 +41,11 @@ func (m *Entity) BeforeUpdate(tx *gorm.DB) (err error) {
 	return
 }
 
+type MasterEntity struct {
+	Code string `json:"code" gorm:"not null;unique;size:50"`
+	Name string `json:"name" gorm:"not null;unique;size:50"`
+}
+
 type Tabler interface {
 	TableName() string
 }

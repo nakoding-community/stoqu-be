@@ -29,6 +29,13 @@ func Init(cfg *config.Configuration) {
 					&entity.RoleModel{},
 					&entity.UserModel{},
 					&entity.UserProfileModel{},
+					&entity.ReminderStockModel{},
+					&entity.ConvertionUnitModel{},
+					&entity.UnitModel{},
+					&entity.PacketModel{},
+					&entity.CurrencyModel{},
+					&entity.VariantModel{},
+					&entity.BrandModel{},
 				},
 			}
 		}

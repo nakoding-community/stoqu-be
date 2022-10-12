@@ -34,14 +34,14 @@ func (h *auth) Route(g *echo.Group) {
 // @Tags auth
 // @Accept json
 // @Produce json
-// @Param request body dto.AuthLoginRequest true "request body"
+// @Param request body dto.LoginAuthRequest true "request body"
 // @Success 200 {object} dto.AuthLoginResponseDoc
 // @Failure 400 {object} res.errorResponse
 // @Failure 404 {object} res.errorResponse
 // @Failure 500 {object} res.errorResponse
 // @Router /api/auth/login [post]
 func (h *auth) Login(c echo.Context) error {
-	payload := new(dto.AuthLoginRequest)
+	payload := new(dto.LoginAuthRequest)
 	if err := c.Bind(payload); err != nil {
 		return res.ErrorBuilder(res.Constant.Error.BadRequest, err).Send(c)
 	}
@@ -64,14 +64,14 @@ func (h *auth) Login(c echo.Context) error {
 // @Accept json
 // @Produce json
 // @Security BearerAuth
-// @Param request body dto.AuthRegisterRequest true "request body"
+// @Param request body dto.RegisterAuthRequest true "request body"
 // @Success 200 {object} dto.AuthLoginResponseDoc
 // @Failure 400 {object} res.errorResponse
 // @Failure 404 {object} res.errorResponse
 // @Failure 500 {object} res.errorResponse
 // @Router /api/auth/register [post]
 func (h *auth) Register(c echo.Context) error {
-	payload := new(dto.AuthRegisterRequest)
+	payload := new(dto.RegisterAuthRequest)
 	if err := c.Bind(payload); err != nil {
 		return res.ErrorBuilder(res.Constant.Error.BadRequest, err).Send(c)
 	}

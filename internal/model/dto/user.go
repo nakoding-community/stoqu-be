@@ -8,16 +8,14 @@ import (
 // request
 type (
 	CreateUserRequest struct {
-		Name        string  `json:"name" validate:"required"`
-		Email       *string `json:"email,omitempty" validate:"omitempty"`
+		Name        string  `json:"name" validate:"required" example:"user"`
+		Email       *string `json:"email,omitempty" validate:"omitempty" example:"user@gmail.com"`
 		Password    string  `json:"password"`
 		PhoneNumber string  `json:"phone_number"`
-		RoleID      *string `json:"role_id,omitempty" validate:"required_without=RoleName,omitempty"`
+		RoleID      *string `json:"role_id,omitempty" validate:"required_without=RoleName,omitempty" example:"1"`
 		RoleName    *string `json:"role_name,omitempty" validate:"required_without=RoleID,omitempty"`
 	}
-)
 
-type (
 	UpdateUserRequest struct {
 		ID          string `param:"id" validate:"required"`
 		Name        string `json:"name"`

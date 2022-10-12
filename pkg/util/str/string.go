@@ -17,6 +17,11 @@ func GenRandStr(length int) string {
 	return string(s)
 }
 
+func GenCode(prefix string) string {
+	length := 5
+	return prefix + GenRandStr(length)
+}
+
 func FormatDayID(day string) string {
 	switch day {
 	case "monday":

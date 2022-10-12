@@ -17,12 +17,12 @@ import (
 
 type (
 	Base[T any] interface {
-		getConn(ctx context.Context) *gorm.DB
-		maskError(err error) error
-		buildFilterSort(ctx context.Context, name string, query *gorm.DB, filterParam abstraction.Filter)
-		buildPagination(ctx context.Context, query *gorm.DB, pagination abstraction.Pagination) *abstraction.PaginationInfo
+		GetConn(ctx context.Context) *gorm.DB
+		MaskError(err error) error
+		BuildFilterSort(ctx context.Context, name string, query *gorm.DB, filterParam abstraction.Filter)
+		BuildPagination(ctx context.Context, query *gorm.DB, pagination abstraction.Pagination) *abstraction.PaginationInfo
 
-		Find(ctx context.Context, filterParam abstraction.Filter) ([]T, *abstraction.PaginationInfo, error)
+		Find(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]T, *abstraction.PaginationInfo, error)
 		FindByID(ctx context.Context, id string) (*T, error)
 		FindByCode(ctx context.Context, code string) (*T, error)
 		FindByName(ctx context.Context, name string) (*T, error)
@@ -30,6 +30,7 @@ type (
 		Creates(ctx context.Context, data []T) ([]T, error)
 		UpdateByID(ctx context.Context, id string, data T) (T, error)
 		DeleteByID(ctx context.Context, id string) error
+		Count(ctx context.Context) (int64, error)
 	}
 
 	base[T any] struct {
@@ -47,16 +48,15 @@ func NewBase[T any](conn *gorm.DB, entity T, entityName string) Base[T] {
 	}
 }
 
-func (m *base[T]) getConn(ctx context.Context) *gorm.DB {
+func (m *base[T]) GetConn(ctx context.Context) *gorm.DB {
 	tx := ctxval.GetTrxValue(ctx)
-	fmt.Println("DEBUG HERE - get conn", tx)
 	if tx != nil {
 		return tx
 	}
 	return m.conn
 }
 
-func (m *base[T]) buildFilterSort(ctx context.Context, name string, query *gorm.DB, filterParam abstraction.Filter) {
+func (m *base[T]) BuildFilterSort(ctx context.Context, name string, query *gorm.DB, filterParam abstraction.Filter) {
 	for _, filter := range filterParam.Query {
 		query.Where(filter.Field+" = ?", filter.Value)
 	}
@@ -77,7 +77,7 @@ func (m *base[T]) buildFilterSort(ctx context.Context, name string, query *gorm.
 	}
 }
 
-func (m *base[T]) buildPagination(ctx context.Context, tx *gorm.DB, pagination abstraction.Pagination) *abstraction.PaginationInfo {
+func (m *base[T]) BuildPagination(ctx context.Context, tx *gorm.DB, pagination abstraction.Pagination) *abstraction.PaginationInfo {
 	info := &abstraction.PaginationInfo{}
 	limit := 10
 	if pagination.Limit != nil {
@@ -98,7 +98,7 @@ func (m *base[T]) buildPagination(ctx context.Context, tx *gorm.DB, pagination a
 	return info
 }
 
-func (m *base[T]) maskError(err error) error {
+func (m *base[T]) MaskError(err error) error {
 	if err != nil {
 		// not found
 		if err == gorm.ErrRecordNotFound {
@@ -118,11 +118,14 @@ func (m *base[T]) maskError(err error) error {
 	return nil
 }
 
-func (m *base[T]) Find(ctx context.Context, filterParam abstraction.Filter) ([]T, *abstraction.PaginationInfo, error) {
-	query := m.getConn(ctx).Model(m.entity)
+func (m *base[T]) Find(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]T, *abstraction.PaginationInfo, error) {
+	query := m.GetConn(ctx).Model(m.entity)
+	if search != nil {
+		query = query.Where(search.Query, search.Args...)
+	}
 
-	m.buildFilterSort(ctx, m.entityName, query, filterParam)
-	info := m.buildPagination(ctx, query, filterParam.Pagination)
+	m.BuildFilterSort(ctx, m.entityName, query, filterParam)
+	info := m.BuildPagination(ctx, query, filterParam.Pagination)
 
 	result := []T{}
 	err := query.WithContext(ctx).Find(&result).Error
@@ -134,52 +137,58 @@ func (m *base[T]) Find(ctx context.Context, filterParam abstraction.Filter) ([]T
 }
 
 func (m *base[T]) FindByID(ctx context.Context, id string) (*T, error) {
-	query := m.getConn(ctx).Model(m.entity)
+	query := m.GetConn(ctx).Model(m.entity)
 	result := new(T)
 	err := query.WithContext(ctx).Where("id", id).First(result).Error
 	if err != nil {
-		return nil, m.maskError(err)
+		return nil, m.MaskError(err)
 	}
 	return result, nil
 }
 
 func (m *base[T]) FindByCode(ctx context.Context, code string) (*T, error) {
-	query := m.getConn(ctx).Model(m.entity)
+	query := m.GetConn(ctx).Model(m.entity)
 	result := new(T)
 	err := query.WithContext(ctx).Where("code", code).First(result).Error
 	if err != nil {
-		return nil, m.maskError(err)
+		return nil, m.MaskError(err)
 	}
 	return result, nil
 }
 
 func (m *base[T]) FindByName(ctx context.Context, name string) (*T, error) {
-	query := m.getConn(ctx).Model(m.entity)
+	query := m.GetConn(ctx).Model(m.entity)
 	result := new(T)
 	err := query.WithContext(ctx).Where("name", name).First(result).Error
 	if err != nil {
-		return nil, m.maskError(err)
+		return nil, m.MaskError(err)
 	}
 	return result, nil
 }
 
 func (m *base[T]) Create(ctx context.Context, data T) (T, error) {
-	query := m.getConn(ctx).Model(m.entity)
+	query := m.GetConn(ctx).Model(m.entity)
 	err := query.WithContext(ctx).Create(&data).Error
-	return data, m.maskError(err)
+	return data, m.MaskError(err)
 }
 
 func (m *base[T]) Creates(ctx context.Context, data []T) ([]T, error) {
-	err := m.getConn(ctx).Model(m.entity).WithContext(ctx).Create(&data).Error
-	return data, m.maskError(err)
+	err := m.GetConn(ctx).Model(m.entity).WithContext(ctx).Create(&data).Error
+	return data, m.MaskError(err)
 }
 
 func (m *base[T]) UpdateByID(ctx context.Context, id string, data T) (T, error) {
-	err := m.getConn(ctx).Model(&data).WithContext(ctx).Where("id = ?", id).Updates(&data).Error
-	return data, m.maskError(err)
+	err := m.GetConn(ctx).Model(&data).WithContext(ctx).Where("id = ?", id).Updates(&data).Error
+	return data, m.MaskError(err)
 }
 
 func (m *base[T]) DeleteByID(ctx context.Context, id string) error {
-	err := m.getConn(ctx).WithContext(ctx).Where("id = ?", id).Delete(m.entity).Error
-	return m.maskError(err)
+	err := m.GetConn(ctx).WithContext(ctx).Where("id = ?", id).Delete(m.entity).Error
+	return m.MaskError(err)
+}
+
+func (m *base[T]) Count(ctx context.Context) (int64, error) {
+	var count int64
+	err := m.GetConn(ctx).Model(m.entity).WithContext(ctx).Count(&count).Error
+	return count, err
 }
