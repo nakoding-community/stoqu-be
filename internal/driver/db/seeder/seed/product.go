@@ -8,11 +8,12 @@ import (
 	"gorm.io/gorm"
 )
 
-type BrandSeed struct{}
+type ProductSeed struct{}
 
-func (s *BrandSeed) Run(conn *gorm.DB) error {
+func (s *ProductSeed) Run(conn *gorm.DB) error {
 	trx := conn.Begin()
 
+	// brand
 	brandNames := []string{"maestro", "kahf", "axe"}
 	var brands []entity.BrandModel
 	for _, v := range brandNames {
@@ -36,23 +37,51 @@ func (s *BrandSeed) Run(conn *gorm.DB) error {
 		return err
 	}
 
+	// variant
 	variantNames := []string{"chocolate", "apple", "orange", "grape"}
 	var variants []entity.VariantModel
-	for _, v := range variantNames {
-		for _, v2 := range brands {
+	for _, v := range brands {
+		for _, v2 := range variantNames {
 			variant := entity.VariantModel{
 				VariantEntity: entity.VariantEntity{
 					Code:       str.GenCode(constant.CODE_VARIANT_PREFIX),
-					Name:       v,
-					ITL:        v,
+					Name:       v2,
+					ITL:        v2,
 					UniqueCode: "",
-					BrandID:    v2.ID,
+					BrandID:    v.ID,
 				},
 			}
 			variants = append(variants, variant)
 		}
 	}
 	if err := trx.Create(&variants).Error; err != nil {
+		trx.Rollback()
+		logrus.Error(err)
+		return err
+	}
+
+	// product
+	var packets []entity.PacketModel
+	if err := trx.Model(&entity.PacketModel{}).Find(&packets).Error; err != nil {
+		return err
+	}
+	var products []entity.ProductModel
+	for _, v := range variants {
+		for _, v2 := range packets {
+			product := entity.ProductModel{
+				ProductEntity: entity.ProductEntity{
+					Code:      str.GenCode(constant.CODE_PACKET_PREFIX),
+					PriceUSD:  1,
+					PriceIDR:  15000,
+					BrandID:   v.BrandID,
+					VariantID: v.ID,
+					PacketID:  v2.ID,
+				},
+			}
+			products = append(products, product)
+		}
+	}
+	if err := trx.Create(&products).Error; err != nil {
 		trx.Rollback()
 		logrus.Error(err)
 		return err
@@ -66,6 +95,6 @@ func (s *BrandSeed) Run(conn *gorm.DB) error {
 	return nil
 }
 
-func (s *BrandSeed) GetTag() string {
-	return `brand_seed`
+func (s *ProductSeed) GetTag() string {
+	return `product_seed`
 }

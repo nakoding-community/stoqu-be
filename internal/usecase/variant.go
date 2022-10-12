@@ -106,7 +106,6 @@ func (u *variant) Update(ctx context.Context, payload dto.UpdateVariantRequest) 
 				Name:       payload.Name,
 				ITL:        payload.ITL,
 				UniqueCode: payload.UniqueCode,
-				BrandID:    payload.BrandID,
 			},
 		}
 	)

@@ -12,10 +12,10 @@ import (
 )
 
 type (
-	role struct {
+	product struct {
 		Factory factory.Factory
 	}
-	Role interface {
+	Product interface {
 		Route(g *echo.Group)
 		Get(c echo.Context) error
 		GetByID(c echo.Context) error
@@ -25,11 +25,11 @@ type (
 	}
 )
 
-func NewRole(f factory.Factory) Role {
-	return &role{f}
+func NewProduct(f factory.Factory) Product {
+	return &product{f}
 }
 
-func (h *role) Route(g *echo.Group) {
+func (h *product) Route(g *echo.Group) {
 	g.GET("", h.Get, middleware.Authentication)
 	g.GET("/:id", h.GetByID, middleware.Authentication)
 	g.POST("", h.Create, middleware.Authentication)
@@ -37,49 +37,49 @@ func (h *role) Route(g *echo.Group) {
 	g.DELETE("/:id", h.Delete, middleware.Authentication)
 }
 
-// Get role
-// @Summary Get role
-// @Description Get role
-// @Tags role
+// Get product
+// @Summary Get product
+// @Description Get product
+// @Tags product
 // @Accept json
 // @Produce json
 // @Security BearerAuth
 // @param request query abstraction.Filter true "request query"
-// @Param entity query model.RoleEntity false "entity query"
-// @Success 200 {object} dto.RoleResponseDoc
+// @Param entity query model.ProductEntity false "entity query"
+// @Success 200 {object} dto.ProductResponseDoc
 // @Failure 400 {object} res.errorResponse
 // @Failure 404 {object} res.errorResponse
 // @Failure 500 {object} res.errorResponse
-// @Router /api/roles [get]
-func (h *role) Get(c echo.Context) error {
-	filter := abstraction.NewFilterBuiler[model.RoleEntity](c, "roles")
+// @Router /api/products [get]
+func (h *product) Get(c echo.Context) error {
+	filter := abstraction.NewFilterBuiler[model.ProductEntity](c, "products")
 	if err := c.Bind(filter.Payload); err != nil {
 		return res.ErrorBuilder(res.Constant.Error.BadRequest, err).Send(c)
 	}
 	filter.Bind()
 
-	result, pagination, err := h.Factory.Usecase.Role.Find(c.Request().Context(), *filter.Payload)
+	result, pagination, err := h.Factory.Usecase.Product.Find(c.Request().Context(), *filter.Payload)
 	if err != nil {
 		return res.ErrorResponse(err).Send(c)
 	}
 
-	return res.CustomSuccessBuilder(200, result, "Get roles success", &pagination).Send(c)
+	return res.CustomSuccessBuilder(200, result, "Get products success", &pagination).Send(c)
 }
 
-// Get role by id
-// @Summary Get role by id
-// @Description Get role by id
-// @Tags role
+// Get product by id
+// @Summary Get product by id
+// @Description Get product by id
+// @Tags product
 // @Accept json
 // @Produce json
 // @Security BearerAuth
 // @Param id path string true "id path"
-// @Success 200 {object} dto.RoleResponseDoc
+// @Success 200 {object} dto.ProductResponseDoc
 // @Failure 400 {object} res.errorResponse
 // @Failure 404 {object} res.errorResponse
 // @Failure 500 {object} res.errorResponse
-// @Router /api/roles/{id} [get]
-func (h *role) GetByID(c echo.Context) error {
+// @Router /api/products/{id} [get]
+func (h *product) GetByID(c echo.Context) error {
 	ctx := c.Request().Context()
 
 	payload := new(dto.ByIDRequest)
@@ -91,30 +91,30 @@ func (h *role) GetByID(c echo.Context) error {
 		return response.Send(c)
 	}
 
-	result, err := h.Factory.Usecase.Role.FindByID(ctx, *payload)
+	result, err := h.Factory.Usecase.Product.FindByID(ctx, *payload)
 	if err != nil {
 		return res.ErrorResponse(err).Send(c)
 	}
 	return res.SuccessResponse(result).Send(c)
 }
 
-// Create role
-// @Summary Create role
-// @Description Create role
-// @Tags role
+// Create product
+// @Summary Create product
+// @Description Create product
+// @Tags product
 // @Accept json
 // @Produce json
 // @Security BearerAuth
-// @Param request body dto.CreateRoleRequest true "request body"
-// @Success 200 {object} dto.RoleResponseDoc
+// @Param request body dto.CreateProductRequest true "request body"
+// @Success 200 {object} dto.ProductResponseDoc
 // @Failure 400 {object} res.errorResponse
 // @Failure 404 {object} res.errorResponse
 // @Failure 500 {object} res.errorResponse
-// @Router /api/roles [post]
-func (h *role) Create(c echo.Context) error {
+// @Router /api/products [post]
+func (h *product) Create(c echo.Context) error {
 	ctx := c.Request().Context()
 
-	payload := new(dto.CreateRoleRequest)
+	payload := new(dto.CreateProductRequest)
 	if err := c.Bind(payload); err != nil {
 		return res.ErrorBuilder(res.Constant.Error.BadRequest, err).Send(c)
 	}
@@ -122,7 +122,7 @@ func (h *role) Create(c echo.Context) error {
 		return res.ErrorBuilder(res.Constant.Error.Validation, err).Send(c)
 	}
 
-	result, err := h.Factory.Usecase.Role.Create(ctx, *payload)
+	result, err := h.Factory.Usecase.Product.Create(ctx, *payload)
 	if err != nil {
 		return res.ErrorResponse(err).Send(c)
 	}
@@ -130,24 +130,24 @@ func (h *role) Create(c echo.Context) error {
 	return res.SuccessResponse(result).Send(c)
 }
 
-// Update role
-// @Summary Update role
-// @Description Update role
-// @Tags role
+// Update product
+// @Summary Update product
+// @Description Update product
+// @Tags product
 // @Accept json
 // @Produce json
 // @Security BearerAuth
 // @Param id path string true "id path"
-// @Param request body dto.UpdateRoleRequest true "request body"
-// @Success 200 {object} dto.RoleResponseDoc
+// @Param request body dto.UpdateProductRequest true "request body"
+// @Success 200 {object} dto.ProductResponseDoc
 // @Failure 400 {object} res.errorResponse
 // @Failure 404 {object} res.errorResponse
 // @Failure 500 {object} res.errorResponse
-// @Router /api/roles/{id} [put]
-func (h *role) Update(c echo.Context) error {
+// @Router /api/products/{id} [put]
+func (h *product) Update(c echo.Context) error {
 	ctx := c.Request().Context()
 
-	payload := new(dto.UpdateRoleRequest)
+	payload := new(dto.UpdateProductRequest)
 	if err := c.Bind(&payload); err != nil {
 		return res.ErrorBuilder(res.Constant.Error.BadRequest, err).Send(c)
 	}
@@ -155,7 +155,7 @@ func (h *role) Update(c echo.Context) error {
 		return res.ErrorBuilder(res.Constant.Error.Validation, err).Send(c)
 	}
 
-	result, err := h.Factory.Usecase.Role.Update(ctx, *payload)
+	result, err := h.Factory.Usecase.Product.Update(ctx, *payload)
 	if err != nil {
 		return res.ErrorResponse(err).Send(c)
 	}
@@ -163,20 +163,20 @@ func (h *role) Update(c echo.Context) error {
 	return res.SuccessResponse(result).Send(c)
 }
 
-// Delete role
-// @Summary Delete role
-// @Description Delete role
-// @Tags role
+// Delete product
+// @Summary Delete product
+// @Description Delete product
+// @Tags product
 // @Accept json
 // @Produce json
 // @Security BearerAuth
 // @Param id path string true "id path"
-// @Success 200 {object} dto.RoleResponseDoc
+// @Success 200 {object} dto.ProductResponseDoc
 // @Failure 400 {object} res.errorResponse
 // @Failure 404 {object} res.errorResponse
 // @Failure 500 {object} res.errorResponse
-// @Router /api/roles/{id} [delete]
-func (h *role) Delete(c echo.Context) error {
+// @Router /api/products/{id} [delete]
+func (h *product) Delete(c echo.Context) error {
 	ctx := c.Request().Context()
 
 	payload := new(dto.ByIDRequest)
@@ -187,7 +187,7 @@ func (h *role) Delete(c echo.Context) error {
 		return res.ErrorBuilder(res.Constant.Error.Validation, err).Send(c)
 	}
 
-	result, err := h.Factory.Usecase.Role.Delete(ctx, *payload)
+	result, err := h.Factory.Usecase.Product.Delete(ctx, *payload)
 	if err != nil {
 		return res.ErrorResponse(err).Send(c)
 	}

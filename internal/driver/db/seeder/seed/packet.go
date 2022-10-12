@@ -16,6 +16,7 @@ type PacketSeed struct{}
 func (s *PacketSeed) Run(conn *gorm.DB) error {
 	trx := conn.Begin()
 
+	// unit
 	unitNames := []string{"KG", "L", "ML"}
 	var units []entity.UnitModel
 	for _, v := range unitNames {
@@ -36,6 +37,7 @@ func (s *PacketSeed) Run(conn *gorm.DB) error {
 		return err
 	}
 
+	// convertion unit
 	var convertionUnits = []entity.ConvertionUnitModel{
 		{
 			Entity: entity.Entity{
@@ -93,6 +95,7 @@ func (s *PacketSeed) Run(conn *gorm.DB) error {
 		return err
 	}
 
+	// packet
 	pkgValues := []int{1, 5, 10, 25}
 	var pkgs []entity.PacketModel
 	for _, v := range pkgValues {

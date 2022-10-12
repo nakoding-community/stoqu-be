@@ -14,7 +14,7 @@ type (
 
 	UpdateBrandRequest struct {
 		ID         string `param:"id" validate:"required"`
-		Name       string `json:"name" validate:"required"`
+		Name       string `json:"name"`
 		SupplierID string `json:"supplier_id"`
 	}
 )

@@ -36,6 +36,8 @@ func Init(cfg *config.Configuration) {
 					&entity.CurrencyModel{},
 					&entity.VariantModel{},
 					&entity.BrandModel{},
+					&entity.ProductLookupEntity{},
+					&entity.ProductEntity{},
 				},
 			}
 		}

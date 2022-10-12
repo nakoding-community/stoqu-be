@@ -5,6 +5,18 @@ import (
 	res "gitlab.com/stoqu/stoqu-be/pkg/util/response"
 )
 
+// request
+type (
+	CreateRoleRequest struct {
+		Name string `json:"name" validate:"required"`
+	}
+
+	UpdateRoleRequest struct {
+		ID   string `param:"id" validate:"required"`
+		Name string `json:"name"`
+	}
+)
+
 // response
 type (
 	RoleResponse struct {

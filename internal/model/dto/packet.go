@@ -14,7 +14,7 @@ type (
 
 	UpdatePacketRequest struct {
 		ID     string `param:"id" validate:"required"`
-		UnitID string `json:"unit_id" validate:"required"`
+		UnitID string `json:"unit_id"`
 		Value  int    `json:"value"`
 	}
 )

@@ -16,10 +16,9 @@ type (
 
 	UpdateVariantRequest struct {
 		ID         string `param:"id" validate:"required"`
-		Name       string `json:"name" validate:"required"`
+		Name       string `json:"name"`
 		ITL        string `json:"itl"`
 		UniqueCode string `json:"unique_code,omitempty"`
-		BrandID    string `json:"brand_id" validate:"required"`
 	}
 )
 

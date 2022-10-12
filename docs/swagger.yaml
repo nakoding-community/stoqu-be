@@ -170,12 +170,58 @@ definitions:
     - unit_id
     - value
     type: object
+  dto.CreateProductLookupRequest:
+    properties:
+      is_seal:
+        type: boolean
+      product_id:
+        type: string
+      remaining_type_value:
+        type: integer
+      remaining_type_value_before:
+        type: integer
+      type_value:
+        type: integer
+    required:
+    - product_id
+    type: object
+  dto.CreateProductRequest:
+    properties:
+      brand_id:
+        type: string
+      packet_id:
+        type: string
+      price_idr:
+        type: number
+      price_usd:
+        type: number
+      variant_id:
+        type: string
+    required:
+    - brand_id
+    - packet_id
+    - variant_id
+    type: object
   dto.CreateReminderStockRequest:
     properties:
       min_stock:
         type: integer
       name:
         type: string
+    type: object
+  dto.CreateRoleRequest:
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  dto.CreateUnitRequest:
+    properties:
+      name:
+        type: string
+    required:
+    - name
     type: object
   dto.CreateUserRequest:
     properties:
@@ -289,6 +335,89 @@ definitions:
             $ref: '#/definitions/response.Meta'
         type: object
     type: object
+  dto.ProductLookupResponse:
+    properties:
+      code:
+        type: string
+      created_at:
+        type: string
+      created_by:
+        type: string
+      id:
+        type: string
+      is_seal:
+        type: boolean
+      modified_at:
+        type: string
+      modified_by:
+        type: string
+      product_id:
+        description: fk
+        type: string
+      remaining_type_value:
+        type: integer
+      remaining_type_value_before:
+        type: integer
+      type_value:
+        type: integer
+    type: object
+  dto.ProductLookupResponseDoc:
+    properties:
+      body:
+        properties:
+          data:
+            $ref: '#/definitions/dto.ProductLookupResponse'
+          meta:
+            $ref: '#/definitions/response.Meta'
+        type: object
+    type: object
+  dto.ProductResponse:
+    properties:
+      brand:
+        $ref: '#/definitions/entity.BrandModel'
+        description: relations
+      brand_id:
+        description: fk
+        type: string
+      code:
+        type: string
+      created_at:
+        type: string
+      created_by:
+        type: string
+      id:
+        type: string
+      modified_at:
+        type: string
+      modified_by:
+        type: string
+      packet_id:
+        type: string
+      price_idr:
+        type: number
+      price_usd:
+        type: number
+      product_lookups:
+        items:
+          $ref: '#/definitions/entity.ProductLookupModel'
+        type: array
+      type:
+        $ref: '#/definitions/entity.PacketModel'
+      variant:
+        $ref: '#/definitions/entity.VariantModel'
+      variant_id:
+        type: string
+    type: object
+  dto.ProductResponseDoc:
+    properties:
+      body:
+        properties:
+          data:
+            $ref: '#/definitions/dto.ProductResponse'
+          meta:
+            $ref: '#/definitions/response.Meta'
+        type: object
+    type: object
   dto.RegisterAuthRequest:
     properties:
       email:
@@ -394,7 +523,6 @@ definitions:
         type: string
     required:
     - id
-    - name
     type: object
   dto.UpdateConvertionUnitRequest:
     properties:
@@ -432,7 +560,32 @@ definitions:
         type: integer
     required:
     - id
-    - unit_id
+    type: object
+  dto.UpdateProductLookupRequest:
+    properties:
+      id:
+        type: string
+      is_seal:
+        type: boolean
+      remaining_type_value:
+        type: integer
+      remaining_type_value_before:
+        type: integer
+      type_value:
+        type: integer
+    required:
+    - id
+    type: object
+  dto.UpdateProductRequest:
+    properties:
+      id:
+        type: string
+      price_idr:
+        type: number
+      price_usd:
+        type: number
+    required:
+    - id
     type: object
   dto.UpdateReminderStockRequest:
     properties:
@@ -440,6 +593,24 @@ definitions:
         type: string
       min_stock:
         type: integer
+      name:
+        type: string
+    required:
+    - id
+    type: object
+  dto.UpdateRoleRequest:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    required:
+    - id
+    type: object
+  dto.UpdateUnitRequest:
+    properties:
+      id:
+        type: string
       name:
         type: string
     required:
@@ -462,8 +633,6 @@ definitions:
     type: object
   dto.UpdateVariantRequest:
     properties:
-      brand_id:
-        type: string
       id:
         type: string
       itl:
@@ -473,9 +642,7 @@ definitions:
       unique_code:
         type: string
     required:
-    - brand_id
     - id
-    - name
     type: object
   dto.UserResponse:
     properties:
@@ -576,6 +743,57 @@ definitions:
         items:
           $ref: '#/definitions/entity.VariantModel'
         type: array
+    type: object
+  entity.PacketModel:
+    properties:
+      code:
+        type: string
+      created_at:
+        type: string
+      created_by:
+        type: string
+      id:
+        type: string
+      modified_at:
+        type: string
+      modified_by:
+        type: string
+      name:
+        type: string
+      unit:
+        $ref: '#/definitions/entity.UnitModel'
+        description: relations
+      unit_id:
+        description: fk
+        type: string
+      value:
+        type: integer
+    type: object
+  entity.ProductLookupModel:
+    properties:
+      code:
+        type: string
+      created_at:
+        type: string
+      created_by:
+        type: string
+      id:
+        type: string
+      is_seal:
+        type: boolean
+      modified_at:
+        type: string
+      modified_by:
+        type: string
+      product_id:
+        description: fk
+        type: string
+      remaining_type_value:
+        type: integer
+      remaining_type_value_before:
+        type: integer
+      type_value:
+        type: integer
     type: object
   entity.RoleModel:
     properties:
@@ -1616,6 +1834,420 @@ paths:
       summary: Update packet
       tags:
       - packet
+  /api/product-lookups:
+    get:
+      consumes:
+      - application/json
+      description: Get productLookup
+      parameters:
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: page_size
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - in: query
+        items:
+          type: string
+        name: sort_by
+        type: array
+      - in: query
+        name: code
+        type: string
+      - in: query
+        name: is_seal
+        type: boolean
+      - description: fk
+        in: query
+        name: product_id
+        type: string
+      - in: query
+        name: remaining_type_value
+        type: integer
+      - in: query
+        name: remaining_type_value_before
+        type: integer
+      - in: query
+        name: type_value
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ProductLookupResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get productLookup
+      tags:
+      - productLookup
+    post:
+      consumes:
+      - application/json
+      description: Create productLookup
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateProductLookupRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ProductLookupResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create productLookup
+      tags:
+      - productLookup
+  /api/product-lookups/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete productLookup
+      parameters:
+      - description: id path
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ProductLookupResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete productLookup
+      tags:
+      - productLookup
+    get:
+      consumes:
+      - application/json
+      description: Get productLookup by id
+      parameters:
+      - description: id path
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ProductLookupResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get productLookup by id
+      tags:
+      - productLookup
+    put:
+      consumes:
+      - application/json
+      description: Update productLookup
+      parameters:
+      - description: id path
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateProductLookupRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ProductLookupResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update productLookup
+      tags:
+      - productLookup
+  /api/products:
+    get:
+      consumes:
+      - application/json
+      description: Get product
+      parameters:
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: page_size
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - in: query
+        items:
+          type: string
+        name: sort_by
+        type: array
+      - description: fk
+        in: query
+        name: brand_id
+        type: string
+      - in: query
+        name: code
+        type: string
+      - in: query
+        name: packet_id
+        type: string
+      - in: query
+        name: price_idr
+        type: number
+      - in: query
+        name: price_usd
+        type: number
+      - in: query
+        name: variant_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ProductResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get product
+      tags:
+      - product
+    post:
+      consumes:
+      - application/json
+      description: Create product
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateProductRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ProductResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create product
+      tags:
+      - product
+  /api/products/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete product
+      parameters:
+      - description: id path
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ProductResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete product
+      tags:
+      - product
+    get:
+      consumes:
+      - application/json
+      description: Get product by id
+      parameters:
+      - description: id path
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ProductResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get product by id
+      tags:
+      - product
+    put:
+      consumes:
+      - application/json
+      description: Update product
+      parameters:
+      - description: id path
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateProductRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ProductResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update product
+      tags:
+      - product
   /api/reminder-stocks:
     post:
       consumes:
@@ -1864,6 +2496,150 @@ paths:
       summary: Get role
       tags:
       - role
+    post:
+      consumes:
+      - application/json
+      description: Create role
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.RoleResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create role
+      tags:
+      - role
+  /api/roles/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete role
+      parameters:
+      - description: id path
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.RoleResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete role
+      tags:
+      - role
+    get:
+      consumes:
+      - application/json
+      description: Get role by id
+      parameters:
+      - description: id path
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.RoleResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get role by id
+      tags:
+      - role
+    put:
+      consumes:
+      - application/json
+      description: Update role
+      parameters:
+      - description: id path
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.RoleResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update role
+      tags:
+      - role
   /api/units:
     get:
       consumes:
@@ -1912,6 +2688,150 @@ paths:
       security:
       - BearerAuth: []
       summary: Get unit
+      tags:
+      - unit
+    post:
+      consumes:
+      - application/json
+      description: Create unit
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateUnitRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UnitResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create unit
+      tags:
+      - unit
+  /api/units/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete unit
+      parameters:
+      - description: id path
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UnitResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete unit
+      tags:
+      - unit
+    get:
+      consumes:
+      - application/json
+      description: Get unit by id
+      parameters:
+      - description: id path
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UnitResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get unit by id
+      tags:
+      - unit
+    put:
+      consumes:
+      - application/json
+      description: Update unit
+      parameters:
+      - description: id path
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateUnitRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UnitResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update unit
       tags:
       - unit
   /api/users:

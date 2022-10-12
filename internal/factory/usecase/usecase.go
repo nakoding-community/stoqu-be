@@ -17,8 +17,10 @@ type Factory struct {
 	Currency       usecase.Currency
 	ReminderStock  usecase.ReminderStock
 
-	Brand   usecase.Brand
-	Variant usecase.Variant
+	Brand         usecase.Brand
+	Variant       usecase.Variant
+	Product       usecase.Product
+	ProductLookup usecase.ProductLookup
 }
 
 func Init(cfg *config.Configuration, r repository.Factory) Factory {
@@ -36,6 +38,8 @@ func Init(cfg *config.Configuration, r repository.Factory) Factory {
 
 	f.Brand = usecase.NewBrand(cfg, r)
 	f.Variant = usecase.NewVariant(cfg, r)
+	f.Product = usecase.NewProduct(cfg, r)
+	f.ProductLookup = usecase.NewProductLookup(cfg, r)
 
 	return f
 }

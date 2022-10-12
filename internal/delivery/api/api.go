@@ -22,4 +22,6 @@ func Init(e *echo.Echo, f factory.Factory) {
 	handler.NewPacket(f).Route(e.Group(prefix + "/packets"))
 	handler.NewBrand(f).Route(e.Group(prefix + "/brands"))
 	handler.NewVariant(f).Route(e.Group(prefix + "/variants"))
+	handler.NewProduct(f).Route(e.Group(prefix + "/products"))
+	handler.NewProductLookup(f).Route(e.Group(prefix + "/product-lookups"))
 }
