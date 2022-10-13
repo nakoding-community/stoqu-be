@@ -18,7 +18,7 @@ func (s *ProductSeed) Run(conn *gorm.DB) error {
 	var brands []entity.BrandModel
 	for _, v := range brandNames {
 		var user entity.UserModel
-		if err := trx.Model(&entity.UserModel{}).Joins(`join roles on roles.id = users.role_id`).Find(&user).Where("roles.name = 'supplier'").Error; err != nil {
+		if err := trx.Model(&entity.UserModel{}).Joins(`join roles on roles.id = users.role_id`).Where("roles.name = 'supplier'").Find(&user).Error; err != nil {
 			return err
 		}
 

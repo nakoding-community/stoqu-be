@@ -79,7 +79,7 @@ func (m *seeder) Run() error {
 			}
 
 			var seedExist seederEntity
-			if err := trx.Find(&seedExist).Where("tag=" + v.GetTag()).Error; err != nil {
+			if err := trx.Where("tag", v.GetTag()).Find(&seedExist).Error; err != nil {
 				return err
 			}
 			if seedExist.Tag != "" {
