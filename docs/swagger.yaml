@@ -177,11 +177,11 @@ definitions:
       product_id:
         type: string
       remaining_type_value:
-        type: integer
+        type: number
       remaining_type_value_before:
-        type: integer
+        type: number
       type_value:
-        type: integer
+        type: number
     required:
     - product_id
     type: object
@@ -189,9 +189,11 @@ definitions:
     properties:
       brand_id:
         type: string
+      name:
+        type: string
       packet_id:
         type: string
-      price_idr:
+      price_final:
         type: number
       price_usd:
         type: number
@@ -355,11 +357,11 @@ definitions:
         description: fk
         type: string
       remaining_type_value:
-        type: integer
+        type: number
       remaining_type_value_before:
-        type: integer
+        type: number
       type_value:
-        type: integer
+        type: number
     type: object
   dto.ProductLookupResponseDoc:
     properties:
@@ -391,9 +393,11 @@ definitions:
         type: string
       modified_by:
         type: string
+      name:
+        type: string
       packet_id:
         type: string
-      price_idr:
+      price_final:
         type: number
       price_usd:
         type: number
@@ -568,11 +572,11 @@ definitions:
       is_seal:
         type: boolean
       remaining_type_value:
-        type: integer
+        type: number
       remaining_type_value_before:
-        type: integer
+        type: number
       type_value:
-        type: integer
+        type: number
     required:
     - id
     type: object
@@ -580,7 +584,9 @@ definitions:
     properties:
       id:
         type: string
-      price_idr:
+      name:
+        type: string
+      price_final:
         type: number
       price_usd:
         type: number
@@ -789,11 +795,11 @@ definitions:
         description: fk
         type: string
       remaining_type_value:
-        type: integer
+        type: number
       remaining_type_value_before:
-        type: integer
+        type: number
       type_value:
-        type: integer
+        type: number
     type: object
   entity.RoleModel:
     properties:
@@ -1881,13 +1887,13 @@ paths:
         type: string
       - in: query
         name: remaining_type_value
-        type: integer
+        type: number
       - in: query
         name: remaining_type_value_before
-        type: integer
+        type: number
       - in: query
         name: type_value
-        type: integer
+        type: number
       produces:
       - application/json
       responses:
@@ -2106,13 +2112,16 @@ paths:
         name: modified_by
         type: string
       - in: query
+        name: name
+        type: string
+      - in: query
         name: packet_id
         type: string
       - in: query
         name: packet_value
         type: integer
       - in: query
-        name: price_idr
+        name: price_final
         type: number
       - in: query
         name: price_usd

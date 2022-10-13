@@ -1521,17 +1521,17 @@
                         "in": "query"
                     },
                     {
-                        "type": "integer",
+                        "type": "number",
                         "name": "remaining_type_value",
                         "in": "query"
                     },
                     {
-                        "type": "integer",
+                        "type": "number",
                         "name": "remaining_type_value_before",
                         "in": "query"
                     },
                     {
-                        "type": "integer",
+                        "type": "number",
                         "name": "type_value",
                         "in": "query"
                     }
@@ -1879,6 +1879,11 @@
                     },
                     {
                         "type": "string",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "packet_id",
                         "in": "query"
                     },
@@ -1889,7 +1894,7 @@
                     },
                     {
                         "type": "number",
-                        "name": "price_idr",
+                        "name": "price_final",
                         "in": "query"
                     },
                     {
@@ -4031,13 +4036,13 @@
                     "type": "string"
                 },
                 "remaining_type_value": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "remaining_type_value_before": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "type_value": {
-                    "type": "integer"
+                    "type": "number"
                 }
             }
         },
@@ -4052,10 +4057,13 @@
                 "brand_id": {
                     "type": "string"
                 },
+                "name": {
+                    "type": "string"
+                },
                 "packet_id": {
                     "type": "string"
                 },
-                "price_idr": {
+                "price_final": {
                     "type": "number"
                 },
                 "price_usd": {
@@ -4296,13 +4304,13 @@
                     "type": "string"
                 },
                 "remaining_type_value": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "remaining_type_value_before": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "type_value": {
-                    "type": "integer"
+                    "type": "number"
                 }
             }
         },
@@ -4351,10 +4359,13 @@
                 "modified_by": {
                     "type": "string"
                 },
+                "name": {
+                    "type": "string"
+                },
                 "packet_id": {
                     "type": "string"
                 },
-                "price_idr": {
+                "price_final": {
                     "type": "number"
                 },
                 "price_usd": {
@@ -4627,13 +4638,13 @@
                     "type": "boolean"
                 },
                 "remaining_type_value": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "remaining_type_value_before": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "type_value": {
-                    "type": "integer"
+                    "type": "number"
                 }
             }
         },
@@ -4646,7 +4657,10 @@
                 "id": {
                     "type": "string"
                 },
-                "price_idr": {
+                "name": {
+                    "type": "string"
+                },
+                "price_final": {
                     "type": "number"
                 },
                 "price_usd": {
@@ -4959,13 +4973,13 @@
                     "type": "string"
                 },
                 "remaining_type_value": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "remaining_type_value_before": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "type_value": {
-                    "type": "integer"
+                    "type": "number"
                 }
             }
         },

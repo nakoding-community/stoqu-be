@@ -66,7 +66,7 @@ func (m *seeder) Run() error {
 	if !m.Db.Migrator().HasTable(seederEntity.TableName(seederEntity{})) {
 		err := m.Db.Migrator().CreateTable(&seederEntity{})
 		if err != nil {
-			logrus.Error("failed to run seeder, create seed entity", err.Error())
+			logrus.Error("failed to run seeder, create seed entity ", err.Error())
 			return err
 		}
 	}
@@ -76,6 +76,15 @@ func (m *seeder) Run() error {
 			trx := ctxval.GetTrxValue(ctx)
 			seed := seederEntity{
 				Tag: v.GetTag(),
+			}
+
+			var seedExist seederEntity
+			if err := trx.Find(&seedExist).Where("tag=" + v.GetTag()).Error; err != nil {
+				return err
+			}
+			if seedExist.Tag != "" {
+				logrus.Info("skip seed, cause has been executed ", v.GetTag())
+				return nil
 			}
 
 			if err := trx.Create(&seed).Error; err != nil {

@@ -1528,17 +1528,17 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "type": "integer",
+                        "type": "number",
                         "name": "remaining_type_value",
                         "in": "query"
                     },
                     {
-                        "type": "integer",
+                        "type": "number",
                         "name": "remaining_type_value_before",
                         "in": "query"
                     },
                     {
-                        "type": "integer",
+                        "type": "number",
                         "name": "type_value",
                         "in": "query"
                     }
@@ -1886,6 +1886,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "packet_id",
                         "in": "query"
                     },
@@ -1896,7 +1901,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "number",
-                        "name": "price_idr",
+                        "name": "price_final",
                         "in": "query"
                     },
                     {
@@ -4038,13 +4043,13 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "remaining_type_value": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "remaining_type_value_before": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "type_value": {
-                    "type": "integer"
+                    "type": "number"
                 }
             }
         },
@@ -4059,10 +4064,13 @@ const docTemplate = `{
                 "brand_id": {
                     "type": "string"
                 },
+                "name": {
+                    "type": "string"
+                },
                 "packet_id": {
                     "type": "string"
                 },
-                "price_idr": {
+                "price_final": {
                     "type": "number"
                 },
                 "price_usd": {
@@ -4303,13 +4311,13 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "remaining_type_value": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "remaining_type_value_before": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "type_value": {
-                    "type": "integer"
+                    "type": "number"
                 }
             }
         },
@@ -4358,10 +4366,13 @@ const docTemplate = `{
                 "modified_by": {
                     "type": "string"
                 },
+                "name": {
+                    "type": "string"
+                },
                 "packet_id": {
                     "type": "string"
                 },
-                "price_idr": {
+                "price_final": {
                     "type": "number"
                 },
                 "price_usd": {
@@ -4634,13 +4645,13 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "remaining_type_value": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "remaining_type_value_before": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "type_value": {
-                    "type": "integer"
+                    "type": "number"
                 }
             }
         },
@@ -4653,7 +4664,10 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
-                "price_idr": {
+                "name": {
+                    "type": "string"
+                },
+                "price_final": {
                     "type": "number"
                 },
                 "price_usd": {
@@ -4966,13 +4980,13 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "remaining_type_value": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "remaining_type_value_before": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "type_value": {
-                    "type": "integer"
+                    "type": "number"
                 }
             }
         },
