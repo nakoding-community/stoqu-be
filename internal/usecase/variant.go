@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"strings"
 
 	"github.com/google/uuid"
 	"gitlab.com/stoqu/stoqu-be/internal/config"
@@ -34,7 +35,17 @@ func NewVariant(cfg *config.Configuration, f repository.Factory) Variant {
 }
 
 func (u *variant) Find(ctx context.Context, filterParam abstraction.Filter) (result []dto.VariantResponse, pagination abstraction.PaginationInfo, err error) {
-	variants, info, err := u.Repo.Variant.Find(ctx, filterParam, nil)
+	var search *abstraction.Search
+	if filterParam.Search != "" {
+		searchQuery := "lower(code) LIKE ? OR lower(name) LIKE ? OR lower(itl) LIKE ? OR lower(unique_code) LIKE ?"
+		searchVal := "%" + strings.ToLower(filterParam.Search) + "%"
+		search = &abstraction.Search{
+			Query: searchQuery,
+			Args:  []interface{}{searchVal, searchVal, searchVal, searchVal},
+		}
+	}
+
+	variants, info, err := u.Repo.Variant.Find(ctx, filterParam, search)
 	if err != nil {
 		return nil, pagination, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
 	}

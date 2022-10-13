@@ -36,7 +36,7 @@ func NewUser(cfg *config.Configuration, f repository.Factory) User {
 func (u *user) Find(ctx context.Context, filterParam abstraction.Filter) (result []dto.UserResponse, pagination abstraction.PaginationInfo, err error) {
 	var search *abstraction.Search
 	if filterParam.Search != "" {
-		searchQuery := "lower(name) LIKE ? or lower(email) Like ?"
+		searchQuery := "lower(name) LIKE ? OR lower(email) Like ?"
 		searchVal := "%" + strings.ToLower(filterParam.Search) + "%"
 		search = &abstraction.Search{
 			Query: searchQuery,

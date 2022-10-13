@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"strings"
 
 	"github.com/google/uuid"
 	"gitlab.com/stoqu/stoqu-be/internal/config"
@@ -34,7 +35,17 @@ func NewPacket(cfg *config.Configuration, f repository.Factory) Packet {
 }
 
 func (u *packet) Find(ctx context.Context, filterParam abstraction.Filter) (result []dto.PacketResponse, pagination abstraction.PaginationInfo, err error) {
-	packets, info, err := u.Repo.Packet.Find(ctx, filterParam, nil)
+	var search *abstraction.Search
+	if filterParam.Search != "" {
+		searchQuery := "lower(code) LIKE ? OR lower(name) LIKE ?"
+		searchVal := "%" + strings.ToLower(filterParam.Search) + "%"
+		search = &abstraction.Search{
+			Query: searchQuery,
+			Args:  []interface{}{searchVal, searchVal},
+		}
+	}
+
+	packets, info, err := u.Repo.Packet.Find(ctx, filterParam, search)
 	if err != nil {
 		return nil, pagination, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
 	}

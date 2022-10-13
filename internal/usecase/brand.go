@@ -37,13 +37,14 @@ func NewBrand(cfg *config.Configuration, f repository.Factory) Brand {
 func (u *brand) Find(ctx context.Context, filterParam abstraction.Filter) (result []dto.BrandResponse, pagination abstraction.PaginationInfo, err error) {
 	var search *abstraction.Search
 	if filterParam.Search != "" {
-		searchQuery := "lower(name) LIKE ?"
-		searchValStr := "%" + strings.ToLower(filterParam.Search) + "%"
+		searchQuery := "lower(code) LIKE ? OR lower(name) LIKE ?"
+		searchVal := "%" + strings.ToLower(filterParam.Search) + "%"
 		search = &abstraction.Search{
 			Query: searchQuery,
-			Args:  []interface{}{searchValStr},
+			Args:  []interface{}{searchVal, searchVal},
 		}
 	}
+
 	brands, info, err := u.Repo.Brand.Find(ctx, filterParam, search)
 	if err != nil {
 		return nil, pagination, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)

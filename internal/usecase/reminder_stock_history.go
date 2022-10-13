@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"strings"
 
 	"gitlab.com/stoqu/stoqu-be/internal/config"
 
@@ -35,7 +36,17 @@ func NewReminderStockHistory(cfg *config.Configuration, f repository.Factory) Re
 }
 
 func (u *reminderStockHistory) Find(ctx context.Context, filterParam abstraction.Filter) (result []dto.ReminderStockHistoryResponse, pagination abstraction.PaginationInfo, err error) {
-	reminderStockHistorys, info, err := u.Repo.ReminderStockHistory.Find(ctx, filterParam, nil)
+	var search *abstraction.Search
+	if filterParam.Search != "" {
+		searchQuery := "lower(title) LIKE ? OR lower(body) LIKE ?"
+		searchVal := "%" + strings.ToLower(filterParam.Search) + "%"
+		search = &abstraction.Search{
+			Query: searchQuery,
+			Args:  []interface{}{searchVal, searchVal},
+		}
+	}
+
+	reminderStockHistorys, info, err := u.Repo.ReminderStockHistory.Find(ctx, filterParam, search)
 	if err != nil {
 		return nil, pagination, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
 	}

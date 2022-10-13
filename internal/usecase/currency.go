@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"math"
 	"net/http"
+	"strings"
 
 	"github.com/google/uuid"
 	"gitlab.com/stoqu/stoqu-be/internal/config"
@@ -38,7 +39,17 @@ func NewCurrency(cfg *config.Configuration, f repository.Factory) Currency {
 }
 
 func (u *currency) Find(ctx context.Context, filterParam abstraction.Filter) (result []dto.CurrencyResponse, pagination abstraction.PaginationInfo, err error) {
-	currencies, info, err := u.Repo.Currency.Find(ctx, filterParam, nil)
+	var search *abstraction.Search
+	if filterParam.Search != "" {
+		searchQuery := "lower(code) LIKE ? OR lower(name) LIKE ?"
+		searchVal := "%" + strings.ToLower(filterParam.Search) + "%"
+		search = &abstraction.Search{
+			Query: searchQuery,
+			Args:  []interface{}{searchVal, searchVal},
+		}
+	}
+
+	currencies, info, err := u.Repo.Currency.Find(ctx, filterParam, search)
 	if err != nil {
 		return nil, pagination, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
 	}

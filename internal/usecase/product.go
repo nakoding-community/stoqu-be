@@ -2,6 +2,8 @@ package usecase
 
 import (
 	"context"
+	"strconv"
+	"strings"
 
 	"github.com/google/uuid"
 	"gitlab.com/stoqu/stoqu-be/internal/config"
@@ -34,7 +36,38 @@ func NewProduct(cfg *config.Configuration, f repository.Factory) Product {
 }
 
 func (u *product) Find(ctx context.Context, filterParam abstraction.Filter) (result []dto.ProductViewResponse, pagination abstraction.PaginationInfo, err error) {
-	products, info, err := u.Repo.Product.Find(ctx, filterParam, nil)
+	var search *abstraction.Search
+	if filterParam.Search != "" {
+		searchQuery := `
+			lower(products.code) LIKE ? OR 
+			lower(products.name) LIKE ? OR 
+			products.price_usd = ? OR 
+			products.price_final = ? OR 
+			lower(brands.name) LIKE ? OR 
+			lower(users.name) LIKE ? OR 
+			lower(variants.name) LIKE ? OR 
+			lower(units.name) LIKE ? OR
+			packets.value = ?
+		`
+		searchVal := "%" + strings.ToLower(filterParam.Search) + "%"
+		searchValFloat, _ := strconv.ParseFloat(filterParam.Search, 64)
+		search = &abstraction.Search{
+			Query: searchQuery,
+			Args: []interface{}{
+				searchVal,
+				searchVal,
+				searchValFloat,
+				searchValFloat,
+				searchVal,
+				searchVal,
+				searchVal,
+				searchVal,
+				searchValFloat,
+			},
+		}
+	}
+
+	products, info, err := u.Repo.Product.Find(ctx, filterParam, search)
 	if err != nil {
 		return nil, pagination, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
 	}

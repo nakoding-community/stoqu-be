@@ -2,6 +2,8 @@ package usecase
 
 import (
 	"context"
+	"strconv"
+	"strings"
 
 	"github.com/google/uuid"
 	"gitlab.com/stoqu/stoqu-be/internal/config"
@@ -34,7 +36,18 @@ func NewProductLookup(cfg *config.Configuration, f repository.Factory) ProductLo
 }
 
 func (u *productLookup) Find(ctx context.Context, filterParam abstraction.Filter) (result []dto.ProductLookupResponse, pagination abstraction.PaginationInfo, err error) {
-	productLookups, info, err := u.Repo.ProductLookup.Find(ctx, filterParam, nil)
+	var search *abstraction.Search
+	if filterParam.Search != "" {
+		searchQuery := "lower(code) LIKE ? OR type_value = ? OR remaining_type_value = ? OR remaining_type_value_before = ?"
+		searchVal := "%" + strings.ToLower(filterParam.Search) + "%"
+		searchValFloat, _ := strconv.ParseFloat(filterParam.Search, 64)
+		search = &abstraction.Search{
+			Query: searchQuery,
+			Args:  []interface{}{searchVal, searchValFloat, searchValFloat, searchValFloat},
+		}
+	}
+
+	productLookups, info, err := u.Repo.ProductLookup.Find(ctx, filterParam, search)
 	if err != nil {
 		return nil, pagination, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
 	}

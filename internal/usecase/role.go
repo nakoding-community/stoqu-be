@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"strings"
 
 	"github.com/google/uuid"
 	"gitlab.com/stoqu/stoqu-be/internal/config"
@@ -34,7 +35,17 @@ func NewRole(cfg *config.Configuration, f repository.Factory) Role {
 }
 
 func (u *role) Find(ctx context.Context, filterParam abstraction.Filter) (result []dto.RoleResponse, pagination abstraction.PaginationInfo, err error) {
-	roles, info, err := u.Repo.Role.Find(ctx, filterParam, nil)
+	var search *abstraction.Search
+	if filterParam.Search != "" {
+		searchQuery := "lower(code) LIKE ? OR lower(name) LIKE ?"
+		searchVal := "%" + strings.ToLower(filterParam.Search) + "%"
+		search = &abstraction.Search{
+			Query: searchQuery,
+			Args:  []interface{}{searchVal, searchVal},
+		}
+	}
+
+	roles, info, err := u.Repo.Role.Find(ctx, filterParam, search)
 	if err != nil {
 		return nil, pagination, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
 	}

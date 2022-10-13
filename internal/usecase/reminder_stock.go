@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"strings"
 
 	"github.com/google/uuid"
 	"gitlab.com/stoqu/stoqu-be/internal/config"
@@ -34,13 +35,23 @@ func NewReminderStock(cfg *config.Configuration, f repository.Factory) ReminderS
 }
 
 func (u *reminderStock) Find(ctx context.Context, filterParam abstraction.Filter) (result []dto.ReminderStockResponse, pagination abstraction.PaginationInfo, err error) {
-	currencies, info, err := u.Repo.ReminderStock.Find(ctx, filterParam, nil)
+	var search *abstraction.Search
+	if filterParam.Search != "" {
+		searchQuery := "lower(code) LIKE ? OR lower(name) LIKE ?"
+		searchVal := "%" + strings.ToLower(filterParam.Search) + "%"
+		search = &abstraction.Search{
+			Query: searchQuery,
+			Args:  []interface{}{searchVal, searchVal},
+		}
+	}
+
+	reminderStocks, info, err := u.Repo.ReminderStock.Find(ctx, filterParam, search)
 	if err != nil {
 		return nil, pagination, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
 	}
 	pagination = *info
 
-	for _, reminderStock := range currencies {
+	for _, reminderStock := range reminderStocks {
 		result = append(result, dto.ReminderStockResponse{
 			ReminderStockModel: reminderStock,
 		})

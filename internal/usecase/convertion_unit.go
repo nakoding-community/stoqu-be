@@ -38,12 +38,12 @@ func NewConvertionUnit(cfg *config.Configuration, f repository.Factory) Converti
 func (u *convertionUnit) Find(ctx context.Context, filterParam abstraction.Filter) (result []dto.ConvertionUnitResponse, pagination abstraction.PaginationInfo, err error) {
 	var search *abstraction.Search
 	if filterParam.Search != "" {
-		searchQuery := "lower(name) LIKE ? or value_convertion = ?"
-		searchValStr := "%" + strings.ToLower(filterParam.Search) + "%"
+		searchQuery := "lower(code) LIKE ? OR lower(name) LIKE ? OR value_convertion = ?"
+		searchVal := "%" + strings.ToLower(filterParam.Search) + "%"
 		searchValFloat, _ := strconv.ParseFloat(filterParam.Search, 64)
 		search = &abstraction.Search{
 			Query: searchQuery,
-			Args:  []interface{}{searchValStr, searchValFloat},
+			Args:  []interface{}{searchVal, searchVal, searchValFloat},
 		}
 	}
 
