@@ -164,6 +164,10 @@ const docTemplate = `{
                         "items": {
                             "type": "string"
                         },
+                        "example": [
+                            "asc_column",
+                            "-dsc_column"
+                        ],
                         "name": "sort_by",
                         "in": "query"
                     },
@@ -476,6 +480,10 @@ const docTemplate = `{
                         "items": {
                             "type": "string"
                         },
+                        "example": [
+                            "asc_column",
+                            "-dsc_column"
+                        ],
                         "name": "sort_by",
                         "in": "query"
                     },
@@ -798,6 +806,10 @@ const docTemplate = `{
                         "items": {
                             "type": "string"
                         },
+                        "example": [
+                            "asc_column",
+                            "-dsc_column"
+                        ],
                         "name": "sort_by",
                         "in": "query"
                     },
@@ -1171,6 +1183,10 @@ const docTemplate = `{
                         "items": {
                             "type": "string"
                         },
+                        "example": [
+                            "asc_column",
+                            "-dsc_column"
+                        ],
                         "name": "sort_by",
                         "in": "query"
                     },
@@ -1488,6 +1504,10 @@ const docTemplate = `{
                         "items": {
                             "type": "string"
                         },
+                        "example": [
+                            "asc_column",
+                            "-dsc_column"
+                        ],
                         "name": "sort_by",
                         "in": "query"
                     },
@@ -1815,6 +1835,10 @@ const docTemplate = `{
                         "items": {
                             "type": "string"
                         },
+                        "example": [
+                            "asc_column",
+                            "-dsc_column"
+                        ],
                         "name": "sort_by",
                         "in": "query"
                     },
@@ -1826,12 +1850,48 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "join",
+                        "name": "brand_name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "code",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "name": "created_at",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "created_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "modified_at",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "modified_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "packet_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "packet_value",
                         "in": "query"
                     },
                     {
@@ -1846,7 +1906,22 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "supplier_name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "unit_name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "variant_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "variant_name",
                         "in": "query"
                     }
                 ],
@@ -2369,6 +2444,10 @@ const docTemplate = `{
                         "items": {
                             "type": "string"
                         },
+                        "example": [
+                            "asc_column",
+                            "-dsc_column"
+                        ],
                         "name": "sort_by",
                         "in": "query"
                     },
@@ -2455,6 +2534,10 @@ const docTemplate = `{
                         "items": {
                             "type": "string"
                         },
+                        "example": [
+                            "asc_column",
+                            "-dsc_column"
+                        ],
                         "name": "sort_by",
                         "in": "query"
                     },
@@ -2761,6 +2844,10 @@ const docTemplate = `{
                         "items": {
                             "type": "string"
                         },
+                        "example": [
+                            "asc_column",
+                            "-dsc_column"
+                        ],
                         "name": "sort_by",
                         "in": "query"
                     },
@@ -3067,6 +3154,10 @@ const docTemplate = `{
                         "items": {
                             "type": "string"
                         },
+                        "example": [
+                            "asc_column",
+                            "-dsc_column"
+                        ],
                         "name": "sort_by",
                         "in": "query"
                     },
@@ -3384,6 +3475,10 @@ const docTemplate = `{
                         "items": {
                             "type": "string"
                         },
+                        "example": [
+                            "asc_column",
+                            "-dsc_column"
+                        ],
                         "name": "sort_by",
                         "in": "query"
                     },

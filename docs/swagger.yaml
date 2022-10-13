@@ -1010,7 +1010,10 @@ paths:
       - in: query
         name: search
         type: string
-      - in: query
+      - example:
+        - asc_column
+        - -dsc_column
+        in: query
         items:
           type: string
         name: sort_by
@@ -1208,7 +1211,10 @@ paths:
       - in: query
         name: search
         type: string
-      - in: query
+      - example:
+        - asc_column
+        - -dsc_column
+        in: query
         items:
           type: string
         name: sort_by
@@ -1412,7 +1418,10 @@ paths:
       - in: query
         name: search
         type: string
-      - in: query
+      - example:
+        - asc_column
+        - -dsc_column
+        in: query
         items:
           type: string
         name: sort_by
@@ -1648,7 +1657,10 @@ paths:
       - in: query
         name: search
         type: string
-      - in: query
+      - example:
+        - asc_column
+        - -dsc_column
+        in: query
         items:
           type: string
         name: sort_by
@@ -1849,7 +1861,10 @@ paths:
       - in: query
         name: search
         type: string
-      - in: query
+      - example:
+        - asc_column
+        - -dsc_column
+        in: query
         items:
           type: string
         name: sort_by
@@ -2056,7 +2071,10 @@ paths:
       - in: query
         name: search
         type: string
-      - in: query
+      - example:
+        - asc_column
+        - -dsc_column
+        in: query
         items:
           type: string
         name: sort_by
@@ -2065,12 +2083,34 @@ paths:
         in: query
         name: brand_id
         type: string
+      - description: join
+        in: query
+        name: brand_name
+        type: string
       - in: query
         name: code
         type: string
       - in: query
+        name: created_at
+        type: string
+      - in: query
+        name: created_by
+        type: string
+      - in: query
+        name: id
+        type: string
+      - in: query
+        name: modified_at
+        type: string
+      - in: query
+        name: modified_by
+        type: string
+      - in: query
         name: packet_id
         type: string
+      - in: query
+        name: packet_value
+        type: integer
       - in: query
         name: price_idr
         type: number
@@ -2078,7 +2118,16 @@ paths:
         name: price_usd
         type: number
       - in: query
+        name: supplier_name
+        type: string
+      - in: query
+        name: unit_name
+        type: string
+      - in: query
         name: variant_id
+        type: string
+      - in: query
+        name: variant_name
         type: string
       produces:
       - application/json
@@ -2408,7 +2457,10 @@ paths:
       - in: query
         name: search
         type: string
-      - in: query
+      - example:
+        - asc_column
+        - -dsc_column
+        in: query
         items:
           type: string
         name: sort_by
@@ -2461,7 +2513,10 @@ paths:
       - in: query
         name: search
         type: string
-      - in: query
+      - example:
+        - asc_column
+        - -dsc_column
+        in: query
         items:
           type: string
         name: sort_by
@@ -2655,7 +2710,10 @@ paths:
       - in: query
         name: search
         type: string
-      - in: query
+      - example:
+        - asc_column
+        - -dsc_column
+        in: query
         items:
           type: string
         name: sort_by
@@ -2849,7 +2907,10 @@ paths:
       - in: query
         name: search
         type: string
-      - in: query
+      - example:
+        - asc_column
+        - -dsc_column
+        in: query
         items:
           type: string
         name: sort_by
@@ -3050,7 +3111,10 @@ paths:
       - in: query
         name: search
         type: string
-      - in: query
+      - example:
+        - asc_column
+        - -dsc_column
+        in: query
         items:
           type: string
         name: sort_by

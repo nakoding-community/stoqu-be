@@ -19,7 +19,7 @@ type (
 	Base[T any] interface {
 		GetConn(ctx context.Context) *gorm.DB
 		MaskError(err error) error
-		BuildFilterSort(ctx context.Context, name string, query *gorm.DB, filterParam abstraction.Filter)
+		BuildFilterSort(ctx context.Context, query *gorm.DB, filterParam abstraction.Filter)
 		BuildPagination(ctx context.Context, query *gorm.DB, pagination abstraction.Pagination) *abstraction.PaginationInfo
 
 		Find(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]T, *abstraction.PaginationInfo, error)
@@ -56,7 +56,7 @@ func (m *base[T]) GetConn(ctx context.Context) *gorm.DB {
 	return m.conn
 }
 
-func (m *base[T]) BuildFilterSort(ctx context.Context, name string, query *gorm.DB, filterParam abstraction.Filter) {
+func (m *base[T]) BuildFilterSort(ctx context.Context, query *gorm.DB, filterParam abstraction.Filter) {
 	for _, filter := range filterParam.Query {
 		query.Where(filter.Field+" = ?", filter.Value)
 	}
@@ -71,7 +71,7 @@ func (m *base[T]) BuildFilterSort(ctx context.Context, name string, query *gorm.
 				sortBy = sortBy[1:]
 			}
 
-			sortArg := fmt.Sprintf("%s.%s %s", name, sortBy, sortType)
+			sortArg := fmt.Sprintf("%s %s", sortBy, sortType)
 			query = query.Order(sortArg)
 		}
 	}
@@ -124,7 +124,7 @@ func (m *base[T]) Find(ctx context.Context, filterParam abstraction.Filter, sear
 		query = query.Where(search.Query, search.Args...)
 	}
 
-	m.BuildFilterSort(ctx, m.entityName, query, filterParam)
+	m.BuildFilterSort(ctx, query, filterParam)
 	info := m.BuildPagination(ctx, query, filterParam.Pagination)
 
 	result := []T{}

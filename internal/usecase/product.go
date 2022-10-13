@@ -17,7 +17,7 @@ import (
 )
 
 type Product interface {
-	Find(ctx context.Context, filterParam abstraction.Filter) ([]dto.ProductResponse, abstraction.PaginationInfo, error)
+	Find(ctx context.Context, filterParam abstraction.Filter) ([]dto.ProductViewResponse, abstraction.PaginationInfo, error)
 	FindByID(ctx context.Context, payload dto.ByIDRequest) (dto.ProductResponse, error)
 	Create(ctx context.Context, payload dto.CreateProductRequest) (dto.ProductResponse, error)
 	Update(ctx context.Context, payload dto.UpdateProductRequest) (dto.ProductResponse, error)
@@ -33,7 +33,7 @@ func NewProduct(cfg *config.Configuration, f repository.Factory) Product {
 	return &product{f, cfg}
 }
 
-func (u *product) Find(ctx context.Context, filterParam abstraction.Filter) (result []dto.ProductResponse, pagination abstraction.PaginationInfo, err error) {
+func (u *product) Find(ctx context.Context, filterParam abstraction.Filter) (result []dto.ProductViewResponse, pagination abstraction.PaginationInfo, err error) {
 	products, info, err := u.Repo.Product.Find(ctx, filterParam, nil)
 	if err != nil {
 		return nil, pagination, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
@@ -41,8 +41,8 @@ func (u *product) Find(ctx context.Context, filterParam abstraction.Filter) (res
 	pagination = *info
 
 	for _, product := range products {
-		result = append(result, dto.ProductResponse{
-			ProductModel: product,
+		result = append(result, dto.ProductViewResponse{
+			ProductView: product,
 		})
 	}
 
@@ -72,12 +72,13 @@ func (u *product) Create(ctx context.Context, payload dto.CreateProductRequest) 
 				ID: productID,
 			},
 			ProductEntity: model.ProductEntity{
-				Code:      str.GenCode(constant.CODE_PRODUCT_PREFIX),
-				PriceUSD:  payload.PriceUSD,
-				PriceIDR:  payload.PriceIDR,
-				BrandID:   payload.BrandID,
-				VariantID: payload.VariantID,
-				PacketID:  payload.PacketID,
+				Code:       str.GenCode(constant.CODE_PRODUCT_PREFIX),
+				Name:       payload.Name,
+				PriceUSD:   payload.PriceUSD,
+				PriceFinal: payload.PriceFinal,
+				BrandID:    payload.BrandID,
+				VariantID:  payload.VariantID,
+				PacketID:   payload.PacketID,
 			},
 		}
 	)
@@ -104,8 +105,9 @@ func (u *product) Update(ctx context.Context, payload dto.UpdateProductRequest) 
 	var (
 		productData = &model.ProductModel{
 			ProductEntity: model.ProductEntity{
-				PriceUSD: payload.PriceUSD,
-				PriceIDR: payload.PriceIDR,
+				Name:       payload.Name,
+				PriceUSD:   payload.PriceUSD,
+				PriceFinal: payload.PriceFinal,
 			},
 		}
 	)

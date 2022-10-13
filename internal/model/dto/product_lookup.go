@@ -8,19 +8,19 @@ import (
 // request
 type (
 	CreateProductLookupRequest struct {
-		IsSeal                   bool   `json:"is_seal"`
-		TypeValue                int    `json:"type_value"`
-		RemainingTypeValue       int    `json:"remaining_type_value"`
-		RemainingTypeValueBefore int    `json:"remaining_type_value_before"`
-		ProductID                string `json:"product_id" validate:"required"`
+		IsSeal                   bool    `json:"is_seal"`
+		TypeValue                float64 `json:"type_value"`
+		RemainingTypeValue       float64 `json:"remaining_type_value"`
+		RemainingTypeValueBefore float64 `json:"remaining_type_value_before"`
+		ProductID                string  `json:"product_id" validate:"required"`
 	}
 
 	UpdateProductLookupRequest struct {
-		ID                       string `param:"id" validate:"required"`
-		IsSeal                   bool   `json:"is_seal"`
-		TypeValue                int    `json:"type_value"`
-		RemainingTypeValue       int    `json:"remaining_type_value"`
-		RemainingTypeValueBefore int    `json:"remaining_type_value_before"`
+		ID                       string  `param:"id" validate:"required"`
+		IsSeal                   bool    `json:"is_seal"`
+		TypeValue                float64 `json:"type_value"`
+		RemainingTypeValue       float64 `json:"remaining_type_value"`
+		RemainingTypeValueBefore float64 `json:"remaining_type_value_before"`
 	}
 )
 

@@ -70,12 +70,13 @@ func (s *ProductSeed) Run(conn *gorm.DB) error {
 		for _, v2 := range packets {
 			product := entity.ProductModel{
 				ProductEntity: entity.ProductEntity{
-					Code:      str.GenCode(constant.CODE_PACKET_PREFIX),
-					PriceUSD:  1,
-					PriceIDR:  15000,
-					BrandID:   v.BrandID,
-					VariantID: v.ID,
-					PacketID:  v2.ID,
+					Code:       str.GenCode(constant.CODE_PACKET_PREFIX),
+					Name:       "Product " + str.GenCode(constant.CODE_PACKET_PREFIX),
+					PriceUSD:   1,
+					PriceFinal: 15000,
+					BrandID:    v.BrandID,
+					VariantID:  v.ID,
+					PacketID:   v2.ID,
 				},
 			}
 			products = append(products, product)

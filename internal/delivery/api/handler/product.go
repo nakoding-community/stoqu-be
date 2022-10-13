@@ -45,14 +45,14 @@ func (h *product) Route(g *echo.Group) {
 // @Produce json
 // @Security BearerAuth
 // @param request query abstraction.Filter true "request query"
-// @Param entity query model.ProductEntity false "entity query"
+// @Param entity query model.ProductView false "entity query"
 // @Success 200 {object} dto.ProductResponseDoc
 // @Failure 400 {object} res.errorResponse
 // @Failure 404 {object} res.errorResponse
 // @Failure 500 {object} res.errorResponse
 // @Router /api/products [get]
 func (h *product) Get(c echo.Context) error {
-	filter := abstraction.NewFilterBuiler[model.ProductEntity](c, "products")
+	filter := abstraction.NewFilterBuiler[model.ProductView](c, "products")
 	if err := c.Bind(filter.Payload); err != nil {
 		return res.ErrorBuilder(res.Constant.Error.BadRequest, err).Send(c)
 	}
