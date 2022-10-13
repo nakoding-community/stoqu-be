@@ -59,7 +59,7 @@ func (m *reminderStockHistory) UpdateBulkRead(ctx context.Context, ids []string)
 		modifiedBy = authCtx.Name
 	}
 
-	err := m.GetConn(ctx).Model(m.entity).Where("id IN ?", ids).Updates(map[string]interface{}{
+	err := m.GetConn(ctx).Model(&model.ReminderStockHistoryModel{}).Where("id IN ?", ids).Updates(map[string]interface{}{
 		"is_read":     true,
 		"modified_at": time.Now(),
 		"modified_by": modifiedBy,
@@ -69,6 +69,6 @@ func (m *reminderStockHistory) UpdateBulkRead(ctx context.Context, ids []string)
 }
 
 func (m *reminderStockHistory) CountUnread(ctx context.Context) (count int64, err error) {
-	err = m.GetConn(ctx).Model(&model.ReminderStockHistoryModel{}).Where("is_read = ?", false).Count(&count).Error
+	err = m.GetConn(ctx).Model(m.entity).Where("is_read = ?", false).Count(&count).Error
 	return
 }

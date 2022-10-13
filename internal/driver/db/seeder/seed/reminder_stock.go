@@ -14,7 +14,7 @@ func (s *ReminderStockSeed) Run(conn *gorm.DB) error {
 	trx := conn.Begin()
 
 	reminderStockNames := []string{"daily", "monthly"}
-	var currencies []entity.ReminderStockModel
+	var reminderStocks []entity.ReminderStockModel
 	for _, v := range reminderStockNames {
 		reminderStock := entity.ReminderStockModel{
 			ReminderStockEntity: entity.ReminderStockEntity{
@@ -23,10 +23,10 @@ func (s *ReminderStockSeed) Run(conn *gorm.DB) error {
 				MinStock: 10,
 			},
 		}
-		currencies = append(currencies, reminderStock)
+		reminderStocks = append(reminderStocks, reminderStock)
 	}
 
-	if err := trx.Create(&currencies).Error; err != nil {
+	if err := trx.Create(&reminderStocks).Error; err != nil {
 		trx.Rollback()
 		logrus.Error(err)
 		return err

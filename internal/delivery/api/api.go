@@ -17,7 +17,8 @@ func Init(e *echo.Echo, f factory.Factory) {
 	handler.NewUnit(f).Route(e.Group(prefix + "/units"))
 	handler.NewConvertionUnit(f).Route(e.Group(prefix + "/convertion-units"))
 	handler.NewCurrency(f).Route(e.Group(prefix + "/currencies"))
-	handler.NewCurrency(f).Route(e.Group(prefix + "/reminder-stocks"))
+	handler.NewReminderStock(f).Route(e.Group(prefix + "/reminder-stocks"))
+	handler.NewReminderStockHistory(f).Route(e.Group(prefix + "/reminder-stock-histories"))
 
 	handler.NewPacket(f).Route(e.Group(prefix + "/packets"))
 	handler.NewBrand(f).Route(e.Group(prefix + "/brands"))

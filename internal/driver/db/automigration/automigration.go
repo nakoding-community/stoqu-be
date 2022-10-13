@@ -30,6 +30,7 @@ func Init(cfg *config.Configuration) {
 					&entity.UserModel{},
 					&entity.UserProfileModel{},
 					&entity.ReminderStockModel{},
+					&entity.ReminderStockHistoryModel{},
 					&entity.ConvertionUnitModel{},
 					&entity.UnitModel{},
 					&entity.PacketModel{},

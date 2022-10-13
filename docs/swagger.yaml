@@ -2383,6 +2383,62 @@ paths:
       summary: Update product
       tags:
       - product
+  /api/reminder-stock-histories:
+    get:
+      consumes:
+      - application/json
+      description: Get reminderStockHistory
+      parameters:
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: page_size
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - example:
+        - asc_column
+        - -dsc_column
+        in: query
+        items:
+          type: string
+        name: sort_by
+        type: array
+      - in: query
+        name: body
+        type: string
+      - in: query
+        name: is_read
+        type: boolean
+      - in: query
+        name: title
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ReminderStockHistoryResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get reminderStockHistory
+      tags:
+      - reminderStockHistory
   /api/reminder-stock-histories/{id}:
     delete:
       consumes:
@@ -2498,11 +2554,6 @@ paths:
       - application/json
       description: Update bulk read reminderStockHistory
       parameters:
-      - description: id path
-        in: path
-        name: id
-        required: true
-        type: string
       - description: request body
         in: body
         name: request
@@ -2711,7 +2762,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get reminderStockHistory
+      description: Get reminderStock
       parameters:
       - in: query
         name: page
@@ -2731,13 +2782,13 @@ paths:
         name: sort_by
         type: array
       - in: query
-        name: body
+        name: code
         type: string
       - in: query
-        name: is_read
-        type: boolean
+        name: min_stock
+        type: integer
       - in: query
-        name: title
+        name: name
         type: string
       produces:
       - application/json
@@ -2745,7 +2796,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.ReminderStockHistoryResponseDoc'
+            $ref: '#/definitions/dto.ReminderStockResponseDoc'
         "400":
           description: Bad Request
           schema:
@@ -2760,9 +2811,9 @@ paths:
             $ref: '#/definitions/response.errorResponse'
       security:
       - BearerAuth: []
-      summary: Get reminderStockHistory
+      summary: Get reminderStock
       tags:
-      - reminderStockHistory
+      - reminderStock
   /api/roles:
     get:
       consumes:

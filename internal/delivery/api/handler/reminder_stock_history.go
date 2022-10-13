@@ -30,10 +30,10 @@ func NewReminderStockHistory(f factory.Factory) ReminderStockHistory {
 
 func (h *reminderStockHistory) Route(g *echo.Group) {
 	g.GET("", h.Get, middleware.Authentication)
-	g.GET("/:id", h.GetByID, middleware.Authentication)
 	g.GET("/count-unread", h.GetCountUnead, middleware.Authentication)
+	g.GET("/:id", h.GetByID, middleware.Authentication)
+	g.PUT("/bulk-read", h.UpdateBulkRead, middleware.Authentication)
 	g.PUT("/:id", h.Update, middleware.Authentication)
-	g.PUT("/bulk-read/:id", h.Update, middleware.Authentication)
 	g.DELETE("/:id", h.Delete, middleware.Authentication)
 }
 
@@ -50,7 +50,7 @@ func (h *reminderStockHistory) Route(g *echo.Group) {
 // @Failure 400 {object} res.errorResponse
 // @Failure 404 {object} res.errorResponse
 // @Failure 500 {object} res.errorResponse
-// @Router /api/reminder_stocks [get]
+// @Router /api/reminder-stock-histories [get]
 func (h *reminderStockHistory) Get(c echo.Context) error {
 	filter := abstraction.NewFilterBuiler[model.ReminderStockHistoryEntity](c, "reminder_stocks")
 	if err := c.Bind(filter.Payload); err != nil {
@@ -64,6 +64,27 @@ func (h *reminderStockHistory) Get(c echo.Context) error {
 	}
 
 	return res.CustomSuccessBuilder(200, result, "Get reminder stock success", &pagination).Send(c)
+}
+
+// Get count unread reminderStockHistory
+// @Summary Get count unread reminderStockHistory
+// @Description Get count unread reminderStockHistory
+// @Tags reminderStockHistory
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} dto.ReminderStockHistoryCountUnreadResponseDoc
+// @Failure 400 {object} res.errorResponse
+// @Failure 404 {object} res.errorResponse
+// @Failure 500 {object} res.errorResponse
+// @Router /api/reminder-stock-histories/count-unread [get]
+func (h *reminderStockHistory) GetCountUnead(c echo.Context) error {
+	ctx := c.Request().Context()
+	result, err := h.Factory.Usecase.ReminderStockHistory.CountUnread(ctx)
+	if err != nil {
+		return res.ErrorResponse(err).Send(c)
+	}
+	return res.SuccessResponse(result).Send(c)
 }
 
 // Get reminderStockHistory by id
@@ -98,24 +119,35 @@ func (h *reminderStockHistory) GetByID(c echo.Context) error {
 	return res.SuccessResponse(result).Send(c)
 }
 
-// Get count unread reminderStockHistory
-// @Summary Get count unread reminderStockHistory
-// @Description Get count unread reminderStockHistory
+// Update bulk read reminderStockHistory
+// @Summary Update bulk read reminderStockHistory
+// @Description Update bulk read reminderStockHistory
 // @Tags reminderStockHistory
 // @Accept json
 // @Produce json
 // @Security BearerAuth
-// @Success 200 {object} dto.ReminderStockHistoryCountUnreadResponseDoc
+// @Param request body dto.UpdateReminderStockHistoryBulkReadRequest true "request body"
+// @Success 200 {object} dto.ReminderStockHistoryBulkReadResponseDoc
 // @Failure 400 {object} res.errorResponse
 // @Failure 404 {object} res.errorResponse
 // @Failure 500 {object} res.errorResponse
-// @Router /api/reminder-stock-histories/count-unread [get]
-func (h *reminderStockHistory) GetCountUnead(c echo.Context) error {
+// @Router /api/reminder-stock-histories/bulk-read [put]
+func (h *reminderStockHistory) UpdateBulkRead(c echo.Context) error {
 	ctx := c.Request().Context()
-	result, err := h.Factory.Usecase.ReminderStockHistory.CountUnread(ctx)
+
+	payload := new(dto.UpdateReminderStockHistoryBulkReadRequest)
+	if err := c.Bind(&payload); err != nil {
+		return res.ErrorBuilder(res.Constant.Error.BadRequest, err).Send(c)
+	}
+	if err := c.Validate(payload); err != nil {
+		return res.ErrorBuilder(res.Constant.Error.Validation, err).Send(c)
+	}
+
+	result, err := h.Factory.Usecase.ReminderStockHistory.UpdateBulkRead(ctx, *payload)
 	if err != nil {
 		return res.ErrorResponse(err).Send(c)
 	}
+
 	return res.SuccessResponse(result).Send(c)
 }
 
@@ -145,39 +177,6 @@ func (h *reminderStockHistory) Update(c echo.Context) error {
 	}
 
 	result, err := h.Factory.Usecase.ReminderStockHistory.Update(ctx, *payload)
-	if err != nil {
-		return res.ErrorResponse(err).Send(c)
-	}
-
-	return res.SuccessResponse(result).Send(c)
-}
-
-// Update bulk read reminderStockHistory
-// @Summary Update bulk read reminderStockHistory
-// @Description Update bulk read reminderStockHistory
-// @Tags reminderStockHistory
-// @Accept json
-// @Produce json
-// @Security BearerAuth
-// @Param id path string true "id path"
-// @Param request body dto.UpdateReminderStockHistoryBulkReadRequest true "request body"
-// @Success 200 {object} dto.ReminderStockHistoryBulkReadResponseDoc
-// @Failure 400 {object} res.errorResponse
-// @Failure 404 {object} res.errorResponse
-// @Failure 500 {object} res.errorResponse
-// @Router /api/reminder-stock-histories/bulk-read [put]
-func (h *reminderStockHistory) UpdateBulkRead(c echo.Context) error {
-	ctx := c.Request().Context()
-
-	payload := new(dto.UpdateReminderStockHistoryBulkReadRequest)
-	if err := c.Bind(&payload); err != nil {
-		return res.ErrorBuilder(res.Constant.Error.BadRequest, err).Send(c)
-	}
-	if err := c.Validate(payload); err != nil {
-		return res.ErrorBuilder(res.Constant.Error.Validation, err).Send(c)
-	}
-
-	result, err := h.Factory.Usecase.ReminderStockHistory.UpdateBulkRead(ctx, *payload)
 	if err != nil {
 		return res.ErrorResponse(err).Send(c)
 	}

@@ -2183,6 +2183,96 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/reminder-stock-histories": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get reminderStockHistory",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reminderStockHistory"
+                ],
+                "summary": "Get reminderStockHistory",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "example": [
+                            "asc_column",
+                            "-dsc_column"
+                        ],
+                        "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "body",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "is_read",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "title",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ReminderStockHistoryResponseDoc"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/reminder-stock-histories/bulk-read": {
             "put": {
                 "security": [
@@ -2202,13 +2292,6 @@ const docTemplate = `{
                 ],
                 "summary": "Update bulk read reminderStockHistory",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "id path",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
                     {
                         "description": "request body",
                         "name": "request",
@@ -2697,7 +2780,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Get reminderStockHistory",
+                "description": "Get reminderStock",
                 "consumes": [
                     "application/json"
                 ],
@@ -2705,9 +2788,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "reminderStockHistory"
+                    "reminderStock"
                 ],
-                "summary": "Get reminderStockHistory",
+                "summary": "Get reminderStock",
                 "parameters": [
                     {
                         "type": "integer",
@@ -2738,17 +2821,17 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "name": "body",
+                        "name": "code",
                         "in": "query"
                     },
                     {
-                        "type": "boolean",
-                        "name": "is_read",
+                        "type": "integer",
+                        "name": "min_stock",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "name": "title",
+                        "name": "name",
                         "in": "query"
                     }
                 ],
@@ -2756,7 +2839,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ReminderStockHistoryResponseDoc"
+                            "$ref": "#/definitions/dto.ReminderStockResponseDoc"
                         }
                     },
                     "400": {
