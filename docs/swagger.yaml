@@ -434,6 +434,65 @@ definitions:
         description: fk
         type: string
     type: object
+  dto.ReminderStockHistoryBulkReadResponse:
+    properties:
+      status:
+        type: string
+    type: object
+  dto.ReminderStockHistoryBulkReadResponseDoc:
+    properties:
+      body:
+        properties:
+          data:
+            $ref: '#/definitions/dto.ReminderStockHistoryBulkReadResponse'
+          meta:
+            $ref: '#/definitions/response.Meta'
+        type: object
+    type: object
+  dto.ReminderStockHistoryCountUnreadResponse:
+    properties:
+      count:
+        type: integer
+    type: object
+  dto.ReminderStockHistoryCountUnreadResponseDoc:
+    properties:
+      body:
+        properties:
+          data:
+            $ref: '#/definitions/dto.ReminderStockHistoryCountUnreadResponse'
+          meta:
+            $ref: '#/definitions/response.Meta'
+        type: object
+    type: object
+  dto.ReminderStockHistoryResponse:
+    properties:
+      body:
+        type: string
+      created_at:
+        type: string
+      created_by:
+        type: string
+      id:
+        type: string
+      is_read:
+        type: boolean
+      modified_at:
+        type: string
+      modified_by:
+        type: string
+      title:
+        type: string
+    type: object
+  dto.ReminderStockHistoryResponseDoc:
+    properties:
+      body:
+        properties:
+          data:
+            $ref: '#/definitions/dto.ReminderStockHistoryResponse'
+          meta:
+            $ref: '#/definitions/response.Meta'
+        type: object
+    type: object
   dto.ReminderStockResponse:
     properties:
       code:
@@ -590,6 +649,24 @@ definitions:
         type: number
       price_usd:
         type: number
+    required:
+    - id
+    type: object
+  dto.UpdateReminderStockHistoryBulkReadRequest:
+    properties:
+      ids:
+        items:
+          type: string
+        type: array
+    required:
+    - ids
+    type: object
+  dto.UpdateReminderStockHistoryRequest:
+    properties:
+      id:
+        type: string
+      is_read:
+        type: boolean
     required:
     - id
     type: object
@@ -2306,6 +2383,185 @@ paths:
       summary: Update product
       tags:
       - product
+  /api/reminder-stock-histories/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete reminderStockHistory
+      parameters:
+      - description: id path
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ReminderStockHistoryResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete reminderStockHistory
+      tags:
+      - reminderStockHistory
+    get:
+      consumes:
+      - application/json
+      description: Get reminderStockHistory by id
+      parameters:
+      - description: id path
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ReminderStockHistoryResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get reminderStockHistory by id
+      tags:
+      - reminderStockHistory
+    put:
+      consumes:
+      - application/json
+      description: Update reminderStockHistory
+      parameters:
+      - description: id path
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateReminderStockHistoryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ReminderStockHistoryResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update reminderStockHistory
+      tags:
+      - reminderStockHistory
+  /api/reminder-stock-histories/bulk-read:
+    put:
+      consumes:
+      - application/json
+      description: Update bulk read reminderStockHistory
+      parameters:
+      - description: id path
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateReminderStockHistoryBulkReadRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ReminderStockHistoryBulkReadResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update bulk read reminderStockHistory
+      tags:
+      - reminderStockHistory
+  /api/reminder-stock-histories/count-unread:
+    get:
+      consumes:
+      - application/json
+      description: Get count unread reminderStockHistory
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ReminderStockHistoryCountUnreadResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get count unread reminderStockHistory
+      tags:
+      - reminderStockHistory
   /api/reminder-stocks:
     post:
       consumes:
@@ -2455,7 +2711,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get reminderStock
+      description: Get reminderStockHistory
       parameters:
       - in: query
         name: page
@@ -2475,13 +2731,13 @@ paths:
         name: sort_by
         type: array
       - in: query
-        name: code
+        name: body
         type: string
       - in: query
-        name: min_stock
-        type: integer
+        name: is_read
+        type: boolean
       - in: query
-        name: name
+        name: title
         type: string
       produces:
       - application/json
@@ -2489,7 +2745,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.ReminderStockResponseDoc'
+            $ref: '#/definitions/dto.ReminderStockHistoryResponseDoc'
         "400":
           description: Bad Request
           schema:
@@ -2504,9 +2760,9 @@ paths:
             $ref: '#/definitions/response.errorResponse'
       security:
       - BearerAuth: []
-      summary: Get reminderStock
+      summary: Get reminderStockHistory
       tags:
-      - reminderStock
+      - reminderStockHistory
   /api/roles:
     get:
       consumes:

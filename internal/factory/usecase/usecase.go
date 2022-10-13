@@ -11,11 +11,12 @@ type Factory struct {
 	User usecase.User
 	Auth usecase.Auth
 
-	Unit           usecase.Unit
-	Packet         usecase.Packet
-	ConvertionUnit usecase.ConvertionUnit
-	Currency       usecase.Currency
-	ReminderStock  usecase.ReminderStock
+	Unit                 usecase.Unit
+	Packet               usecase.Packet
+	ConvertionUnit       usecase.ConvertionUnit
+	Currency             usecase.Currency
+	ReminderStock        usecase.ReminderStock
+	ReminderStockHistory usecase.ReminderStockHistory
 
 	Brand         usecase.Brand
 	Variant       usecase.Variant
@@ -35,6 +36,7 @@ func Init(cfg *config.Configuration, r repository.Factory) Factory {
 	f.ConvertionUnit = usecase.NewConvertionUnit(cfg, r)
 	f.Currency = usecase.NewCurrency(cfg, r)
 	f.ReminderStock = usecase.NewReminderStock(cfg, r)
+	f.ReminderStockHistory = usecase.NewReminderStockHistory(cfg, r)
 
 	f.Brand = usecase.NewBrand(cfg, r)
 	f.Variant = usecase.NewVariant(cfg, r)

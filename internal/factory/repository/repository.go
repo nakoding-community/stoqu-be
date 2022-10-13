@@ -19,11 +19,12 @@ type Factory struct {
 	User        dbRepository.User
 	UserProfile dbRepository.UserProfile
 
-	Unit           dbRepository.Unit
-	Packet         dbRepository.Packet
-	ConvertionUnit dbRepository.ConvertionUnit
-	Currency       dbRepository.Currency
-	ReminderStock  dbRepository.ReminderStock
+	Unit                 dbRepository.Unit
+	Packet               dbRepository.Packet
+	ConvertionUnit       dbRepository.ConvertionUnit
+	Currency             dbRepository.Currency
+	ReminderStock        dbRepository.ReminderStock
+	ReminderStockHistory dbRepository.ReminderStockHistory
 
 	Brand         dbRepository.Brand
 	Variant       dbRepository.Variant
@@ -44,6 +45,7 @@ func Init(cfg *config.Configuration, db *gorm.DB) Factory {
 	f.ConvertionUnit = dbRepository.NewConvertionUnit(f.Db)
 	f.Currency = dbRepository.NewCurrency(f.Db)
 	f.ReminderStock = dbRepository.NewReminderStock(f.Db)
+	f.ReminderStockHistory = dbRepository.NewReminderStockHistory(f.Db)
 
 	f.Brand = dbRepository.NewBrand(f.Db)
 	f.Variant = dbRepository.NewVariant(f.Db)

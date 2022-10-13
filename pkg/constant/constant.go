@@ -28,3 +28,9 @@ const (
 	CODE_ORDER_TRX_PREFIX = "OT-"
 	CODE_STOCK_TRX_PREFIX = "ST-"
 )
+
+// status
+const (
+	STATUS_SUCCESS = "SUCCESS"
+	STATUS_FAILED  = "FAILED"
+)

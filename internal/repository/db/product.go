@@ -16,7 +16,6 @@ type (
 		// Base[model.ProductModel]
 
 		// Base
-		Find(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.ProductView, *abstraction.PaginationInfo, error)
 		FindByID(ctx context.Context, id string) (*model.ProductModel, error)
 		FindByCode(ctx context.Context, code string) (*model.ProductModel, error)
 		FindByName(ctx context.Context, name string) (*model.ProductModel, error)
@@ -25,6 +24,9 @@ type (
 		UpdateByID(ctx context.Context, id string, data model.ProductModel) (model.ProductModel, error)
 		DeleteByID(ctx context.Context, id string) error
 		Count(ctx context.Context) (int64, error)
+
+		// Custom
+		Find(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.ProductView, *abstraction.PaginationInfo, error)
 	}
 
 	product struct {
