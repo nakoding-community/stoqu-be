@@ -35,9 +35,7 @@ func (h *currency) Route(g *echo.Group) {
 	g.POST("", h.Create, middleware.Authentication)
 	g.PUT("/:id", h.Update, middleware.Authentication)
 	g.DELETE("/:id", h.Delete, middleware.Authentication)
-
-	g.POST("", h.Create, middleware.Authentication)
-
+	g.POST("/convert", h.Convert, middleware.Authentication)
 }
 
 // Get currency
