@@ -35,6 +35,6 @@ type ProductView struct {
 	BrandName    string `json:"brand_name" filter:"column:brands.name"`
 	SupplierName string `json:"supplier_name" filter:"column:users.name"`
 	VariantName  string `json:"variant_name" filter:"column:variants.name"`
+	PacketValue  int64  `json:"packet_value" filter:"column:packets.value"`
 	UnitName     string `json:"unit_name" filter:"column:units.name"`
-	PacketValue  int    `json:"packet_value" filter:"column:packets.value"`
 }

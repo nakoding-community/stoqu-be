@@ -108,7 +108,7 @@ func (s *PacketSeed) Run(conn *gorm.DB) error {
 					Code:   str.GenCode(constant.CODE_PACKET_PREFIX),
 					Name:   fmt.Sprintf(`%d %s`, v, v2.Name),
 					UnitID: v2.ID,
-					Value:  v,
+					Value:  int64(v),
 				},
 			}
 			pkgs = append(pkgs, pkg)

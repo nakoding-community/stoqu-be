@@ -9,13 +9,13 @@ import (
 type (
 	CreatePacketRequest struct {
 		UnitID string `json:"unit_id" validate:"required"`
-		Value  int    `json:"value" validate:"required"`
+		Value  int64  `json:"value" validate:"required"`
 	}
 
 	UpdatePacketRequest struct {
 		ID     string `param:"id" validate:"required"`
 		UnitID string `json:"unit_id"`
-		Value  int    `json:"value"`
+		Value  int64  `json:"value"`
 	}
 )
 

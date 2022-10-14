@@ -9,13 +9,13 @@ import (
 type (
 	CreateReminderStockRequest struct {
 		Name     string `json:"name"`
-		MinStock int    `json:"min_stock"`
+		MinStock int64  `json:"min_stock"`
 	}
 
 	UpdateReminderStockRequest struct {
 		ID       string `param:"id" validate:"required"`
 		Name     string `json:"name"`
-		MinStock int    `json:"min_stock"`
+		MinStock int64  `json:"min_stock"`
 	}
 )
 

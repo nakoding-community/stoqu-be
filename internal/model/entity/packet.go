@@ -3,7 +3,7 @@ package entity
 type PacketEntity struct {
 	Code  string `json:"code" gorm:"not null;unique;size:50"`
 	Name  string `json:"name" gorm:"not null;unique;size:50"`
-	Value int    `json:"value"`
+	Value int64  `json:"value"`
 
 	// fk
 	UnitID string `json:"unit_id" gorm:"not null"`
