@@ -170,21 +170,6 @@ definitions:
     - unit_id
     - value
     type: object
-  dto.CreateProductLookupRequest:
-    properties:
-      is_seal:
-        type: boolean
-      product_id:
-        type: string
-      remaining_type_value:
-        type: number
-      remaining_type_value_before:
-        type: number
-      type_value:
-        type: number
-    required:
-    - product_id
-    type: object
   dto.CreateProductRequest:
     properties:
       brand_id:
@@ -217,6 +202,21 @@ definitions:
         type: string
     required:
     - name
+    type: object
+  dto.CreateStockLookupRequest:
+    properties:
+      is_seal:
+        type: boolean
+      remaining_type_value:
+        type: number
+      remaining_type_value_before:
+        type: number
+      stock_id:
+        type: string
+      type_value:
+        type: number
+    required:
+    - stock_id
     type: object
   dto.CreateUnitRequest:
     properties:
@@ -337,42 +337,6 @@ definitions:
             $ref: '#/definitions/response.Meta'
         type: object
     type: object
-  dto.ProductLookupResponse:
-    properties:
-      code:
-        type: string
-      created_at:
-        type: string
-      created_by:
-        type: string
-      id:
-        type: string
-      is_seal:
-        type: boolean
-      modified_at:
-        type: string
-      modified_by:
-        type: string
-      product_id:
-        description: fk
-        type: string
-      remaining_type_value:
-        type: number
-      remaining_type_value_before:
-        type: number
-      type_value:
-        type: number
-    type: object
-  dto.ProductLookupResponseDoc:
-    properties:
-      body:
-        properties:
-          data:
-            $ref: '#/definitions/dto.ProductLookupResponse'
-          meta:
-            $ref: '#/definitions/response.Meta'
-        type: object
-    type: object
   dto.ProductResponse:
     properties:
       brand:
@@ -395,18 +359,16 @@ definitions:
         type: string
       name:
         type: string
+      packet:
+        $ref: '#/definitions/entity.PacketModel'
       packet_id:
         type: string
       price_final:
         type: number
       price_usd:
         type: number
-      product_lookups:
-        items:
-          $ref: '#/definitions/entity.ProductLookupModel'
-        type: array
-      type:
-        $ref: '#/definitions/entity.PacketModel'
+      stock:
+        $ref: '#/definitions/entity.StockModel'
       variant:
         $ref: '#/definitions/entity.VariantModel'
       variant_id:
@@ -549,6 +511,93 @@ definitions:
             $ref: '#/definitions/response.Meta'
         type: object
     type: object
+  dto.StockLookupResponse:
+    properties:
+      code:
+        type: string
+      created_at:
+        type: string
+      created_by:
+        type: string
+      id:
+        type: string
+      is_seal:
+        type: boolean
+      modified_at:
+        type: string
+      modified_by:
+        type: string
+      remaining_type_value:
+        type: number
+      remaining_type_value_before:
+        type: number
+      stock_id:
+        description: fk
+        type: string
+      type_value:
+        type: number
+    type: object
+  dto.StockLookupResponseDoc:
+    properties:
+      body:
+        properties:
+          data:
+            $ref: '#/definitions/dto.StockLookupResponse'
+          meta:
+            $ref: '#/definitions/response.Meta'
+        type: object
+    type: object
+  dto.StockResponse:
+    properties:
+      brand:
+        $ref: '#/definitions/entity.BrandModel'
+      brand_id:
+        type: string
+      created_at:
+        type: string
+      created_by:
+        type: string
+      id:
+        type: string
+      modified_at:
+        type: string
+      modified_by:
+        type: string
+      packet_id:
+        type: string
+      price_final:
+        type: integer
+      price_usd:
+        type: integer
+      product:
+        $ref: '#/definitions/entity.ProductModel'
+        description: relations
+      product_id:
+        description: fk
+        type: string
+      stock_lookups:
+        items:
+          $ref: '#/definitions/entity.StockLookupModel'
+        type: array
+      toital:
+        type: integer
+      type:
+        $ref: '#/definitions/entity.PacketModel'
+      variant:
+        $ref: '#/definitions/entity.VariantModel'
+      variant_id:
+        type: string
+    type: object
+  dto.StockResponseDoc:
+    properties:
+      body:
+        properties:
+          data:
+            $ref: '#/definitions/dto.StockResponse'
+          meta:
+            $ref: '#/definitions/response.Meta'
+        type: object
+    type: object
   dto.UnitResponse:
     properties:
       code:
@@ -624,21 +673,6 @@ definitions:
     required:
     - id
     type: object
-  dto.UpdateProductLookupRequest:
-    properties:
-      id:
-        type: string
-      is_seal:
-        type: boolean
-      remaining_type_value:
-        type: number
-      remaining_type_value_before:
-        type: number
-      type_value:
-        type: number
-    required:
-    - id
-    type: object
   dto.UpdateProductRequest:
     properties:
       id:
@@ -687,6 +721,21 @@ definitions:
         type: string
       name:
         type: string
+    required:
+    - id
+    type: object
+  dto.UpdateStockLookupRequest:
+    properties:
+      id:
+        type: string
+      is_seal:
+        type: boolean
+      remaining_type_value:
+        type: number
+      remaining_type_value_before:
+        type: number
+      type_value:
+        type: number
     required:
     - id
     type: object
@@ -852,8 +901,14 @@ definitions:
       value:
         type: integer
     type: object
-  entity.ProductLookupModel:
+  entity.ProductModel:
     properties:
+      brand:
+        $ref: '#/definitions/entity.BrandModel'
+        description: relations
+      brand_id:
+        description: fk
+        type: string
       code:
         type: string
       created_at:
@@ -862,21 +917,26 @@ definitions:
         type: string
       id:
         type: string
-      is_seal:
-        type: boolean
       modified_at:
         type: string
       modified_by:
         type: string
-      product_id:
-        description: fk
+      name:
         type: string
-      remaining_type_value:
+      packet:
+        $ref: '#/definitions/entity.PacketModel'
+      packet_id:
+        type: string
+      price_final:
         type: number
-      remaining_type_value_before:
+      price_usd:
         type: number
-      type_value:
-        type: number
+      stock:
+        $ref: '#/definitions/entity.StockModel'
+      variant:
+        $ref: '#/definitions/entity.VariantModel'
+      variant_id:
+        type: string
     type: object
   entity.RoleModel:
     properties:
@@ -893,6 +953,73 @@ definitions:
       modified_by:
         type: string
       name:
+        type: string
+    type: object
+  entity.StockLookupModel:
+    properties:
+      code:
+        type: string
+      created_at:
+        type: string
+      created_by:
+        type: string
+      id:
+        type: string
+      is_seal:
+        type: boolean
+      modified_at:
+        type: string
+      modified_by:
+        type: string
+      remaining_type_value:
+        type: number
+      remaining_type_value_before:
+        type: number
+      stock_id:
+        description: fk
+        type: string
+      type_value:
+        type: number
+    type: object
+  entity.StockModel:
+    properties:
+      brand:
+        $ref: '#/definitions/entity.BrandModel'
+      brand_id:
+        type: string
+      created_at:
+        type: string
+      created_by:
+        type: string
+      id:
+        type: string
+      modified_at:
+        type: string
+      modified_by:
+        type: string
+      packet_id:
+        type: string
+      price_final:
+        type: integer
+      price_usd:
+        type: integer
+      product:
+        $ref: '#/definitions/entity.ProductModel'
+        description: relations
+      product_id:
+        description: fk
+        type: string
+      stock_lookups:
+        items:
+          $ref: '#/definitions/entity.StockLookupModel'
+        type: array
+      toital:
+        type: integer
+      type:
+        $ref: '#/definitions/entity.PacketModel'
+      variant:
+        $ref: '#/definitions/entity.VariantModel'
+      variant_id:
         type: string
     type: object
   entity.UnitModel:
@@ -1929,216 +2056,6 @@ paths:
       summary: Update packet
       tags:
       - packet
-  /api/product-lookups:
-    get:
-      consumes:
-      - application/json
-      description: Get productLookup
-      parameters:
-      - in: query
-        name: page
-        type: integer
-      - in: query
-        name: page_size
-        type: integer
-      - in: query
-        name: search
-        type: string
-      - example:
-        - asc_column
-        - -dsc_column
-        in: query
-        items:
-          type: string
-        name: sort_by
-        type: array
-      - in: query
-        name: code
-        type: string
-      - in: query
-        name: is_seal
-        type: boolean
-      - description: fk
-        in: query
-        name: product_id
-        type: string
-      - in: query
-        name: remaining_type_value
-        type: number
-      - in: query
-        name: remaining_type_value_before
-        type: number
-      - in: query
-        name: type_value
-        type: number
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.ProductLookupResponseDoc'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.errorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/response.errorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.errorResponse'
-      security:
-      - BearerAuth: []
-      summary: Get productLookup
-      tags:
-      - productLookup
-    post:
-      consumes:
-      - application/json
-      description: Create productLookup
-      parameters:
-      - description: request body
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/dto.CreateProductLookupRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.ProductLookupResponseDoc'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.errorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/response.errorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.errorResponse'
-      security:
-      - BearerAuth: []
-      summary: Create productLookup
-      tags:
-      - productLookup
-  /api/product-lookups/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete productLookup
-      parameters:
-      - description: id path
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.ProductLookupResponseDoc'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.errorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/response.errorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.errorResponse'
-      security:
-      - BearerAuth: []
-      summary: Delete productLookup
-      tags:
-      - productLookup
-    get:
-      consumes:
-      - application/json
-      description: Get productLookup by id
-      parameters:
-      - description: id path
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.ProductLookupResponseDoc'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.errorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/response.errorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.errorResponse'
-      security:
-      - BearerAuth: []
-      summary: Get productLookup by id
-      tags:
-      - productLookup
-    put:
-      consumes:
-      - application/json
-      description: Update productLookup
-      parameters:
-      - description: id path
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: request body
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/dto.UpdateProductLookupRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.ProductLookupResponseDoc'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.errorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/response.errorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.errorResponse'
-      security:
-      - BearerAuth: []
-      summary: Update productLookup
-      tags:
-      - productLookup
   /api/products:
     get:
       consumes:
@@ -3011,6 +2928,357 @@ paths:
       summary: Update role
       tags:
       - role
+  /api/stock-lookups:
+    get:
+      consumes:
+      - application/json
+      description: Get stockLookup
+      parameters:
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: page_size
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - example:
+        - asc_column
+        - -dsc_column
+        in: query
+        items:
+          type: string
+        name: sort_by
+        type: array
+      - in: query
+        name: code
+        type: string
+      - in: query
+        name: is_seal
+        type: boolean
+      - in: query
+        name: remaining_type_value
+        type: number
+      - in: query
+        name: remaining_type_value_before
+        type: number
+      - description: fk
+        in: query
+        name: stock_id
+        type: string
+      - in: query
+        name: type_value
+        type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.StockLookupResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get stockLookup
+      tags:
+      - stockLookup
+    post:
+      consumes:
+      - application/json
+      description: Create stockLookup
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateStockLookupRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.StockLookupResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create stockLookup
+      tags:
+      - stockLookup
+  /api/stock-lookups/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete stockLookup
+      parameters:
+      - description: id path
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.StockLookupResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete stockLookup
+      tags:
+      - stockLookup
+    get:
+      consumes:
+      - application/json
+      description: Get stockLookup by id
+      parameters:
+      - description: id path
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.StockLookupResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get stockLookup by id
+      tags:
+      - stockLookup
+    put:
+      consumes:
+      - application/json
+      description: Update stockLookup
+      parameters:
+      - description: id path
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateStockLookupRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.StockLookupResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update stockLookup
+      tags:
+      - stockLookup
+  /api/stocks:
+    get:
+      consumes:
+      - application/json
+      description: Get stock
+      parameters:
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: page_size
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - example:
+        - asc_column
+        - -dsc_column
+        in: query
+        items:
+          type: string
+        name: sort_by
+        type: array
+      - in: query
+        name: brand_id
+        type: string
+      - in: query
+        name: brand_name
+        type: string
+      - in: query
+        name: created_at
+        type: string
+      - in: query
+        name: created_by
+        type: string
+      - in: query
+        name: id
+        type: string
+      - in: query
+        name: modified_at
+        type: string
+      - in: query
+        name: modified_by
+        type: string
+      - in: query
+        name: packet_id
+        type: string
+      - in: query
+        name: packet_value
+        type: integer
+      - in: query
+        name: price_final
+        type: integer
+      - in: query
+        name: price_usd
+        type: integer
+      - description: join
+        in: query
+        name: product_code
+        type: string
+      - description: fk
+        in: query
+        name: product_id
+        type: string
+      - in: query
+        name: product_name
+        type: string
+      - in: query
+        name: supplier_name
+        type: string
+      - in: query
+        name: toital
+        type: integer
+      - in: query
+        name: unit_name
+        type: string
+      - in: query
+        name: variant_id
+        type: string
+      - in: query
+        name: variant_name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.StockResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get stock
+      tags:
+      - stock
+  /api/stocks/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get stock by id
+      parameters:
+      - description: id path
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.StockResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get stock by id
+      tags:
+      - stock
   /api/units:
     get:
       consumes:

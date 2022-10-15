@@ -1,6 +1,6 @@
 package entity
 
-type ProductLookupEntity struct {
+type StockLookupEntity struct {
 	Code                     string  `json:"code" gorm:"size:50;not null;unique"`
 	IsSeal                   bool    `json:"is_seal" gorm:"not null"`
 	TypeValue                float64 `json:"type_value" gorm:"not null"`
@@ -8,14 +8,14 @@ type ProductLookupEntity struct {
 	RemainingTypeValueBefore float64 `json:"remaining_type_value_before" gorm:"not null"`
 
 	// fk
-	ProductID string `json:"product_id" gorm:"not null"`
+	StockID string `json:"stock_id" gorm:"not null"`
 }
 
-type ProductLookupModel struct {
+type StockLookupModel struct {
 	Entity
-	ProductLookupEntity
+	StockLookupEntity
 }
 
-func (ProductLookupModel) TableName() string {
-	return "product_lookups"
+func (StockLookupEntity) TableName() string {
+	return "stock_lookups"
 }

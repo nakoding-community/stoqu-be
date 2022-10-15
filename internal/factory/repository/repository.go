@@ -26,11 +26,12 @@ type Factory struct {
 	ReminderStock        dbRepository.ReminderStock
 	ReminderStockHistory dbRepository.ReminderStockHistory
 
-	Brand         dbRepository.Brand
-	Variant       dbRepository.Variant
-	Product       dbRepository.Product
-	ProductLookup dbRepository.ProductLookup
-	Stock         dbRepository.Stock
+	Brand   dbRepository.Brand
+	Variant dbRepository.Variant
+	Product dbRepository.Product
+
+	Stock       dbRepository.Stock
+	StockLookup dbRepository.StockLookup
 }
 
 func Init(cfg *config.Configuration, db *gorm.DB) Factory {
@@ -51,8 +52,8 @@ func Init(cfg *config.Configuration, db *gorm.DB) Factory {
 	f.Brand = dbRepository.NewBrand(f.Db)
 	f.Variant = dbRepository.NewVariant(f.Db)
 	f.Product = dbRepository.NewProduct(f.Db)
-	f.ProductLookup = dbRepository.NewProductLookup(f.Db)
 	f.Stock = dbRepository.NewStock(f.Db)
+	f.StockLookup = dbRepository.NewStockLookup(f.Db)
 
 	return f
 }

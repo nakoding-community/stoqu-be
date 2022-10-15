@@ -17,10 +17,11 @@ type StockModel struct {
 	StockEntity
 
 	// relations
-	Product *ProductModel `json:"product" gorm:"foreignKey:ProductID;"`
-	Brand   *BrandModel   `json:"brand" gorm:"foreignKey:BrandID;"`
-	Variant *VariantModel `json:"variant" gorm:"foreignKey:VariantID;"`
-	Packet  *PacketModel  `json:"type" gorm:"foreignKey:PacketID;"`
+	Product      *ProductModel      `json:"product" gorm:"foreignKey:ProductID;"`
+	Brand        *BrandModel        `json:"brand" gorm:"foreignKey:BrandID;"`
+	Variant      *VariantModel      `json:"variant" gorm:"foreignKey:VariantID;"`
+	Packet       *PacketModel       `json:"type" gorm:"foreignKey:PacketID;"`
+	StockLookups []StockLookupModel `json:"stock_lookups" gorm:"foreignKey:StockID;constraint:OnDelete:CASCADE;"`
 }
 
 func (StockModel) TableName() string {

@@ -1465,337 +1465,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/product-lookups": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Get productLookup",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "productLookup"
-                ],
-                "summary": "Get productLookup",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "page_size",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "search",
-                        "in": "query"
-                    },
-                    {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "example": [
-                            "asc_column",
-                            "-dsc_column"
-                        ],
-                        "name": "sort_by",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "code",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "is_seal",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "fk",
-                        "name": "product_id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "name": "remaining_type_value",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "name": "remaining_type_value_before",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "name": "type_value",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ProductLookupResponseDoc"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/response.errorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/response.errorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/response.errorResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Create productLookup",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "productLookup"
-                ],
-                "summary": "Create productLookup",
-                "parameters": [
-                    {
-                        "description": "request body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.CreateProductLookupRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ProductLookupResponseDoc"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/response.errorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/response.errorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/response.errorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/product-lookups/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Get productLookup by id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "productLookup"
-                ],
-                "summary": "Get productLookup by id",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "id path",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ProductLookupResponseDoc"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/response.errorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/response.errorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/response.errorResponse"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Update productLookup",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "productLookup"
-                ],
-                "summary": "Update productLookup",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "id path",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "request body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.UpdateProductLookupRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ProductLookupResponseDoc"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/response.errorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/response.errorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/response.errorResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Delete productLookup",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "productLookup"
-                ],
-                "summary": "Delete productLookup",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "id path",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ProductLookupResponseDoc"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/response.errorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/response.errorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/response.errorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/api/products": {
             "get": {
                 "security": [
@@ -3173,6 +2842,564 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/stock-lookups": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get stockLookup",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stockLookup"
+                ],
+                "summary": "Get stockLookup",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "example": [
+                            "asc_column",
+                            "-dsc_column"
+                        ],
+                        "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "code",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "is_seal",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "name": "remaining_type_value",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "name": "remaining_type_value_before",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "fk",
+                        "name": "stock_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "name": "type_value",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.StockLookupResponseDoc"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create stockLookup",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stockLookup"
+                ],
+                "summary": "Create stockLookup",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateStockLookupRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.StockLookupResponseDoc"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/stock-lookups/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get stockLookup by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stockLookup"
+                ],
+                "summary": "Get stockLookup by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id path",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.StockLookupResponseDoc"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update stockLookup",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stockLookup"
+                ],
+                "summary": "Update stockLookup",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id path",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "request body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateStockLookupRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.StockLookupResponseDoc"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete stockLookup",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stockLookup"
+                ],
+                "summary": "Delete stockLookup",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id path",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.StockLookupResponseDoc"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/stocks": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get stock",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stock"
+                ],
+                "summary": "Get stock",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "example": [
+                            "asc_column",
+                            "-dsc_column"
+                        ],
+                        "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "brand_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "brand_name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "created_at",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "created_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "modified_at",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "modified_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "packet_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "packet_value",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "price_final",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "price_usd",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "join",
+                        "name": "product_code",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "fk",
+                        "name": "product_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "product_name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "supplier_name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "toital",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "unit_name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "variant_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "variant_name",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.StockResponseDoc"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/stocks/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get stock by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stock"
+                ],
+                "summary": "Get stock by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id path",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.StockResponseDoc"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/units": {
             "get": {
                 "security": [
@@ -4393,29 +4620,6 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CreateProductLookupRequest": {
-            "type": "object",
-            "required": [
-                "product_id"
-            ],
-            "properties": {
-                "is_seal": {
-                    "type": "boolean"
-                },
-                "product_id": {
-                    "type": "string"
-                },
-                "remaining_type_value": {
-                    "type": "number"
-                },
-                "remaining_type_value_before": {
-                    "type": "number"
-                },
-                "type_value": {
-                    "type": "number"
-                }
-            }
-        },
         "dto.CreateProductRequest": {
             "type": "object",
             "required": [
@@ -4463,6 +4667,29 @@ const docTemplate = `{
             "properties": {
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.CreateStockLookupRequest": {
+            "type": "object",
+            "required": [
+                "stock_id"
+            ],
+            "properties": {
+                "is_seal": {
+                    "type": "boolean"
+                },
+                "remaining_type_value": {
+                    "type": "number"
+                },
+                "remaining_type_value_before": {
+                    "type": "number"
+                },
+                "stock_id": {
+                    "type": "string"
+                },
+                "type_value": {
+                    "type": "number"
                 }
             }
         },
@@ -4645,61 +4872,6 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.ProductLookupResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "created_by": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "is_seal": {
-                    "type": "boolean"
-                },
-                "modified_at": {
-                    "type": "string"
-                },
-                "modified_by": {
-                    "type": "string"
-                },
-                "product_id": {
-                    "description": "fk",
-                    "type": "string"
-                },
-                "remaining_type_value": {
-                    "type": "number"
-                },
-                "remaining_type_value_before": {
-                    "type": "number"
-                },
-                "type_value": {
-                    "type": "number"
-                }
-            }
-        },
-        "dto.ProductLookupResponseDoc": {
-            "type": "object",
-            "properties": {
-                "body": {
-                    "type": "object",
-                    "properties": {
-                        "data": {
-                            "$ref": "#/definitions/dto.ProductLookupResponse"
-                        },
-                        "meta": {
-                            "$ref": "#/definitions/response.Meta"
-                        }
-                    }
-                }
-            }
-        },
         "dto.ProductResponse": {
             "type": "object",
             "properties": {
@@ -4732,6 +4904,9 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "packet": {
+                    "$ref": "#/definitions/entity.PacketModel"
+                },
                 "packet_id": {
                     "type": "string"
                 },
@@ -4741,14 +4916,8 @@ const docTemplate = `{
                 "price_usd": {
                     "type": "number"
                 },
-                "product_lookups": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/entity.ProductLookupModel"
-                    }
-                },
-                "type": {
-                    "$ref": "#/definitions/entity.PacketModel"
+                "stock": {
+                    "$ref": "#/definitions/entity.StockModel"
                 },
                 "variant": {
                     "$ref": "#/definitions/entity.VariantModel"
@@ -4972,6 +5141,138 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.StockLookupResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "created_by": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_seal": {
+                    "type": "boolean"
+                },
+                "modified_at": {
+                    "type": "string"
+                },
+                "modified_by": {
+                    "type": "string"
+                },
+                "remaining_type_value": {
+                    "type": "number"
+                },
+                "remaining_type_value_before": {
+                    "type": "number"
+                },
+                "stock_id": {
+                    "description": "fk",
+                    "type": "string"
+                },
+                "type_value": {
+                    "type": "number"
+                }
+            }
+        },
+        "dto.StockLookupResponseDoc": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "$ref": "#/definitions/dto.StockLookupResponse"
+                        },
+                        "meta": {
+                            "$ref": "#/definitions/response.Meta"
+                        }
+                    }
+                }
+            }
+        },
+        "dto.StockResponse": {
+            "type": "object",
+            "properties": {
+                "brand": {
+                    "$ref": "#/definitions/entity.BrandModel"
+                },
+                "brand_id": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "created_by": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "modified_at": {
+                    "type": "string"
+                },
+                "modified_by": {
+                    "type": "string"
+                },
+                "packet_id": {
+                    "type": "string"
+                },
+                "price_final": {
+                    "type": "integer"
+                },
+                "price_usd": {
+                    "type": "integer"
+                },
+                "product": {
+                    "description": "relations",
+                    "$ref": "#/definitions/entity.ProductModel"
+                },
+                "product_id": {
+                    "description": "fk",
+                    "type": "string"
+                },
+                "stock_lookups": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.StockLookupModel"
+                    }
+                },
+                "toital": {
+                    "type": "integer"
+                },
+                "type": {
+                    "$ref": "#/definitions/entity.PacketModel"
+                },
+                "variant": {
+                    "$ref": "#/definitions/entity.VariantModel"
+                },
+                "variant_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.StockResponseDoc": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "$ref": "#/definitions/dto.StockResponse"
+                        },
+                        "meta": {
+                            "$ref": "#/definitions/response.Meta"
+                        }
+                    }
+                }
+            }
+        },
         "dto.UnitResponse": {
             "type": "object",
             "properties": {
@@ -5088,29 +5389,6 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UpdateProductLookupRequest": {
-            "type": "object",
-            "required": [
-                "id"
-            ],
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "is_seal": {
-                    "type": "boolean"
-                },
-                "remaining_type_value": {
-                    "type": "number"
-                },
-                "remaining_type_value_before": {
-                    "type": "number"
-                },
-                "type_value": {
-                    "type": "number"
-                }
-            }
-        },
         "dto.UpdateProductRequest": {
             "type": "object",
             "required": [
@@ -5187,6 +5465,29 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.UpdateStockLookupRequest": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "is_seal": {
+                    "type": "boolean"
+                },
+                "remaining_type_value": {
+                    "type": "number"
+                },
+                "remaining_type_value_before": {
+                    "type": "number"
+                },
+                "type_value": {
+                    "type": "number"
                 }
             }
         },
@@ -5435,9 +5736,17 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.ProductLookupModel": {
+        "entity.ProductModel": {
             "type": "object",
             "properties": {
+                "brand": {
+                    "description": "relations",
+                    "$ref": "#/definitions/entity.BrandModel"
+                },
+                "brand_id": {
+                    "description": "fk",
+                    "type": "string"
+                },
                 "code": {
                     "type": "string"
                 },
@@ -5450,27 +5759,35 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
-                "is_seal": {
-                    "type": "boolean"
-                },
                 "modified_at": {
                     "type": "string"
                 },
                 "modified_by": {
                     "type": "string"
                 },
-                "product_id": {
-                    "description": "fk",
+                "name": {
                     "type": "string"
                 },
-                "remaining_type_value": {
+                "packet": {
+                    "$ref": "#/definitions/entity.PacketModel"
+                },
+                "packet_id": {
+                    "type": "string"
+                },
+                "price_final": {
                     "type": "number"
                 },
-                "remaining_type_value_before": {
+                "price_usd": {
                     "type": "number"
                 },
-                "type_value": {
-                    "type": "number"
+                "stock": {
+                    "$ref": "#/definitions/entity.StockModel"
+                },
+                "variant": {
+                    "$ref": "#/definitions/entity.VariantModel"
+                },
+                "variant_id": {
+                    "type": "string"
                 }
             }
         },
@@ -5496,6 +5813,106 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.StockLookupModel": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "created_by": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_seal": {
+                    "type": "boolean"
+                },
+                "modified_at": {
+                    "type": "string"
+                },
+                "modified_by": {
+                    "type": "string"
+                },
+                "remaining_type_value": {
+                    "type": "number"
+                },
+                "remaining_type_value_before": {
+                    "type": "number"
+                },
+                "stock_id": {
+                    "description": "fk",
+                    "type": "string"
+                },
+                "type_value": {
+                    "type": "number"
+                }
+            }
+        },
+        "entity.StockModel": {
+            "type": "object",
+            "properties": {
+                "brand": {
+                    "$ref": "#/definitions/entity.BrandModel"
+                },
+                "brand_id": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "created_by": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "modified_at": {
+                    "type": "string"
+                },
+                "modified_by": {
+                    "type": "string"
+                },
+                "packet_id": {
+                    "type": "string"
+                },
+                "price_final": {
+                    "type": "integer"
+                },
+                "price_usd": {
+                    "type": "integer"
+                },
+                "product": {
+                    "description": "relations",
+                    "$ref": "#/definitions/entity.ProductModel"
+                },
+                "product_id": {
+                    "description": "fk",
+                    "type": "string"
+                },
+                "stock_lookups": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.StockLookupModel"
+                    }
+                },
+                "toital": {
+                    "type": "integer"
+                },
+                "type": {
+                    "$ref": "#/definitions/entity.PacketModel"
+                },
+                "variant": {
+                    "$ref": "#/definitions/entity.VariantModel"
+                },
+                "variant_id": {
                     "type": "string"
                 }
             }

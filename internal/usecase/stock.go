@@ -5,17 +5,21 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/google/uuid"
 	"gitlab.com/stoqu/stoqu-be/internal/config"
 
 	"gitlab.com/stoqu/stoqu-be/internal/factory/repository"
 	"gitlab.com/stoqu/stoqu-be/internal/model/abstraction"
 	"gitlab.com/stoqu/stoqu-be/internal/model/dto"
+	model "gitlab.com/stoqu/stoqu-be/internal/model/entity"
 	res "gitlab.com/stoqu/stoqu-be/pkg/util/response"
+	"gitlab.com/stoqu/stoqu-be/pkg/util/trxmanager"
 )
 
 type Stock interface {
 	Find(ctx context.Context, filterParam abstraction.Filter) ([]dto.StockViewResponse, abstraction.PaginationInfo, error)
 	FindByID(ctx context.Context, payload dto.ByIDRequest) (dto.StockResponse, error)
+	Create(ctx context.Context, payload dto.CreateStockRequest) (dto.StockResponse, error)
 }
 
 type stock struct {
@@ -84,6 +88,37 @@ func (u *stock) FindByID(ctx context.Context, payload dto.ByIDRequest) (dto.Stoc
 
 	result = dto.StockResponse{
 		StockModel: *product,
+	}
+
+	return result, nil
+}
+
+func (u *stock) Create(ctx context.Context, payload dto.CreateStockRequest) (result dto.StockResponse, err error) {
+	var (
+		productID = uuid.New().String()
+		product   = model.StockModel{
+			Entity: model.Entity{
+				ID: productID,
+			},
+			StockEntity: model.StockEntity{
+				ProductID: payload.ProductID,
+			},
+		}
+	)
+
+	if err = trxmanager.New(u.Repo.Db).WithTrx(ctx, func(ctx context.Context) error {
+		_, err = u.Repo.Stock.Create(ctx, product)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}); err != nil {
+		return result, err
+	}
+
+	result = dto.StockResponse{
+		StockModel: product,
 	}
 
 	return result, nil
