@@ -17,6 +17,7 @@ type Factory struct {
 	Currency             usecase.Currency
 	ReminderStock        usecase.ReminderStock
 	ReminderStockHistory usecase.ReminderStockHistory
+	Rack                 usecase.Rack
 
 	Brand   usecase.Brand
 	Variant usecase.Variant
@@ -39,6 +40,7 @@ func Init(cfg *config.Configuration, r repository.Factory) Factory {
 	f.Currency = usecase.NewCurrency(cfg, r)
 	f.ReminderStock = usecase.NewReminderStock(cfg, r)
 	f.ReminderStockHistory = usecase.NewReminderStockHistory(cfg, r)
+	f.Rack = usecase.NewRack(cfg, r)
 
 	f.Brand = usecase.NewBrand(cfg, r)
 	f.Variant = usecase.NewVariant(cfg, r)
