@@ -40,6 +40,7 @@ func Init(cfg *config.Configuration) {
 					&entity.ProductModel{},
 					&entity.StockModel{},
 					&entity.StockLookupModel{},
+					&entity.RackModel{},
 				},
 			}
 		}

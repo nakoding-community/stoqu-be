@@ -43,6 +43,7 @@ func Init(cfg *config.Configuration) {
 					&seed.ReminderStockSeed{},
 					&seed.ReminderStockHistorySeed{},
 					&seed.ProductSeed{},
+					&seed.RackSeed{},
 				},
 			}
 		}

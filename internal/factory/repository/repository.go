@@ -25,6 +25,7 @@ type Factory struct {
 	Currency             dbRepository.Currency
 	ReminderStock        dbRepository.ReminderStock
 	ReminderStockHistory dbRepository.ReminderStockHistory
+	Rack                 dbRepository.Rack
 
 	Brand   dbRepository.Brand
 	Variant dbRepository.Variant
@@ -48,6 +49,7 @@ func Init(cfg *config.Configuration, db *gorm.DB) Factory {
 	f.Currency = dbRepository.NewCurrency(f.Db)
 	f.ReminderStock = dbRepository.NewReminderStock(f.Db)
 	f.ReminderStockHistory = dbRepository.NewReminderStockHistory(f.Db)
+	f.Rack = dbRepository.NewRack(f.Db)
 
 	f.Brand = dbRepository.NewBrand(f.Db)
 	f.Variant = dbRepository.NewVariant(f.Db)
