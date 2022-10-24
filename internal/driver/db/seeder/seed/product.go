@@ -88,6 +88,25 @@ func (s *ProductSeed) Run(conn *gorm.DB) error {
 		return err
 	}
 
+	// stocks
+	var stocks []entity.StockModel
+	for _, v := range products {
+		stock := entity.StockModel{
+			StockEntity: entity.StockEntity{
+				ProductID: v.ID,
+				BrandID:   v.BrandID,
+				VariantID: v.VariantID,
+				PacketID:  v.PacketID,
+			},
+		}
+		stocks = append(stocks, stock)
+	}
+	if err := trx.Create(&stocks).Error; err != nil {
+		trx.Rollback()
+		logrus.Error(err)
+		return err
+	}
+
 	if err := trx.Commit().Error; err != nil {
 		logrus.Error(err)
 		return err

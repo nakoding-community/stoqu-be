@@ -31,16 +31,21 @@ func Init(cfg *config.Configuration) {
 					&entity.UserProfileModel{},
 					&entity.ReminderStockModel{},
 					&entity.ReminderStockHistoryModel{},
+					&entity.RackModel{},
 					&entity.ConvertionUnitModel{},
 					&entity.UnitModel{},
 					&entity.PacketModel{},
 					&entity.CurrencyModel{},
+
 					&entity.VariantModel{},
 					&entity.BrandModel{},
 					&entity.ProductModel{},
+
 					&entity.StockModel{},
 					&entity.StockLookupModel{},
-					&entity.RackModel{},
+					&entity.StockTrxModel{},
+					&entity.StockTrxItemModel{},
+					&entity.StockTrxItemLookupModel{},
 				},
 			}
 		}

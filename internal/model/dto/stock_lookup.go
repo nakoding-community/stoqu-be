@@ -8,19 +8,19 @@ import (
 // request
 type (
 	CreateStockLookupRequest struct {
-		IsSeal                   bool    `json:"is_seal"`
-		TypeValue                float64 `json:"type_value"`
-		RemainingTypeValue       float64 `json:"remaining_type_value"`
-		RemainingTypeValueBefore float64 `json:"remaining_type_value_before"`
-		StockID                  string  `json:"stock_id" validate:"required"`
+		IsSeal               bool    `json:"is_seal"`
+		Value                float64 `json:"value"`
+		RemainingValue       float64 `json:"remaining_value"`
+		RemainingValueBefore float64 `json:"remaining_value_before"`
+		StockID              string  `json:"stock_id" validate:"required"`
 	}
 
 	UpdateStockLookupRequest struct {
-		ID                       string  `param:"id" validate:"required"`
-		IsSeal                   bool    `json:"is_seal"`
-		TypeValue                float64 `json:"type_value"`
-		RemainingTypeValue       float64 `json:"remaining_type_value"`
-		RemainingTypeValueBefore float64 `json:"remaining_type_value_before"`
+		ID                   string  `param:"id" validate:"required"`
+		IsSeal               bool    `json:"is_seal"`
+		Value                float64 `json:"value"`
+		RemainingValue       float64 `json:"remaining_value"`
+		RemainingValueBefore float64 `json:"remaining_value_before"`
 	}
 )
 

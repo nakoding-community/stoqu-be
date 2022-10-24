@@ -7,9 +7,15 @@ import (
 
 // request
 type (
-	CreateStockRequest struct {
-		Name      string `json:"name"`
-		ProductID string `json:"product_id" validate:"required"`
+	TransactionStockRequest struct {
+		TrxType  string                           `json:"trx_type" validate:"oneof=in out"`
+		Products []TransactionStockProductRequest `json:"products"`
+	}
+
+	TransactionStockProductRequest struct {
+		ID             string   `json:"id" validate:"required"`
+		Quantity       int      `json:"quantity" validate:"required,min=1"`
+		StockLookupIDs []string `json:"stock_lookup_ids"`
 	}
 )
 
@@ -32,6 +38,16 @@ type (
 		Body struct {
 			Meta res.Meta          `json:"meta"`
 			Data StockViewResponse `json:"data"`
+		} `json:"body"`
+	}
+
+	StockTransactionResponse struct {
+		Status string `json:"status"`
+	}
+	StockTransactionResponseDoc struct {
+		Body struct {
+			Meta res.Meta                 `json:"meta"`
+			Data StockTransactionResponse `json:"data"`
 		} `json:"body"`
 	}
 )

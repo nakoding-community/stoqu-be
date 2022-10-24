@@ -24,12 +24,14 @@ type (
 
 		Find(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]T, *abstraction.PaginationInfo, error)
 		FindByID(ctx context.Context, id string) (*T, error)
+		FindByIDs(ctx context.Context, ids []string) ([]T, error)
 		FindByCode(ctx context.Context, code string) (*T, error)
 		FindByName(ctx context.Context, name string) (*T, error)
 		Create(ctx context.Context, data T) (T, error)
 		Creates(ctx context.Context, data []T) ([]T, error)
 		UpdateByID(ctx context.Context, id string, data T) (T, error)
 		DeleteByID(ctx context.Context, id string) error
+		DeleteByIDs(ctx context.Context, ids []string) error
 		Count(ctx context.Context) (int64, error)
 	}
 
@@ -131,7 +133,7 @@ func (m *base[T]) Find(ctx context.Context, filterParam abstraction.Filter, sear
 	err := query.WithContext(ctx).Find(&result).Error
 
 	if err != nil {
-		return nil, info, err
+		return nil, info, m.MaskError(err)
 	}
 	return result, info, nil
 }
@@ -140,6 +142,16 @@ func (m *base[T]) FindByID(ctx context.Context, id string) (*T, error) {
 	query := m.GetConn(ctx).Model(m.entity)
 	result := new(T)
 	err := query.WithContext(ctx).Where("id", id).First(result).Error
+	if err != nil {
+		return nil, m.MaskError(err)
+	}
+	return result, nil
+}
+
+func (m *base[T]) FindByIDs(ctx context.Context, ids []string) ([]T, error) {
+	query := m.GetConn(ctx).Model(m.entity)
+	result := []T{}
+	err := query.WithContext(ctx).Where("id In ?", ids).Find(&result).Error
 	if err != nil {
 		return nil, m.MaskError(err)
 	}
@@ -184,6 +196,11 @@ func (m *base[T]) UpdateByID(ctx context.Context, id string, data T) (T, error) 
 
 func (m *base[T]) DeleteByID(ctx context.Context, id string) error {
 	err := m.GetConn(ctx).WithContext(ctx).Where("id = ?", id).Delete(m.entity).Error
+	return m.MaskError(err)
+}
+
+func (m *base[T]) DeleteByIDs(ctx context.Context, ids []string) error {
+	err := m.GetConn(ctx).WithContext(ctx).Where("id IN ?", ids).Delete(m.entity).Error
 	return m.MaskError(err)
 }
 

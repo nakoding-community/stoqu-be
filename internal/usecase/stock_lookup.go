@@ -85,12 +85,12 @@ func (u *stockLookup) Create(ctx context.Context, payload dto.CreateStockLookupR
 				ID: stockLookupID,
 			},
 			StockLookupEntity: model.StockLookupEntity{
-				Code:                     str.GenCode(constant.CODE_PRODUCT_LOOKUP_PREFIX),
-				IsSeal:                   payload.IsSeal,
-				TypeValue:                payload.TypeValue,
-				RemainingTypeValue:       payload.RemainingTypeValue,
-				RemainingTypeValueBefore: payload.RemainingTypeValueBefore,
-				StockID:                  payload.StockID,
+				Code:                 str.GenCode(constant.CODE_STOCK_LOOKUP_PREFIX),
+				IsSeal:               payload.IsSeal,
+				Value:                payload.Value,
+				RemainingValue:       payload.RemainingValue,
+				RemainingValueBefore: payload.RemainingValueBefore,
+				StockID:              payload.StockID,
 			},
 		}
 	)
@@ -117,10 +117,10 @@ func (u *stockLookup) Update(ctx context.Context, payload dto.UpdateStockLookupR
 	var (
 		stockLookupData = &model.StockLookupModel{
 			StockLookupEntity: model.StockLookupEntity{
-				IsSeal:                   payload.IsSeal,
-				TypeValue:                payload.TypeValue,
-				RemainingTypeValue:       payload.RemainingTypeValue,
-				RemainingTypeValueBefore: payload.RemainingTypeValueBefore,
+				IsSeal:               payload.IsSeal,
+				Value:                payload.Value,
+				RemainingValue:       payload.RemainingValue,
+				RemainingValueBefore: payload.RemainingValueBefore,
 			},
 		}
 	)
