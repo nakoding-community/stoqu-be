@@ -3210,12 +3210,12 @@ const docTemplate = `{
                     },
                     {
                         "type": "number",
-                        "name": "remaining_type_value",
+                        "name": "remaining_value",
                         "in": "query"
                     },
                     {
                         "type": "number",
-                        "name": "remaining_type_value_before",
+                        "name": "remaining_value_before",
                         "in": "query"
                     },
                     {
@@ -3226,7 +3226,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "number",
-                        "name": "type_value",
+                        "name": "value",
                         "in": "query"
                     }
                 ],
@@ -5000,16 +5000,16 @@ const docTemplate = `{
                 "is_seal": {
                     "type": "boolean"
                 },
-                "remaining_type_value": {
+                "remaining_value": {
                     "type": "number"
                 },
-                "remaining_type_value_before": {
+                "remaining_value_before": {
                     "type": "number"
                 },
                 "stock_id": {
                     "type": "string"
                 },
-                "type_value": {
+                "value": {
                     "type": "number"
                 }
             }
@@ -5528,17 +5528,17 @@ const docTemplate = `{
                 "modified_by": {
                     "type": "string"
                 },
-                "remaining_type_value": {
+                "remaining_value": {
                     "type": "number"
                 },
-                "remaining_type_value_before": {
+                "remaining_value_before": {
                     "type": "number"
                 },
                 "stock_id": {
                     "description": "fk",
                     "type": "string"
                 },
-                "type_value": {
+                "value": {
                     "type": "number"
                 }
             }
@@ -5857,13 +5857,13 @@ const docTemplate = `{
                 "is_seal": {
                     "type": "boolean"
                 },
-                "remaining_type_value": {
+                "remaining_value": {
                     "type": "number"
                 },
-                "remaining_type_value_before": {
+                "remaining_value_before": {
                     "type": "number"
                 },
-                "type_value": {
+                "value": {
                     "type": "number"
                 }
             }
@@ -6218,17 +6218,17 @@ const docTemplate = `{
                 "modified_by": {
                     "type": "string"
                 },
-                "remaining_type_value": {
+                "remaining_value": {
                     "type": "number"
                 },
-                "remaining_type_value_before": {
+                "remaining_value_before": {
                     "type": "number"
                 },
                 "stock_id": {
                     "description": "fk",
                     "type": "string"
                 },
-                "type_value": {
+                "value": {
                     "type": "number"
                 }
             }

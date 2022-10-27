@@ -214,13 +214,13 @@ definitions:
     properties:
       is_seal:
         type: boolean
-      remaining_type_value:
+      remaining_value:
         type: number
-      remaining_type_value_before:
+      remaining_value_before:
         type: number
       stock_id:
         type: string
-      type_value:
+      value:
         type: number
     required:
     - stock_id
@@ -561,14 +561,14 @@ definitions:
         type: string
       modified_by:
         type: string
-      remaining_type_value:
+      remaining_value:
         type: number
-      remaining_type_value_before:
+      remaining_value_before:
         type: number
       stock_id:
         description: fk
         type: string
-      type_value:
+      value:
         type: number
     type: object
   dto.StockLookupResponseDoc:
@@ -773,11 +773,11 @@ definitions:
         type: string
       is_seal:
         type: boolean
-      remaining_type_value:
+      remaining_value:
         type: number
-      remaining_type_value_before:
+      remaining_value_before:
         type: number
-      type_value:
+      value:
         type: number
     required:
     - id
@@ -1014,14 +1014,14 @@ definitions:
         type: string
       modified_by:
         type: string
-      remaining_type_value:
+      remaining_value:
         type: number
-      remaining_type_value_before:
+      remaining_value_before:
         type: number
       stock_id:
         description: fk
         type: string
-      type_value:
+      value:
         type: number
     type: object
   entity.StockModel:
@@ -3198,17 +3198,17 @@ paths:
         name: is_seal
         type: boolean
       - in: query
-        name: remaining_type_value
+        name: remaining_value
         type: number
       - in: query
-        name: remaining_type_value_before
+        name: remaining_value_before
         type: number
       - description: fk
         in: query
         name: stock_id
         type: string
       - in: query
-        name: type_value
+        name: value
         type: number
       produces:
       - application/json
