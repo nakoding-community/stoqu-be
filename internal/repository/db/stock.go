@@ -27,6 +27,7 @@ type (
 
 		// Custom
 		Find(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.StockView, *abstraction.PaginationInfo, error)
+		FindByProductID(ctx context.Context, productID string) (*model.StockModel, error)
 	}
 
 	stock struct {
@@ -80,4 +81,14 @@ func (m *stock) Find(ctx context.Context, filterParam abstraction.Filter, search
 		return nil, info, err
 	}
 	return result, info, nil
+}
+
+func (m *stock) FindByProductID(ctx context.Context, productID string) (*model.StockModel, error) {
+	query := m.GetConn(ctx).Model(m.entity)
+	result := new(model.StockModel)
+	err := query.WithContext(ctx).Where("product_id", productID).First(result).Error
+	if err != nil {
+		return nil, m.MaskError(err)
+	}
+	return result, nil
 }

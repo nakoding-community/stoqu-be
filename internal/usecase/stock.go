@@ -114,7 +114,7 @@ func (u *stock) Transaction(ctx context.Context, payload dto.TransactionStockReq
 			var qtySeal, qtyNotSeal int
 			stockTrxItemID := uuid.New().String()
 
-			stock, err := u.Repo.Stock.FindByID(ctx, v.ID)
+			stock, err := u.Repo.Stock.FindByProductID(ctx, v.ID)
 			if err != nil {
 				return res.ErrorBuilder(res.Constant.Error.BadRequest, err, "stock not found")
 			}

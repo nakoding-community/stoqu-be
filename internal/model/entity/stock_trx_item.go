@@ -20,5 +20,5 @@ type StockTrxItemModel struct {
 }
 
 func (StockTrxItemModel) TableName() string {
-	return "stock_trxs"
+	return "stock_trx_items"
 }

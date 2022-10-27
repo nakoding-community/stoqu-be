@@ -632,6 +632,48 @@ definitions:
             $ref: '#/definitions/response.Meta'
         type: object
     type: object
+  dto.StockTransactionResponse:
+    properties:
+      status:
+        type: string
+    type: object
+  dto.StockTransactionResponseDoc:
+    properties:
+      body:
+        properties:
+          data:
+            $ref: '#/definitions/dto.StockTransactionResponse'
+          meta:
+            $ref: '#/definitions/response.Meta'
+        type: object
+    type: object
+  dto.TransactionStockProductRequest:
+    properties:
+      id:
+        type: string
+      quantity:
+        minimum: 1
+        type: integer
+      stock_lookup_ids:
+        items:
+          type: string
+        type: array
+    required:
+    - id
+    - quantity
+    type: object
+  dto.TransactionStockRequest:
+    properties:
+      products:
+        items:
+          $ref: '#/definitions/dto.TransactionStockProductRequest'
+        type: array
+      trx_type:
+        enum:
+        - in
+        - out
+        type: string
+    type: object
   dto.UnitResponse:
     properties:
       code:
@@ -3482,6 +3524,41 @@ paths:
       security:
       - BearerAuth: []
       summary: Get stock
+      tags:
+      - stock
+    put:
+      consumes:
+      - application/json
+      description: Transaction stock
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.TransactionStockRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.StockTransactionResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Transaction stock
       tags:
       - stock
   /api/stocks/{id}:
