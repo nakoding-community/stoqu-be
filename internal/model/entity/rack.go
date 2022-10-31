@@ -8,6 +8,8 @@ type RackEntity struct {
 type RackModel struct {
 	Entity
 	RackEntity
+
+	StockRacks []StockRackModel `json:"stock_racks" gorm:"foreignKey:RackID;constraint:OnDelete:CASCADE;"`
 }
 
 func (RackModel) TableName() string {

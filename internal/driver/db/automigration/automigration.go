@@ -42,6 +42,7 @@ func Init(cfg *config.Configuration) {
 					&entity.ProductModel{},
 
 					&entity.StockModel{},
+					&entity.StockRackModel{},
 					&entity.StockLookupModel{},
 					&entity.StockTrxModel{},
 					&entity.StockTrxItemModel{},

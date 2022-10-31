@@ -174,6 +174,10 @@ func (e *Error) ParseToError() error {
 	return e
 }
 
+func (e *Error) ErrorCode() string {
+	return e.Response.Meta.Code
+}
+
 func (e *Error) Send(c echo.Context) error {
 	if e.Response.Meta.Code != "" && e.Response.Meta.Message == "" {
 		e.Response.Meta.Message = resConstant.CODE_TO_MESSAGE[e.Response.Meta.Code]

@@ -218,12 +218,12 @@ definitions:
         type: number
       remaining_value_before:
         type: number
-      stock_id:
+      stock_rack_id:
         type: string
       value:
         type: number
     required:
-    - stock_id
+    - stock_rack_id
     type: object
   dto.CreateUnitRequest:
     properties:
@@ -407,6 +407,10 @@ definitions:
         type: string
       name:
         type: string
+      stock_racks:
+        items:
+          $ref: '#/definitions/entity.StockRackModel'
+        type: array
     type: object
   dto.RackResponseDoc:
     properties:
@@ -565,7 +569,7 @@ definitions:
         type: number
       remaining_value_before:
         type: number
-      stock_id:
+      stock_rack_id:
         description: fk
         type: string
       value:
@@ -597,6 +601,8 @@ definitions:
         type: string
       modified_by:
         type: string
+      packet:
+        $ref: '#/definitions/entity.PacketModel'
       packet_id:
         type: string
       price_final:
@@ -609,14 +615,12 @@ definitions:
       product_id:
         description: fk
         type: string
-      stock_lookups:
+      stock_racks:
         items:
-          $ref: '#/definitions/entity.StockLookupModel'
+          $ref: '#/definitions/entity.StockRackModel'
         type: array
       toital:
         type: integer
-      type:
-        $ref: '#/definitions/entity.PacketModel'
       variant:
         $ref: '#/definitions/entity.VariantModel'
       variant_id:
@@ -654,6 +658,8 @@ definitions:
       quantity:
         minimum: 1
         type: integer
+      rack_id:
+        type: string
       stock_lookup_ids:
         items:
           type: string
@@ -661,6 +667,7 @@ definitions:
     required:
     - id
     - quantity
+    - rack_id
     type: object
   dto.TransactionStockRequest:
     properties:
@@ -1023,6 +1030,27 @@ definitions:
       variant_id:
         type: string
     type: object
+  entity.RackModel:
+    properties:
+      code:
+        type: string
+      created_at:
+        type: string
+      created_by:
+        type: string
+      id:
+        type: string
+      modified_at:
+        type: string
+      modified_by:
+        type: string
+      name:
+        type: string
+      stock_racks:
+        items:
+          $ref: '#/definitions/entity.StockRackModel'
+        type: array
+    type: object
   entity.RoleModel:
     properties:
       code:
@@ -1060,7 +1088,7 @@ definitions:
         type: number
       remaining_value_before:
         type: number
-      stock_id:
+      stock_rack_id:
         description: fk
         type: string
       value:
@@ -1082,6 +1110,8 @@ definitions:
         type: string
       modified_by:
         type: string
+      packet:
+        $ref: '#/definitions/entity.PacketModel'
       packet_id:
         type: string
       price_final:
@@ -1094,18 +1124,47 @@ definitions:
       product_id:
         description: fk
         type: string
+      stock_racks:
+        items:
+          $ref: '#/definitions/entity.StockRackModel'
+        type: array
+      toital:
+        type: integer
+      variant:
+        $ref: '#/definitions/entity.VariantModel'
+      variant_id:
+        type: string
+    type: object
+  entity.StockRackModel:
+    properties:
+      created_at:
+        type: string
+      created_by:
+        type: string
+      id:
+        type: string
+      modified_at:
+        type: string
+      modified_by:
+        type: string
+      price_final:
+        type: integer
+      price_usd:
+        type: integer
+      rack:
+        $ref: '#/definitions/entity.RackModel'
+        description: relations
+      rack_id:
+        type: string
+      stock_id:
+        description: fk
+        type: string
       stock_lookups:
         items:
           $ref: '#/definitions/entity.StockLookupModel'
         type: array
       toital:
         type: integer
-      type:
-        $ref: '#/definitions/entity.PacketModel'
-      variant:
-        $ref: '#/definitions/entity.VariantModel'
-      variant_id:
-        type: string
     type: object
   entity.UnitModel:
     properties:
@@ -3247,7 +3306,7 @@ paths:
         type: number
       - description: fk
         in: query
-        name: stock_id
+        name: stock_rack_id
         type: string
       - in: query
         name: value

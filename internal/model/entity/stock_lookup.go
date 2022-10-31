@@ -8,7 +8,7 @@ type StockLookupEntity struct {
 	RemainingValueBefore float64 `json:"remaining_value_before" gorm:"not null"`
 
 	// fk
-	StockID string `json:"stock_id" gorm:"not null"`
+	StockRackID string `json:"stock_rack_id" gorm:"not null"`
 }
 
 type StockLookupModel struct {

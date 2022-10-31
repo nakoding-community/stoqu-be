@@ -15,6 +15,7 @@ type (
 	TransactionStockProductRequest struct {
 		ID             string   `json:"id" validate:"required"`
 		Quantity       int      `json:"quantity" validate:"required,min=1"`
+		RackID         string   `json:"rack_id" validate:"required"`
 		StockLookupIDs []string `json:"stock_lookup_ids"`
 	}
 )

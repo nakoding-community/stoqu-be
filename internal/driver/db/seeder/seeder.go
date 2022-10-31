@@ -40,10 +40,10 @@ func Init(cfg *config.Configuration) {
 					&seed.UserSeed{},
 					&seed.PacketSeed{},
 					&seed.CurrencySeed{},
+					&seed.RackSeed{},
 					&seed.ReminderStockSeed{},
 					&seed.ReminderStockHistorySeed{},
 					&seed.ProductSeed{},
-					&seed.RackSeed{},
 				},
 			}
 		}

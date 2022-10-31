@@ -90,7 +90,7 @@ func (u *stockLookup) Create(ctx context.Context, payload dto.CreateStockLookupR
 				Value:                payload.Value,
 				RemainingValue:       payload.RemainingValue,
 				RemainingValueBefore: payload.RemainingValueBefore,
-				StockID:              payload.StockID,
+				StockRackID:          payload.StockRackID,
 			},
 		}
 	)

@@ -3221,7 +3221,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "fk",
-                        "name": "stock_id",
+                        "name": "stock_rack_id",
                         "in": "query"
                     },
                     {
@@ -5049,7 +5049,7 @@ const docTemplate = `{
         "dto.CreateStockLookupRequest": {
             "type": "object",
             "required": [
-                "stock_id"
+                "stock_rack_id"
             ],
             "properties": {
                 "is_seal": {
@@ -5061,7 +5061,7 @@ const docTemplate = `{
                 "remaining_value_before": {
                     "type": "number"
                 },
-                "stock_id": {
+                "stock_rack_id": {
                     "type": "string"
                 },
                 "value": {
@@ -5342,6 +5342,12 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "stock_racks": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.StockRackModel"
+                    }
                 }
             }
         },
@@ -5589,7 +5595,7 @@ const docTemplate = `{
                 "remaining_value_before": {
                     "type": "number"
                 },
-                "stock_id": {
+                "stock_rack_id": {
                     "description": "fk",
                     "type": "string"
                 },
@@ -5638,6 +5644,9 @@ const docTemplate = `{
                 "modified_by": {
                     "type": "string"
                 },
+                "packet": {
+                    "$ref": "#/definitions/entity.PacketModel"
+                },
                 "packet_id": {
                     "type": "string"
                 },
@@ -5655,17 +5664,14 @@ const docTemplate = `{
                     "description": "fk",
                     "type": "string"
                 },
-                "stock_lookups": {
+                "stock_racks": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/entity.StockLookupModel"
+                        "$ref": "#/definitions/entity.StockRackModel"
                     }
                 },
                 "toital": {
                     "type": "integer"
-                },
-                "type": {
-                    "$ref": "#/definitions/entity.PacketModel"
                 },
                 "variant": {
                     "$ref": "#/definitions/entity.VariantModel"
@@ -5719,7 +5725,8 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "id",
-                "quantity"
+                "quantity",
+                "rack_id"
             ],
             "properties": {
                 "id": {
@@ -5728,6 +5735,9 @@ const docTemplate = `{
                 "quantity": {
                     "type": "integer",
                     "minimum": 1
+                },
+                "rack_id": {
+                    "type": "string"
                 },
                 "stock_lookup_ids": {
                     "type": "array",
@@ -6287,6 +6297,38 @@ const docTemplate = `{
                 }
             }
         },
+        "entity.RackModel": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "created_by": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "modified_at": {
+                    "type": "string"
+                },
+                "modified_by": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "stock_racks": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.StockRackModel"
+                    }
+                }
+            }
+        },
         "entity.RoleModel": {
             "type": "object",
             "properties": {
@@ -6343,7 +6385,7 @@ const docTemplate = `{
                 "remaining_value_before": {
                     "type": "number"
                 },
-                "stock_id": {
+                "stock_rack_id": {
                     "description": "fk",
                     "type": "string"
                 },
@@ -6376,6 +6418,9 @@ const docTemplate = `{
                 "modified_by": {
                     "type": "string"
                 },
+                "packet": {
+                    "$ref": "#/definitions/entity.PacketModel"
+                },
                 "packet_id": {
                     "type": "string"
                 },
@@ -6393,6 +6438,58 @@ const docTemplate = `{
                     "description": "fk",
                     "type": "string"
                 },
+                "stock_racks": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.StockRackModel"
+                    }
+                },
+                "toital": {
+                    "type": "integer"
+                },
+                "variant": {
+                    "$ref": "#/definitions/entity.VariantModel"
+                },
+                "variant_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.StockRackModel": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "created_by": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "modified_at": {
+                    "type": "string"
+                },
+                "modified_by": {
+                    "type": "string"
+                },
+                "price_final": {
+                    "type": "integer"
+                },
+                "price_usd": {
+                    "type": "integer"
+                },
+                "rack": {
+                    "description": "relations",
+                    "$ref": "#/definitions/entity.RackModel"
+                },
+                "rack_id": {
+                    "type": "string"
+                },
+                "stock_id": {
+                    "description": "fk",
+                    "type": "string"
+                },
                 "stock_lookups": {
                     "type": "array",
                     "items": {
@@ -6401,15 +6498,6 @@ const docTemplate = `{
                 },
                 "toital": {
                     "type": "integer"
-                },
-                "type": {
-                    "$ref": "#/definitions/entity.PacketModel"
-                },
-                "variant": {
-                    "$ref": "#/definitions/entity.VariantModel"
-                },
-                "variant_id": {
-                    "type": "string"
                 }
             }
         },

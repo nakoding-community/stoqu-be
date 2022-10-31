@@ -13,7 +13,7 @@ type RackSeed struct{}
 func (s *RackSeed) Run(conn *gorm.DB) error {
 	trx := conn.Begin()
 
-	rackNames := []string{"Rack 1", "Rack 2", "Rack 3", "Rack 4", "Rack 5"}
+	rackNames := []string{"Rack 1", "Rack 2", "Rack 3"}
 	var racks []entity.RackModel
 	for _, v := range rackNames {
 		rack := entity.RackModel{

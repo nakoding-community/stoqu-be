@@ -14,6 +14,7 @@ import (
 	model "gitlab.com/stoqu/stoqu-be/internal/model/entity"
 	"gitlab.com/stoqu/stoqu-be/pkg/constant"
 	res "gitlab.com/stoqu/stoqu-be/pkg/util/response"
+	errConstant "gitlab.com/stoqu/stoqu-be/pkg/util/response/constant"
 	"gitlab.com/stoqu/stoqu-be/pkg/util/str"
 	"gitlab.com/stoqu/stoqu-be/pkg/util/trxmanager"
 )
@@ -116,15 +117,40 @@ func (u *stock) Transaction(ctx context.Context, payload dto.TransactionStockReq
 
 			stock, err := u.Repo.Stock.FindByProductID(ctx, v.ID)
 			if err != nil {
-				return res.ErrorBuilder(res.Constant.Error.BadRequest, err, "stock not found")
+				return res.ErrorBuilder(res.Constant.Error.BadRequest, err, "find stock by product id not found")
 			}
+
+			var stockRack *model.StockRackModel
+			stockRack, err = u.Repo.StockRack.FindByRackID(ctx, v.RackID)
+			if err != nil {
+				if res.ErrorResponse(err).ErrorCode() == errConstant.E_DATA_NOTFOUND {
+					stockRackInsert, err := u.Repo.StockRack.Create(ctx, model.StockRackModel{
+						Entity: model.Entity{
+							ID: uuid.New().String(),
+						},
+						StockRackEntity: model.StockRackEntity{
+							StockID: stock.ID,
+							RackID:  v.RackID,
+						},
+					})
+					if err != nil {
+						return res.ErrorBuilder(res.Constant.Error.UnprocessableEntity, err, "create stock rack error")
+					}
+					stockRack = &stockRackInsert
+				} else {
+					return res.ErrorBuilder(res.Constant.Error.BadRequest, err, "find stock rack error")
+				}
+			}
+
 			packet, err := u.Repo.Packet.FindByID(ctx, stock.PacketID)
 			if err != nil {
-				return res.ErrorBuilder(res.Constant.Error.BadRequest, err, "packet not found")
+				return res.ErrorBuilder(res.Constant.Error.BadRequest, err, "find packet by id not found")
 			}
 
 			if payload.TrxType == constant.TRX_TYPE_IN {
 				qtySeal = v.Quantity
+				stockRack.TotalSeal += int64(qtySeal)
+				stockRack.Total += int64(qtySeal)
 				stock.TotalSeal += int64(qtySeal)
 				stock.Total += int64(qtySeal)
 
@@ -136,7 +162,7 @@ func (u *stock) Transaction(ctx context.Context, payload dto.TransactionStockReq
 							IsSeal:         true,
 							Value:          float64(packet.Value),
 							RemainingValue: float64(packet.Value),
-							StockID:        stock.ID,
+							StockRackID:    stockRack.ID,
 						},
 					}
 					stockLookups = append(stockLookups, stockLookup)
@@ -150,12 +176,12 @@ func (u *stock) Transaction(ctx context.Context, payload dto.TransactionStockReq
 
 				_, err = u.Repo.StockLookup.Creates(ctx, stockLookups)
 				if err != nil {
-					return res.ErrorBuilder(res.Constant.Error.UnprocessableEntity, err, "failed create stock lookups")
+					return res.ErrorBuilder(res.Constant.Error.UnprocessableEntity, err, "create stock lookups error")
 				}
 			} else {
 				stockLookups, err := u.Repo.StockLookup.FindByIDs(ctx, v.StockLookupIDs)
 				if err != nil {
-					return res.ErrorBuilder(res.Constant.Error.BadRequest, err, "failed find stock lookups")
+					return res.ErrorBuilder(res.Constant.Error.BadRequest, err, "find stock lookups by ids error")
 				}
 
 				for _, v2 := range stockLookups {
@@ -172,13 +198,16 @@ func (u *stock) Transaction(ctx context.Context, payload dto.TransactionStockReq
 						},
 					})
 				}
+				stockRack.TotalSeal -= int64(qtySeal)
+				stockRack.TotalNotSeal -= int64(qtyNotSeal)
+				stockRack.Total -= int64(qtySeal) + int64(qtyNotSeal)
 				stock.TotalSeal -= int64(qtySeal)
 				stock.TotalNotSeal -= int64(qtyNotSeal)
 				stock.Total -= int64(qtySeal) + int64(qtyNotSeal)
 
 				err = u.Repo.StockLookup.DeleteByIDs(ctx, v.StockLookupIDs)
 				if err != nil {
-					return res.ErrorBuilder(res.Constant.Error.UnprocessableEntity, err, "failed delete stock lookups")
+					return res.ErrorBuilder(res.Constant.Error.UnprocessableEntity, err, "delete stock lookups error")
 				}
 			}
 
@@ -195,23 +224,27 @@ func (u *stock) Transaction(ctx context.Context, payload dto.TransactionStockReq
 				},
 			})
 
+			_, err = u.Repo.StockRack.UpdateByID(ctx, stockRack.ID, *stockRack)
+			if err != nil {
+				return res.ErrorBuilder(res.Constant.Error.UnprocessableEntity, err, "update stock rack error")
+			}
 			_, err = u.Repo.Stock.UpdateByID(ctx, stock.ID, *stock)
 			if err != nil {
-				return res.ErrorBuilder(res.Constant.Error.UnprocessableEntity, err, "failed update stock")
+				return res.ErrorBuilder(res.Constant.Error.UnprocessableEntity, err, "update stock error")
 			}
 		}
 
 		_, err = u.Repo.StockTrx.Create(ctx, stockTrx)
 		if err != nil {
-			return res.ErrorBuilder(res.Constant.Error.UnprocessableEntity, err, "failed create stock trx")
+			return res.ErrorBuilder(res.Constant.Error.UnprocessableEntity, err, "create stock trx error")
 		}
 		_, err = u.Repo.StockTrxItem.Creates(ctx, stockTrxItems)
 		if err != nil {
-			return res.ErrorBuilder(res.Constant.Error.UnprocessableEntity, err, "failed create stock trx items")
+			return res.ErrorBuilder(res.Constant.Error.UnprocessableEntity, err, "create stock trx items error")
 		}
 		_, err = u.Repo.StockTrxItemLookup.Creates(ctx, stockTrxItemLookups)
 		if err != nil {
-			return res.ErrorBuilder(res.Constant.Error.UnprocessableEntity, err, "failed create stock trx item lookups")
+			return res.ErrorBuilder(res.Constant.Error.UnprocessableEntity, err, "create stock trx item lookups error")
 		}
 
 		return nil
