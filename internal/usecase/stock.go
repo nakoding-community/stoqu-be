@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"strconv"
 	"strings"
 
@@ -23,6 +24,7 @@ type Stock interface {
 	Find(ctx context.Context, filterParam abstraction.Filter) ([]dto.StockViewResponse, abstraction.PaginationInfo, error)
 	FindByID(ctx context.Context, payload dto.ByIDRequest) (dto.StockResponse, error)
 	Transaction(ctx context.Context, payload dto.TransactionStockRequest) (dto.StockTransactionResponse, error)
+	Convertion(ctx context.Context, payload dto.ConvertionStockRequest) (dto.StockConvertionResponse, error)
 }
 
 type stock struct {
@@ -119,29 +121,10 @@ func (u *stock) Transaction(ctx context.Context, payload dto.TransactionStockReq
 			if err != nil {
 				return res.ErrorBuilder(res.Constant.Error.BadRequest, err, "find stock by product id not found")
 			}
-
-			var stockRack *model.StockRackModel
-			stockRack, err = u.Repo.StockRack.FindByRackID(ctx, v.RackID)
+			stockRack, err := u.upsertStockRack(ctx, stock.ID, v.RackID)
 			if err != nil {
-				if res.ErrorResponse(err).ErrorCode() == errConstant.E_DATA_NOTFOUND {
-					stockRackInsert, err := u.Repo.StockRack.Create(ctx, model.StockRackModel{
-						Entity: model.Entity{
-							ID: uuid.New().String(),
-						},
-						StockRackEntity: model.StockRackEntity{
-							StockID: stock.ID,
-							RackID:  v.RackID,
-						},
-					})
-					if err != nil {
-						return res.ErrorBuilder(res.Constant.Error.UnprocessableEntity, err, "create stock rack error")
-					}
-					stockRack = &stockRackInsert
-				} else {
-					return res.ErrorBuilder(res.Constant.Error.BadRequest, err, "find stock rack error")
-				}
+				return err
 			}
-
 			packet, err := u.Repo.Packet.FindByID(ctx, stock.PacketID)
 			if err != nil {
 				return res.ErrorBuilder(res.Constant.Error.BadRequest, err, "find packet by id not found")
@@ -179,7 +162,7 @@ func (u *stock) Transaction(ctx context.Context, payload dto.TransactionStockReq
 					return res.ErrorBuilder(res.Constant.Error.UnprocessableEntity, err, "create stock lookups error")
 				}
 			} else {
-				stockLookups, err := u.Repo.StockLookup.FindByIDs(ctx, v.StockLookupIDs)
+				stockLookups, err := u.Repo.StockLookup.FindByIDs(ctx, v.StockLookupIDs, "")
 				if err != nil {
 					return res.ErrorBuilder(res.Constant.Error.BadRequest, err, "find stock lookups by ids error")
 				}
@@ -257,4 +240,322 @@ func (u *stock) Transaction(ctx context.Context, payload dto.TransactionStockReq
 	}
 
 	return result, nil
+}
+
+func (u *stock) Convertion(ctx context.Context, payload dto.ConvertionStockRequest) (result dto.StockConvertionResponse, err error) {
+	if err = trxmanager.New(u.Repo.Db).WithTrx(ctx, func(ctx context.Context) error {
+		wrapper := &convertionDataWrapper{}
+
+		// validate data
+		err := u.convertionValidateData(ctx, payload, wrapper)
+		if err != nil {
+			return err
+		}
+
+		// validate calculation
+		err = u.convertionValidateCalculation(ctx, payload, wrapper)
+		if err != nil {
+			return err
+		}
+
+		// process
+		err = u.convertionProcess(ctx, payload, wrapper)
+		if err != nil {
+			return err
+		}
+
+		// mutation
+		err = u.convertionMutation(ctx, wrapper)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}); err != nil {
+		return result, err
+	}
+
+	return result, nil
+}
+
+func (u *stock) upsertStockRack(ctx context.Context, stockID, rackID string) (result *model.StockRackModel, err error) {
+	result, err = u.Repo.StockRack.FindByStockAndRackID(ctx, stockID, rackID)
+	if err != nil {
+		if res.ErrorResponse(err).ErrorCode() == errConstant.E_DATA_NOTFOUND {
+			stockRackInsert, err := u.Repo.StockRack.Create(ctx, model.StockRackModel{
+				Entity: model.Entity{
+					ID: uuid.New().String(),
+				},
+				StockRackEntity: model.StockRackEntity{
+					StockID: stockID,
+					RackID:  rackID,
+				},
+			})
+			if err != nil {
+				return result, res.ErrorBuilder(res.Constant.Error.UnprocessableEntity, err, "create stock rack error")
+			}
+			result = &stockRackInsert
+		} else {
+			return result, res.ErrorBuilder(res.Constant.Error.BadRequest, err, "find stock rack error")
+		}
+	}
+
+	return result, nil
+}
+
+type productWrapper struct {
+	product      *model.ProductModel
+	stock        *model.StockModel
+	stockRack    *model.StockRackModel
+	packet       *model.PacketModel
+	stockLookups []model.StockLookupModel
+	totalValue   float64
+}
+
+type stockTrxWrapper struct {
+	stockTrx            *model.StockTrxModel
+	stockTrxItems       []model.StockTrxItemModel
+	stockTrxItemLookups []model.StockTrxItemLookupModel
+}
+
+type convertionDataWrapper struct {
+	origin         *productWrapper
+	destination    *productWrapper
+	convertionUnit *model.ConvertionUnitModel
+	trx            *stockTrxWrapper
+}
+
+func (u *stock) convertionValidateData(ctx context.Context, payload dto.ConvertionStockRequest, wrapper *convertionDataWrapper) error {
+	productOrigin, err := u.Repo.Product.FindByID(ctx, payload.Origin.ProductID)
+	if err != nil {
+		return res.ErrorBuilder(res.Constant.Error.BadRequest, err, "find product origin by id error")
+	}
+	stockOrigin, err := u.Repo.Stock.FindByProductID(ctx, productOrigin.ID)
+	if err != nil {
+		return res.ErrorBuilder(res.Constant.Error.BadRequest, err, "find stock origin by product id error")
+	}
+	stockRackOrigin, err := u.Repo.StockRack.FindByStockAndRackID(ctx, stockOrigin.ID, payload.Origin.RackID)
+	if err != nil {
+		return res.ErrorBuilder(res.Constant.Error.BadRequest, err, "find stock rack origin by product id error")
+	}
+	packetOrigin, err := u.Repo.Packet.FindByID(ctx, productOrigin.PacketID)
+	if err != nil {
+		return res.ErrorBuilder(res.Constant.Error.BadRequest, err, "find packet origin by id error")
+	}
+
+	productDestination, err := u.Repo.Product.FindByBrandVariantPacketID(ctx, productOrigin.BrandID, productOrigin.VariantID, payload.Destination.PacketID)
+	if err != nil {
+		return res.ErrorBuilder(res.Constant.Error.BadRequest, err, "find product destination by id error")
+	}
+	stockDestination, err := u.Repo.Stock.FindByProductID(ctx, productDestination.ID)
+	if err != nil {
+		return res.ErrorBuilder(res.Constant.Error.BadRequest, err, "find stock destination by product id error")
+	}
+	stockRackDestination, err := u.upsertStockRack(ctx, stockDestination.ID, payload.Origin.RackID)
+	if err != nil {
+		return err
+	}
+	packetDestination, err := u.Repo.Packet.FindByID(ctx, payload.Destination.PacketID)
+	if err != nil {
+		return res.ErrorBuilder(res.Constant.Error.BadRequest, err, "find packet destination by id error")
+	}
+
+	convertionUnit, err := u.Repo.ConvertionUnit.FindByUnitOriginDestinationID(ctx, packetOrigin.UnitID, packetDestination.UnitID)
+	if err != nil {
+		return res.ErrorBuilder(res.Constant.Error.BadRequest, err, "find convertion unit by unit origin & destination id error")
+	}
+
+	wrapper.origin = &productWrapper{
+		product:   productOrigin,
+		stock:     stockOrigin,
+		stockRack: stockRackOrigin,
+		packet:    packetOrigin,
+	}
+	wrapper.destination = &productWrapper{
+		product:   productDestination,
+		stock:     stockDestination,
+		stockRack: stockRackDestination,
+		packet:    packetDestination,
+	}
+	wrapper.convertionUnit = convertionUnit
+
+	return nil
+}
+
+func (u *stock) convertionValidateCalculation(ctx context.Context, payload dto.ConvertionStockRequest, wrapper *convertionDataWrapper) error {
+	if wrapper.origin.packet.UnitID == wrapper.destination.packet.UnitID && wrapper.origin.packet.Value <= wrapper.destination.packet.Value {
+		return res.ErrorBuilder(res.Constant.Error.BadRequest, errors.New("packet destination must less than origin"))
+	}
+	sumStockLookup, err := u.Repo.StockLookup.SumByIDs(ctx, payload.Origin.StockLookupIDs)
+	if err != nil {
+		return res.ErrorBuilder(res.Constant.Error.BadRequest, err, "sum stock lookup by ids error")
+	}
+	if sumStockLookup.RemainingValue == 0 {
+		return res.ErrorBuilder(res.Constant.Error.BadRequest, errors.New("remaining value must be more than 0"))
+	}
+	totalValueOrigin := sumStockLookup.RemainingValue * wrapper.convertionUnit.ValueConvertion
+	totalValueDestination := float64(payload.Destination.Total) * float64(wrapper.destination.packet.Value)
+	if totalValueOrigin < totalValueDestination {
+		return res.ErrorBuilder(res.Constant.Error.BadRequest, errors.New("total value origin must be more than destination"))
+	}
+
+	wrapper.origin.totalValue = totalValueOrigin
+	wrapper.destination.totalValue = totalValueDestination
+
+	return nil
+}
+
+func (u *stock) convertionProcess(ctx context.Context, payload dto.ConvertionStockRequest, wrapper *convertionDataWrapper) (err error) {
+	stockTrxID := uuid.New().String()
+	stockTrx := model.StockTrxModel{
+		Entity: model.Entity{
+			ID: stockTrxID,
+		},
+		StockTrxEntity: model.StockTrxEntity{
+			TrxType: constant.TRX_TYPE_CONVERT,
+			Code:    str.GenCode(constant.CODE_STOCK_TRX_PREFIX),
+		},
+	}
+	stockTrxItems := []model.StockTrxItemModel{
+		{
+			Entity: model.Entity{
+				ID: uuid.New().String(),
+			},
+			StockTrxItemEntity: model.StockTrxItemEntity{
+				ConvertType: constant.CONVERT_TYPE_ORIGIN,
+				StockTrxID:  stockTrxID,
+				StockID:     wrapper.origin.stock.ID,
+				ProductID:   wrapper.origin.product.ID,
+			},
+		},
+		{
+			Entity: model.Entity{
+				ID: uuid.New().String(),
+			},
+			StockTrxItemEntity: model.StockTrxItemEntity{
+				ConvertType: constant.CONVERT_TYPE_DESTINATION,
+				StockTrxID:  stockTrxID,
+				StockID:     wrapper.destination.stock.ID,
+				ProductID:   wrapper.destination.product.ID,
+			},
+		},
+	}
+	stockTrxItemLookups := []model.StockTrxItemLookupModel{}
+	stockLookupOrigins, err := u.Repo.StockLookup.FindByIDs(ctx, payload.Origin.StockLookupIDs, "remaining_value asc")
+	if err != nil {
+		return res.ErrorBuilder(res.Constant.Error.BadRequest, err, "find stock lookup by ids error")
+	}
+	stockLookupDestinations := []model.StockLookupModel{}
+	for i := 0; i < int(payload.Destination.Total); i++ {
+		decrementValue := float64(wrapper.destination.packet.Value) / wrapper.convertionUnit.ValueConvertion
+		for _, stockLookupOrigin := range stockLookupOrigins {
+			// prevention
+			if stockLookupOrigin.RemainingValue <= 0 {
+				continue
+			}
+			if stockLookupOrigin.RemainingValue < decrementValue && wrapper.origin.totalValue < wrapper.destination.totalValue {
+				break
+			}
+			wrapper.origin.totalValue -= float64(wrapper.destination.packet.Value)
+
+			// origin
+			stockLookupOrigin.RemainingValueBefore = stockLookupOrigin.RemainingValue
+			stockLookupOrigin.RemainingValue -= decrementValue
+			if stockLookupOrigin.IsSeal {
+				stockLookupOrigin.IsSeal = false
+				wrapper.origin.stockRack.TotalNotSeal++
+				wrapper.origin.stockRack.TotalSeal--
+				wrapper.origin.stock.TotalNotSeal++
+				wrapper.origin.stock.TotalSeal--
+				stockTrxItems[0].TotalSeal++
+			} else {
+				stockTrxItems[0].TotalNotSeal++
+			}
+			stockTrxItemLookups = append(stockTrxItemLookups, model.StockTrxItemLookupModel{
+				StockTrxItemLookupEntity: model.StockTrxItemLookupEntity{
+					StockLookupEntity: stockLookupOrigin.StockLookupEntity,
+					StockTrxItemID:    stockTrxItems[0].ID,
+				},
+			})
+
+			// destination
+			stockLookupDestination := model.StockLookupModel{
+				StockLookupEntity: model.StockLookupEntity{
+					Code:           str.GenCode(constant.CODE_STOCK_LOOKUP_PREFIX),
+					IsSeal:         true,
+					Value:          float64(wrapper.destination.packet.Value),
+					RemainingValue: float64(wrapper.destination.packet.Value),
+					StockRackID:    wrapper.destination.stockRack.ID,
+				},
+			}
+			stockLookupDestinations = append(stockLookupDestinations, stockLookupDestination)
+			wrapper.destination.stockRack.TotalSeal++
+			wrapper.destination.stockRack.Total++
+			wrapper.origin.stock.TotalSeal++
+			wrapper.origin.stock.Total++
+			stockTrxItems[1].TotalSeal++
+			stockTrxItemLookups = append(stockTrxItemLookups, model.StockTrxItemLookupModel{
+				StockTrxItemLookupEntity: model.StockTrxItemLookupEntity{
+					StockLookupEntity: stockLookupDestination.StockLookupEntity,
+					StockTrxItemID:    stockTrxItems[1].ID,
+				},
+			})
+		}
+	}
+
+	wrapper.origin.stockLookups = stockLookupOrigins
+	wrapper.destination.stockLookups = stockLookupDestinations
+	wrapper.trx = &stockTrxWrapper{
+		stockTrx:            &stockTrx,
+		stockTrxItems:       stockTrxItems,
+		stockTrxItemLookups: stockTrxItemLookups,
+	}
+
+	return nil
+}
+
+func (u *stock) convertionMutation(ctx context.Context, wrapper *convertionDataWrapper) (err error) {
+	for _, stockLookupOrigin := range wrapper.origin.stockLookups {
+		_, err = u.Repo.StockLookup.UpdateByID(ctx, stockLookupOrigin.ID, stockLookupOrigin)
+		if err != nil {
+			return res.ErrorBuilder(res.Constant.Error.UnprocessableEntity, err, "update stock lookup origin by id error")
+		}
+	}
+	_, err = u.Repo.StockLookup.Creates(ctx, wrapper.destination.stockLookups)
+	if err != nil {
+		return res.ErrorBuilder(res.Constant.Error.UnprocessableEntity, err, "creates stock lookups destination error")
+	}
+
+	_, err = u.Repo.StockRack.UpdateByID(ctx, wrapper.origin.stockRack.ID, *wrapper.origin.stockRack)
+	if err != nil {
+		return res.ErrorBuilder(res.Constant.Error.UnprocessableEntity, err, "update stock rack origin by id error")
+	}
+	_, err = u.Repo.StockRack.UpdateByID(ctx, wrapper.destination.stockRack.ID, *wrapper.destination.stockRack)
+	if err != nil {
+		return res.ErrorBuilder(res.Constant.Error.UnprocessableEntity, err, "update stock rack destination by id error")
+	}
+
+	_, err = u.Repo.Stock.UpdateByID(ctx, wrapper.origin.stock.ID, *wrapper.origin.stock)
+	if err != nil {
+		return res.ErrorBuilder(res.Constant.Error.UnprocessableEntity, err, "update stock origin by id error")
+	}
+	_, err = u.Repo.Stock.UpdateByID(ctx, wrapper.destination.stock.ID, *wrapper.destination.stock)
+	if err != nil {
+		return res.ErrorBuilder(res.Constant.Error.UnprocessableEntity, err, "update stock destination by id error")
+	}
+
+	_, err = u.Repo.StockTrx.Create(ctx, *wrapper.trx.stockTrx)
+	if err != nil {
+		return res.ErrorBuilder(res.Constant.Error.UnprocessableEntity, err, "create stock trx error")
+	}
+	_, err = u.Repo.StockTrxItem.Creates(ctx, wrapper.trx.stockTrxItems)
+	if err != nil {
+		return res.ErrorBuilder(res.Constant.Error.UnprocessableEntity, err, "creates stock trx items error")
+	}
+	_, err = u.Repo.StockTrxItemLookup.Creates(ctx, wrapper.trx.stockTrxItemLookups)
+	if err != nil {
+		return res.ErrorBuilder(res.Constant.Error.UnprocessableEntity, err, "creates stock trx item lookups error")
+	}
+
+	return nil
 }

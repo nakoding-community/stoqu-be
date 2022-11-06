@@ -24,7 +24,7 @@ type (
 
 		Find(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]T, *abstraction.PaginationInfo, error)
 		FindByID(ctx context.Context, id string) (*T, error)
-		FindByIDs(ctx context.Context, ids []string) ([]T, error)
+		FindByIDs(ctx context.Context, ids []string, sortBy string) ([]T, error)
 		FindByCode(ctx context.Context, code string) (*T, error)
 		FindByName(ctx context.Context, name string) (*T, error)
 		Create(ctx context.Context, data T) (T, error)
@@ -139,19 +139,23 @@ func (m *base[T]) Find(ctx context.Context, filterParam abstraction.Filter, sear
 }
 
 func (m *base[T]) FindByID(ctx context.Context, id string) (*T, error) {
-	query := m.GetConn(ctx).Model(m.entity)
+	query := m.GetConn(ctx).Model(m.entity).Where("id", id)
 	result := new(T)
-	err := query.WithContext(ctx).Where("id", id).First(result).Error
+	err := query.WithContext(ctx).First(result).Error
 	if err != nil {
 		return nil, m.MaskError(err)
 	}
 	return result, nil
 }
 
-func (m *base[T]) FindByIDs(ctx context.Context, ids []string) ([]T, error) {
-	query := m.GetConn(ctx).Model(m.entity)
+func (m *base[T]) FindByIDs(ctx context.Context, ids []string, sortBy string) ([]T, error) {
+	query := m.GetConn(ctx).Model(m.entity).Where("id IN ?", ids)
+	if sortBy != "" {
+		query.Order(sortBy)
+	}
+
 	result := []T{}
-	err := query.WithContext(ctx).Where("id In ?", ids).Find(&result).Error
+	err := query.WithContext(ctx).Find(&result).Error
 	if err != nil {
 		return nil, m.MaskError(err)
 	}
@@ -159,9 +163,9 @@ func (m *base[T]) FindByIDs(ctx context.Context, ids []string) ([]T, error) {
 }
 
 func (m *base[T]) FindByCode(ctx context.Context, code string) (*T, error) {
-	query := m.GetConn(ctx).Model(m.entity)
+	query := m.GetConn(ctx).Model(m.entity).Where("code", code)
 	result := new(T)
-	err := query.WithContext(ctx).Where("code", code).First(result).Error
+	err := query.WithContext(ctx).First(result).Error
 	if err != nil {
 		return nil, m.MaskError(err)
 	}
@@ -169,9 +173,9 @@ func (m *base[T]) FindByCode(ctx context.Context, code string) (*T, error) {
 }
 
 func (m *base[T]) FindByName(ctx context.Context, name string) (*T, error) {
-	query := m.GetConn(ctx).Model(m.entity)
+	query := m.GetConn(ctx).Model(m.entity).Where("name", name)
 	result := new(T)
-	err := query.WithContext(ctx).Where("name", name).First(result).Error
+	err := query.WithContext(ctx).First(result).Error
 	if err != nil {
 		return nil, m.MaskError(err)
 	}

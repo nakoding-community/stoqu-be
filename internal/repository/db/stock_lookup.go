@@ -16,9 +16,8 @@ type (
 		// Base[model.StockLookupModel]
 
 		// Base
-		Find(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.StockLookupView, *abstraction.PaginationInfo, error)
 		FindByID(ctx context.Context, id string) (*model.StockLookupModel, error)
-		FindByIDs(ctx context.Context, ids []string) ([]model.StockLookupModel, error)
+		FindByIDs(ctx context.Context, ids []string, sortBy string) ([]model.StockLookupModel, error)
 		FindByCode(ctx context.Context, code string) (*model.StockLookupModel, error)
 		FindByName(ctx context.Context, name string) (*model.StockLookupModel, error)
 		Create(ctx context.Context, data model.StockLookupModel) (model.StockLookupModel, error)
@@ -27,6 +26,10 @@ type (
 		DeleteByID(ctx context.Context, id string) error
 		DeleteByIDs(ctx context.Context, ids []string) error
 		Count(ctx context.Context) (int64, error)
+
+		// Custom
+		Find(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.StockLookupView, *abstraction.PaginationInfo, error)
+		SumByIDs(ctx context.Context, ids []string) (*model.StockLookupSum, error)
 	}
 
 	stockLookup struct {
@@ -68,7 +71,22 @@ func (m *stockLookup) Find(ctx context.Context, filterParam abstraction.Filter, 
 	err := query.WithContext(ctx).Find(&result).Error
 
 	if err != nil {
-		return nil, info, err
+		return nil, info, m.MaskError(err)
 	}
 	return result, info, nil
+}
+
+func (m *stockLookup) SumByIDs(ctx context.Context, ids []string) (*model.StockLookupSum, error) {
+	query := m.GetConn(ctx).Model(m.entity).
+		Select(`
+			sum(remaining_type_value) as remaining_type_value 
+		`).
+		Where(`id IN ?`, ids)
+
+	result := new(model.StockLookupSum)
+	err := query.WithContext(ctx).First(result).Error
+	if err != nil {
+		return nil, m.MaskError(err)
+	}
+	return result, nil
 }

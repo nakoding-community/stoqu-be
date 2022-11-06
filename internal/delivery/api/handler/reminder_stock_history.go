@@ -18,7 +18,9 @@ type (
 	ReminderStockHistory interface {
 		Route(g *echo.Group)
 		Get(c echo.Context) error
+		GetCountUnread(c echo.Context) error
 		GetByID(c echo.Context) error
+		UpdateBulkRead(c echo.Context) error
 		Update(c echo.Context) error
 		Delete(c echo.Context) error
 	}
@@ -30,7 +32,7 @@ func NewReminderStockHistory(f factory.Factory) ReminderStockHistory {
 
 func (h *reminderStockHistory) Route(g *echo.Group) {
 	g.GET("", h.Get, middleware.Authentication)
-	g.GET("/count-unread", h.GetCountUnead, middleware.Authentication)
+	g.GET("/count-unread", h.GetCountUnread, middleware.Authentication)
 	g.GET("/:id", h.GetByID, middleware.Authentication)
 	g.PUT("/bulk-read", h.UpdateBulkRead, middleware.Authentication)
 	g.PUT("/:id", h.Update, middleware.Authentication)
@@ -78,7 +80,7 @@ func (h *reminderStockHistory) Get(c echo.Context) error {
 // @Failure 404 {object} res.errorResponse
 // @Failure 500 {object} res.errorResponse
 // @Router /api/reminder-stock-histories/count-unread [get]
-func (h *reminderStockHistory) GetCountUnead(c echo.Context) error {
+func (h *reminderStockHistory) GetCountUnread(c echo.Context) error {
 	ctx := c.Request().Context()
 	result, err := h.Factory.Usecase.ReminderStockHistory.CountUnread(ctx)
 	if err != nil {

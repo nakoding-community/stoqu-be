@@ -25,10 +25,16 @@ type (
 		UpdateByID(ctx context.Context, id string, data model.ConvertionUnitModel) (model.ConvertionUnitModel, error)
 		DeleteByID(ctx context.Context, id string) error
 		Count(ctx context.Context) (int64, error)
+
+		// Custom
+		FindByUnitOriginDestinationID(ctx context.Context, unitOriginID string, destinationUnitID string) (*model.ConvertionUnitModel, error)
 	}
 
 	convertionUnit struct {
 		Base[model.ConvertionUnitModel]
+
+		entity     model.ConvertionUnitModel
+		entityName string
 	}
 )
 
@@ -36,6 +42,18 @@ func NewConvertionUnit(conn *gorm.DB) ConvertionUnit {
 	model := model.ConvertionUnitModel{}
 	base := NewBase(conn, model, model.TableName())
 	return &convertionUnit{
-		base,
+		Base:       base,
+		entity:     model,
+		entityName: model.TableName(),
 	}
+}
+
+func (m *convertionUnit) FindByUnitOriginDestinationID(ctx context.Context, unitOriginID string, destinationUnitID string) (*model.ConvertionUnitModel, error) {
+	query := m.GetConn(ctx).Model(m.entity)
+	result := new(model.ConvertionUnitModel)
+	err := query.WithContext(ctx).Where("unit_origin_id = ? AND unit_destination_id = ?", unitOriginID, destinationUnitID).First(result).Error
+	if err != nil {
+		return nil, m.MaskError(err)
+	}
+	return result, nil
 }

@@ -18,7 +18,7 @@ type (
 		// Base
 		Find(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.StockTrxModel, *abstraction.PaginationInfo, error)
 		FindByID(ctx context.Context, id string) (*model.StockTrxModel, error)
-		FindByIDs(ctx context.Context, ids []string) ([]model.StockTrxModel, error)
+		FindByIDs(ctx context.Context, ids []string, sortBy string) ([]model.StockTrxModel, error)
 		FindByCode(ctx context.Context, code string) (*model.StockTrxModel, error)
 		FindByName(ctx context.Context, name string) (*model.StockTrxModel, error)
 		Create(ctx context.Context, data model.StockTrxModel) (model.StockTrxModel, error)

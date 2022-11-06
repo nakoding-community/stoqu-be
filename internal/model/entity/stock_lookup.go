@@ -28,3 +28,8 @@ type StockLookupView struct {
 	ProductID string `json:"product_id" filter:"column:stocks.product_id"`
 	RackID    string `json:"rack_id" filter:"column:stock_racks.rack_id"`
 }
+
+type StockLookupSum struct {
+	// join
+	RemainingValue float64 `json:"remaining_value"`
+}

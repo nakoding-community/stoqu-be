@@ -19,6 +19,8 @@ type (
 		Route(g *echo.Group)
 		Get(c echo.Context) error
 		GetByID(c echo.Context) error
+		Transaction(c echo.Context) error
+		Convertion(c echo.Context) error
 	}
 )
 
@@ -29,7 +31,8 @@ func NewStock(f factory.Factory) Stock {
 func (h *stock) Route(g *echo.Group) {
 	g.GET("", h.Get, middleware.Authentication)
 	g.GET("/:id", h.GetByID, middleware.Authentication)
-	g.PUT("", h.Transaction, middleware.Authentication)
+	g.PUT("/transaction", h.Transaction, middleware.Authentication)
+	g.PUT("/convertion", h.Convertion, middleware.Authentication)
 }
 
 // Get stock
@@ -105,7 +108,7 @@ func (h *stock) GetByID(c echo.Context) error {
 // @Failure 400 {object} res.errorResponse
 // @Failure 404 {object} res.errorResponse
 // @Failure 500 {object} res.errorResponse
-// @Router /api/stocks [put]
+// @Router /api/stocks/transaction [put]
 func (h *stock) Transaction(c echo.Context) error {
 	ctx := c.Request().Context()
 
@@ -118,6 +121,38 @@ func (h *stock) Transaction(c echo.Context) error {
 	}
 
 	result, err := h.Factory.Usecase.Stock.Transaction(ctx, *payload)
+	if err != nil {
+		return res.ErrorResponse(err).Send(c)
+	}
+
+	return res.SuccessResponse(result).Send(c)
+}
+
+// Convertion stock
+// @Summary Convertion stock
+// @Description Convertion stock
+// @Tags stock
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body dto.ConvertionStockRequest true "request body"
+// @Success 200 {object} dto.StockConvertionResponseDoc
+// @Failure 400 {object} res.errorResponse
+// @Failure 404 {object} res.errorResponse
+// @Failure 500 {object} res.errorResponse
+// @Router /api/stocks/convertion [put]
+func (h *stock) Convertion(c echo.Context) error {
+	ctx := c.Request().Context()
+
+	payload := new(dto.ConvertionStockRequest)
+	if err := c.Bind(&payload); err != nil {
+		return res.ErrorBuilder(res.Constant.Error.BadRequest, err).Send(c)
+	}
+	if err := c.Validate(payload); err != nil {
+		return res.ErrorBuilder(res.Constant.Error.Validation, err).Send(c)
+	}
+
+	result, err := h.Factory.Usecase.Stock.Convertion(ctx, *payload)
 	if err != nil {
 		return res.ErrorResponse(err).Send(c)
 	}

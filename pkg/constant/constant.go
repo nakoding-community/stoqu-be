@@ -29,12 +29,19 @@ const (
 
 // trx
 const (
-	TRX_TYPE_IN  = "in"
-	TRX_TYPE_OUT = "out"
+	TRX_TYPE_IN      = "in"
+	TRX_TYPE_OUT     = "out"
+	TRX_TYPE_CONVERT = "convert"
 )
 
 // status
 const (
 	STATUS_SUCCESS = "SUCCESS"
 	STATUS_FAILED  = "FAILED"
+)
+
+// convert
+const (
+	CONVERT_TYPE_ORIGIN      = "origin"
+	CONVERT_TYPE_DESTINATION = "destination"
 )

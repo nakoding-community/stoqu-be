@@ -18,7 +18,7 @@ type (
 		// Base
 		Find(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.StockRackModel, *abstraction.PaginationInfo, error)
 		FindByID(ctx context.Context, id string) (*model.StockRackModel, error)
-		FindByIDs(ctx context.Context, ids []string) ([]model.StockRackModel, error)
+		FindByIDs(ctx context.Context, ids []string, sortBy string) ([]model.StockRackModel, error)
 		FindByCode(ctx context.Context, code string) (*model.StockRackModel, error)
 		FindByName(ctx context.Context, name string) (*model.StockRackModel, error)
 		Create(ctx context.Context, data model.StockRackModel) (model.StockRackModel, error)
@@ -29,7 +29,7 @@ type (
 		Count(ctx context.Context) (int64, error)
 
 		// Custom
-		FindByRackID(ctx context.Context, rackID string) (*model.StockRackModel, error)
+		FindByStockAndRackID(ctx context.Context, stockID, rackID string) (*model.StockRackModel, error)
 	}
 
 	stockRack struct {
@@ -50,10 +50,10 @@ func NewStockRack(conn *gorm.DB) StockRack {
 	}
 }
 
-func (m *stockRack) FindByRackID(ctx context.Context, rackID string) (*model.StockRackModel, error) {
+func (m *stockRack) FindByStockAndRackID(ctx context.Context, stockID, rackID string) (*model.StockRackModel, error) {
 	query := m.GetConn(ctx).Model(m.entity)
 	result := new(model.StockRackModel)
-	err := query.WithContext(ctx).Where("rack_id", rackID).First(result).Error
+	err := query.WithContext(ctx).Where("stock_id = ? AND rack_id = ?", stockID, rackID).First(result).Error
 	if err != nil {
 		return nil, m.MaskError(err)
 	}

@@ -27,6 +27,7 @@ type (
 
 		// Custom
 		Find(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.ProductView, *abstraction.PaginationInfo, error)
+		FindByBrandVariantPacketID(ctx context.Context, brandID, variantID, packetID string) (*model.ProductModel, error)
 	}
 
 	product struct {
@@ -77,4 +78,14 @@ func (m *product) Find(ctx context.Context, filterParam abstraction.Filter, sear
 		return nil, info, err
 	}
 	return result, info, nil
+}
+
+func (m *product) FindByBrandVariantPacketID(ctx context.Context, brandID, variantID, packetID string) (*model.ProductModel, error) {
+	query := m.GetConn(ctx).Model(m.entity)
+	result := new(model.ProductModel)
+	err := query.WithContext(ctx).Where("brand_id = ? AND variant_id = ? AND packet_id", brandID, variantID, packetID).First(result).Error
+	if err != nil {
+		return nil, m.MaskError(err)
+	}
+	return result, nil
 }
