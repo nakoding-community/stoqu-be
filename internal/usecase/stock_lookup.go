@@ -19,7 +19,7 @@ import (
 )
 
 type StockLookup interface {
-	Find(ctx context.Context, filterParam abstraction.Filter) ([]dto.StockLookupResponse, abstraction.PaginationInfo, error)
+	Find(ctx context.Context, filterParam abstraction.Filter) ([]dto.StockLookupViewResponse, abstraction.PaginationInfo, error)
 	FindByID(ctx context.Context, payload dto.ByIDRequest) (dto.StockLookupResponse, error)
 	Create(ctx context.Context, payload dto.CreateStockLookupRequest) (dto.StockLookupResponse, error)
 	Update(ctx context.Context, payload dto.UpdateStockLookupRequest) (dto.StockLookupResponse, error)
@@ -35,7 +35,7 @@ func NewStockLookup(cfg *config.Configuration, f repository.Factory) StockLookup
 	return &stockLookup{f, cfg}
 }
 
-func (u *stockLookup) Find(ctx context.Context, filterParam abstraction.Filter) (result []dto.StockLookupResponse, pagination abstraction.PaginationInfo, err error) {
+func (u *stockLookup) Find(ctx context.Context, filterParam abstraction.Filter) (result []dto.StockLookupViewResponse, pagination abstraction.PaginationInfo, err error) {
 	var search *abstraction.Search
 	if filterParam.Search != "" {
 		searchQuery := "lower(code) LIKE ? OR type_value = ? OR remaining_type_value = ? OR remaining_type_value_before = ?"
@@ -54,8 +54,8 @@ func (u *stockLookup) Find(ctx context.Context, filterParam abstraction.Filter) 
 	pagination = *info
 
 	for _, stockLookup := range stockLookups {
-		result = append(result, dto.StockLookupResponse{
-			StockLookupModel: stockLookup,
+		result = append(result, dto.StockLookupViewResponse{
+			StockLookupView: stockLookup,
 		})
 	}
 

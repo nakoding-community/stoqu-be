@@ -585,6 +585,49 @@ definitions:
             $ref: '#/definitions/response.Meta'
         type: object
     type: object
+  dto.StockLookupViewResponse:
+    properties:
+      brand_id:
+        description: fk
+        type: string
+      code:
+        type: string
+      created_at:
+        type: string
+      created_by:
+        type: string
+      id:
+        type: string
+      modified_at:
+        type: string
+      modified_by:
+        type: string
+      name:
+        type: string
+      packet_id:
+        type: string
+      price_final:
+        type: number
+      price_usd:
+        type: number
+      product_id:
+        description: join
+        type: string
+      rack_id:
+        type: string
+      variant_id:
+        type: string
+    type: object
+  dto.StockLookupViewResponseDoc:
+    properties:
+      body:
+        properties:
+          data:
+            $ref: '#/definitions/dto.StockLookupViewResponse'
+          meta:
+            $ref: '#/definitions/response.Meta'
+        type: object
+    type: object
   dto.StockResponse:
     properties:
       brand:
@@ -3292,32 +3335,57 @@ paths:
           type: string
         name: sort_by
         type: array
+      - description: fk
+        in: query
+        name: brand_id
+        type: string
       - in: query
         name: code
         type: string
       - in: query
-        name: is_seal
-        type: boolean
-      - in: query
-        name: remaining_value
-        type: number
-      - in: query
-        name: remaining_value_before
-        type: number
-      - description: fk
-        in: query
-        name: stock_rack_id
+        name: created_at
         type: string
       - in: query
-        name: value
+        name: created_by
+        type: string
+      - in: query
+        name: id
+        type: string
+      - in: query
+        name: modified_at
+        type: string
+      - in: query
+        name: modified_by
+        type: string
+      - in: query
+        name: name
+        type: string
+      - in: query
+        name: packet_id
+        type: string
+      - in: query
+        name: price_final
         type: number
+      - in: query
+        name: price_usd
+        type: number
+      - description: join
+        in: query
+        name: product_id
+        type: string
+      - in: query
+        name: rack_id
+        type: string
+      - in: query
+        name: variant_id
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.StockLookupResponseDoc'
+            $ref: '#/definitions/dto.StockLookupViewResponseDoc'
         "400":
           description: Bad Request
           schema:

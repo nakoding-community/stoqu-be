@@ -3200,33 +3200,74 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "name": "code",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "is_seal",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "name": "remaining_value",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "name": "remaining_value_before",
+                        "description": "fk",
+                        "name": "brand_id",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "fk",
-                        "name": "stock_rack_id",
+                        "name": "code",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "created_at",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "created_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "modified_at",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "modified_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "packet_id",
                         "in": "query"
                     },
                     {
                         "type": "number",
-                        "name": "value",
+                        "name": "price_final",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "name": "price_usd",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "join",
+                        "name": "product_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "rack_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "variant_id",
                         "in": "query"
                     }
                 ],
@@ -3234,7 +3275,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.StockLookupResponseDoc"
+                            "$ref": "#/definitions/dto.StockLookupViewResponseDoc"
                         }
                     },
                     "400": {
@@ -5612,6 +5653,71 @@ const docTemplate = `{
                     "properties": {
                         "data": {
                             "$ref": "#/definitions/dto.StockLookupResponse"
+                        },
+                        "meta": {
+                            "$ref": "#/definitions/response.Meta"
+                        }
+                    }
+                }
+            }
+        },
+        "dto.StockLookupViewResponse": {
+            "type": "object",
+            "properties": {
+                "brand_id": {
+                    "description": "fk",
+                    "type": "string"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "created_by": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "modified_at": {
+                    "type": "string"
+                },
+                "modified_by": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "packet_id": {
+                    "type": "string"
+                },
+                "price_final": {
+                    "type": "number"
+                },
+                "price_usd": {
+                    "type": "number"
+                },
+                "product_id": {
+                    "description": "join",
+                    "type": "string"
+                },
+                "rack_id": {
+                    "type": "string"
+                },
+                "variant_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.StockLookupViewResponseDoc": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "$ref": "#/definitions/dto.StockLookupViewResponse"
                         },
                         "meta": {
                             "$ref": "#/definitions/response.Meta"

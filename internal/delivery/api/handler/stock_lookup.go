@@ -45,14 +45,14 @@ func (h *stockLookup) Route(g *echo.Group) {
 // @Produce json
 // @Security BearerAuth
 // @param request query abstraction.Filter true "request query"
-// @Param entity query model.StockLookupEntity false "entity query"
-// @Success 200 {object} dto.StockLookupResponseDoc
+// @Param entity query model.StockLookupView false "entity query"
+// @Success 200 {object} dto.StockLookupViewResponseDoc
 // @Failure 400 {object} res.errorResponse
 // @Failure 404 {object} res.errorResponse
 // @Failure 500 {object} res.errorResponse
 // @Router /api/stock-lookups [get]
 func (h *stockLookup) Get(c echo.Context) error {
-	filter := abstraction.NewFilterBuiler[model.StockLookupEntity](c, "stock_lookups")
+	filter := abstraction.NewFilterBuiler[model.StockLookupView](c, "stock_lookups")
 	if err := c.Bind(filter.Payload); err != nil {
 		return res.ErrorBuilder(res.Constant.Error.BadRequest, err).Send(c)
 	}

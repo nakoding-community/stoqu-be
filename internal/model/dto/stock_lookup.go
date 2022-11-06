@@ -35,4 +35,14 @@ type (
 			Data StockLookupResponse `json:"data"`
 		} `json:"body"`
 	}
+
+	StockLookupViewResponse struct {
+		model.StockLookupView
+	}
+	StockLookupViewResponseDoc struct {
+		Body struct {
+			Meta res.Meta                `json:"meta"`
+			Data StockLookupViewResponse `json:"data"`
+		} `json:"body"`
+	}
 )
