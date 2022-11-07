@@ -36,19 +36,6 @@ This project have some existing driver :
 6. Websocket
 7. Cron 
 
-# Examples
-This project have some example for rest, ws, web
-
-1. Rest
-  - Auth 
-    - Login
-    - Register
-  - User
-    - Get (+ pagination, sort & filter)
-    - GetByID
-    - Create (+ transaction scope)
-    - Update (+ transaction scope)
-    - Delete
 
 ## Documentation
 
