@@ -47,6 +47,12 @@ func Init(cfg *config.Configuration) {
 					&entity.StockTrxModel{},
 					&entity.StockTrxItemModel{},
 					&entity.StockTrxItemLookupModel{},
+
+					&entity.OrderTrxModel{},
+					&entity.OrderTrxItemModel{},
+					&entity.OrderTrxItemLookupModel{},
+					&entity.OrderTrxStatusModel{},
+					&entity.OrderTrxReceiptModel{},
 				},
 			}
 		}

@@ -37,6 +37,12 @@ type Factory struct {
 	StockTrx           dbRepository.StockTrx
 	StockTrxItem       dbRepository.StockTrxItem
 	StockTrxItemLookup dbRepository.StockTrxItemLookup
+
+	OrderTrx           dbRepository.OrderTrx
+	OrderTrxItem       dbRepository.OrderTrxItem
+	OrderTrxItemLookup dbRepository.OrderTrxItemLookup
+	OrderTrxStatus     dbRepository.OrderTrxStatus
+	OrderTrxReceipt    dbRepository.OrderTrxReceipt
 }
 
 func Init(cfg *config.Configuration, db *gorm.DB) Factory {
@@ -65,6 +71,12 @@ func Init(cfg *config.Configuration, db *gorm.DB) Factory {
 	f.StockTrx = dbRepository.NewStockTrx(f.Db)
 	f.StockTrxItem = dbRepository.NewStockTrxItem(f.Db)
 	f.StockTrxItemLookup = dbRepository.NewStockTrxItemLookup(f.Db)
+
+	f.OrderTrx = dbRepository.NewOrderTrx(f.Db)
+	f.OrderTrxItem = dbRepository.NewOrderTrxItem(f.Db)
+	f.OrderTrxItemLookup = dbRepository.NewOrderTrxItemLookup(f.Db)
+	f.OrderTrxStatus = dbRepository.NewOrderTrxStatus(f.Db)
+	f.OrderTrxReceipt = dbRepository.NewOrderTrxReceipt(f.Db)
 
 	return f
 }
