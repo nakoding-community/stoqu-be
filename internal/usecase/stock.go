@@ -25,6 +25,7 @@ type Stock interface {
 	FindByID(ctx context.Context, payload dto.ByIDRequest) (dto.StockResponse, error)
 	Transaction(ctx context.Context, payload dto.TransactionStockRequest) (dto.StockTransactionResponse, error)
 	Convertion(ctx context.Context, payload dto.ConvertionStockRequest) (dto.StockConvertionResponse, error)
+	Movement(ctx context.Context, payload dto.MovementStockRequest) (result dto.StockMovementResponse, err error)
 }
 
 type stock struct {
@@ -119,7 +120,7 @@ func (u *stock) Transaction(ctx context.Context, payload dto.TransactionStockReq
 
 			stock, err := u.Repo.Stock.FindByProductID(ctx, v.ID)
 			if err != nil {
-				return res.ErrorBuilder(res.Constant.Error.BadRequest, err, "find stock by product id not found")
+				return res.ErrorBuilder(res.Constant.Error.BadRequest, err, "find stock by product id error")
 			}
 			stockRack, err := u.upsertStockRack(ctx, stock.ID, v.RackID)
 			if err != nil {
@@ -127,7 +128,7 @@ func (u *stock) Transaction(ctx context.Context, payload dto.TransactionStockReq
 			}
 			packet, err := u.Repo.Packet.FindByID(ctx, stock.PacketID)
 			if err != nil {
-				return res.ErrorBuilder(res.Constant.Error.BadRequest, err, "find packet by id not found")
+				return res.ErrorBuilder(res.Constant.Error.BadRequest, err, "find packet by id error")
 			}
 
 			if payload.TrxType == constant.TRX_TYPE_IN {
@@ -268,6 +269,71 @@ func (u *stock) Convertion(ctx context.Context, payload dto.ConvertionStockReque
 		err = u.convertionMutation(ctx, wrapper)
 		if err != nil {
 			return err
+		}
+
+		return nil
+	}); err != nil {
+		return result, err
+	}
+
+	return result, nil
+}
+
+func (u *stock) Movement(ctx context.Context, payload dto.MovementStockRequest) (result dto.StockMovementResponse, err error) {
+	if err = trxmanager.New(u.Repo.Db).WithTrx(ctx, func(ctx context.Context) error {
+		// validate
+		if payload.Origin.RackID == payload.Destination.RackID {
+			return res.ErrorBuilder(res.Constant.Error.Validation, errors.New("can't move stock in same rack id"))
+		}
+		stock, err := u.Repo.Stock.FindByProductID(ctx, payload.Origin.ProductID)
+		if err != nil {
+			return res.ErrorBuilder(res.Constant.Error.BadRequest, err, "find stock by product id error")
+		}
+		stockRackOrigin, err := u.Repo.StockRack.FindByStockAndRackID(ctx, stock.ID, payload.Origin.RackID)
+		if err != nil {
+			return res.ErrorBuilder(res.Constant.Error.BadRequest, err, "find stock rack origin by stock and rack id error")
+		}
+		stockRackDestination, err := u.upsertStockRack(ctx, stock.ID, payload.Destination.RackID)
+		if err != nil {
+			return res.ErrorBuilder(res.Constant.Error.BadRequest, err, "upsert stock rack destination by stock and rack id error")
+		}
+		stockLookupOrigins, err := u.Repo.StockLookup.FindByIDs(ctx, payload.Origin.StockLookupIDs, "")
+		if err != nil {
+			return res.ErrorBuilder(res.Constant.Error.BadRequest, err, "find stock lookups origin by ids error")
+		}
+
+		// process
+		var totalSeal, totalNotSeal int
+		for i, stockLookup := range stockLookupOrigins {
+			if stockLookup.IsSeal {
+				totalSeal++
+			} else {
+				totalNotSeal++
+			}
+
+			stockLookupOrigins[i].StockRackID = stockRackDestination.ID
+		}
+		stockRackOrigin.Total -= int64(len(stockLookupOrigins))
+		stockRackOrigin.TotalSeal -= int64(totalSeal)
+		stockRackOrigin.TotalNotSeal -= int64(totalNotSeal)
+		stockRackDestination.Total += int64(len(stockLookupOrigins))
+		stockRackDestination.TotalSeal += int64(totalSeal)
+		stockRackDestination.TotalNotSeal += int64(totalNotSeal)
+
+		// mutation
+		for _, stockLookup := range stockLookupOrigins {
+			_, err = u.Repo.StockLookup.UpdateByID(ctx, stockLookup.ID, stockLookup)
+			if err != nil {
+				return res.ErrorBuilder(res.Constant.Error.BadRequest, err, "update stock lookup origin by id error")
+			}
+		}
+		_, err = u.Repo.StockRack.UpdateByID(ctx, stockRackOrigin.ID, *stockRackOrigin)
+		if err != nil {
+			return res.ErrorBuilder(res.Constant.Error.BadRequest, err, "update stock rack origin by id error")
+		}
+		_, err = u.Repo.StockRack.UpdateByID(ctx, stockRackDestination.ID, *stockRackDestination)
+		if err != nil {
+			return res.ErrorBuilder(res.Constant.Error.BadRequest, err, "update stock destination origin by id error")
 		}
 
 		return nil

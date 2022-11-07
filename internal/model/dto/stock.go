@@ -27,12 +27,27 @@ type (
 	ConvertionStocOriginkRequest struct {
 		ProductID      string   `json:"product_id" validate:"required"`
 		RackID         string   `json:"rack_id" validate:"required"`
-		StockLookupIDs []string `json:"stock_lookup_ids"`
+		StockLookupIDs []string `json:"stock_lookup_ids" validate:"required,min=1"`
 	}
 
 	ConvertionStocDestinationRequest struct {
 		PacketID string `json:"packet_id" validate:"required"`
 		Total    int64  `json:"total" validate:"required,min=1"`
+	}
+
+	MovementStockRequest struct {
+		Origin      MovementOriginRequest      `json:"origin" validate:"required,dive"`
+		Destination MovementDestinationRequest `json:"destination" validate:"required,dive"`
+	}
+
+	MovementOriginRequest struct {
+		ProductID      string   `json:"product_id" validate:"required"`
+		RackID         string   `json:"rack_id" validate:"required"`
+		StockLookupIDs []string `json:"stock_lookup_ids" validate:"required,min=1"`
+	}
+
+	MovementDestinationRequest struct {
+		RackID string `json:"rack_id" validate:"required"`
 	}
 )
 
@@ -75,6 +90,16 @@ type (
 		Body struct {
 			Meta res.Meta                `json:"meta"`
 			Data StockConvertionResponse `json:"data"`
+		} `json:"body"`
+	}
+
+	StockMovementResponse struct {
+		Status string `json:"status"`
+	}
+	StockMovementResponseDoc struct {
+		Body struct {
+			Meta res.Meta              `json:"meta"`
+			Data StockMovementResponse `json:"data"`
 		} `json:"body"`
 	}
 )
