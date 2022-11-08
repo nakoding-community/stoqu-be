@@ -100,6 +100,7 @@ func (u *order) FindByID(ctx context.Context, payload dto.ByIDRequest) (dto.Orde
 }
 
 func (u *order) Upsert(ctx context.Context, payload dto.UpsertOrderRequest) (result dto.OrderUpsertResponse, err error) {
+	//!TODO:need calculation stock in whole function
 	mapStockLookups, err := u.buildMapStockLookups(ctx, payload)
 	if err != nil {
 		return result, err
