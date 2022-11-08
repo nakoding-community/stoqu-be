@@ -1144,6 +1144,308 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/orders": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get order",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "order"
+                ],
+                "summary": "Get order",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "example": [
+                            "asc_column",
+                            "-dsc_column"
+                        ],
+                        "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "code",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "created_at",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "created_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "customer_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "join",
+                        "name": "customer_name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "name": "final_price",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "is_read",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "modified_at",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "modified_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "notes",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "payment_status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "fk",
+                        "name": "pic_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "pic_name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "name": "price",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "shipment_number",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "shipment_price",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "shipment_type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "stock_status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "supplier_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "supplier_name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "trx_type",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.OrderViewResponseDoc"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Upsert order",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "order"
+                ],
+                "summary": "Upsert order",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpsertOrderRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.OrderUpsertResponseDoc"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/orders/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get order by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "order"
+                ],
+                "summary": "Get order by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id path",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.OrderViewResponseDoc"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/packets": {
             "get": {
                 "security": [
@@ -3200,12 +3502,6 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "fk",
-                        "name": "brand_id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
                         "name": "code",
                         "in": "query"
                     },
@@ -3225,6 +3521,11 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "boolean",
+                        "name": "is_seal",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "modified_at",
                         "in": "query"
@@ -3232,26 +3533,6 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "name": "modified_by",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "name",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "packet_id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "name": "price_final",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "name": "price_usd",
                         "in": "query"
                     },
                     {
@@ -3266,8 +3547,24 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "number",
+                        "name": "remaining_value",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "name": "remaining_value_before",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
-                        "name": "variant_id",
+                        "description": "fk",
+                        "name": "stock_rack_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "name": "value",
                         "in": "query"
                     }
                 ],
@@ -3694,7 +3991,66 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
+            }
+        },
+        "/api/stocks/convertion": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Movement stock",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stock"
+                ],
+                "summary": "Movement stock",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.MovementStockRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.StockMovementResponseDoc"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/stocks/transaction": {
             "put": {
                 "security": [
                     {
@@ -4928,6 +5284,60 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.ConvertionStocDestinationRequest": {
+            "type": "object",
+            "required": [
+                "packet_id",
+                "total"
+            ],
+            "properties": {
+                "packet_id": {
+                    "type": "string"
+                },
+                "total": {
+                    "type": "integer",
+                    "minimum": 1
+                }
+            }
+        },
+        "dto.ConvertionStocOriginkRequest": {
+            "type": "object",
+            "required": [
+                "product_id",
+                "rack_id",
+                "stock_lookup_ids"
+            ],
+            "properties": {
+                "product_id": {
+                    "type": "string"
+                },
+                "rack_id": {
+                    "type": "string"
+                },
+                "stock_lookup_ids": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "dto.ConvertionStockRequest": {
+            "type": "object",
+            "required": [
+                "destination",
+                "origin"
+            ],
+            "properties": {
+                "destination": {
+                    "$ref": "#/definitions/dto.ConvertionStocDestinationRequest"
+                },
+                "origin": {
+                    "$ref": "#/definitions/dto.ConvertionStocOriginkRequest"
+                }
+            }
+        },
         "dto.ConvertionUnitResponse": {
             "type": "object",
             "properties": {
@@ -5233,6 +5643,95 @@ const docTemplate = `{
                 "password": {
                     "type": "string",
                     "example": "admin"
+                }
+            }
+        },
+        "dto.MovementDestinationRequest": {
+            "type": "object",
+            "required": [
+                "rack_id"
+            ],
+            "properties": {
+                "rack_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.MovementOriginRequest": {
+            "type": "object",
+            "required": [
+                "product_id",
+                "rack_id",
+                "stock_lookup_ids"
+            ],
+            "properties": {
+                "product_id": {
+                    "type": "string"
+                },
+                "rack_id": {
+                    "type": "string"
+                },
+                "stock_lookup_ids": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "dto.MovementStockRequest": {
+            "type": "object",
+            "required": [
+                "destination",
+                "origin"
+            ],
+            "properties": {
+                "destination": {
+                    "$ref": "#/definitions/dto.MovementDestinationRequest"
+                },
+                "origin": {
+                    "$ref": "#/definitions/dto.MovementOriginRequest"
+                }
+            }
+        },
+        "dto.OrderUpsertResponse": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.OrderUpsertResponseDoc": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "$ref": "#/definitions/dto.OrderUpsertResponse"
+                        },
+                        "meta": {
+                            "$ref": "#/definitions/response.Meta"
+                        }
+                    }
+                }
+            }
+        },
+        "dto.OrderViewResponseDoc": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "$ref": "#/definitions/entity.OrderView"
+                        },
+                        "meta": {
+                            "$ref": "#/definitions/response.Meta"
+                        }
+                    }
                 }
             }
         },
@@ -5606,6 +6105,30 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.StockConvertionResponse": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.StockConvertionResponseDoc": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "$ref": "#/definitions/dto.StockConvertionResponse"
+                        },
+                        "meta": {
+                            "$ref": "#/definitions/response.Meta"
+                        }
+                    }
+                }
+            }
+        },
         "dto.StockLookupResponse": {
             "type": "object",
             "properties": {
@@ -5664,10 +6187,6 @@ const docTemplate = `{
         "dto.StockLookupViewResponse": {
             "type": "object",
             "properties": {
-                "brand_id": {
-                    "description": "fk",
-                    "type": "string"
-                },
                 "code": {
                     "type": "string"
                 },
@@ -5680,23 +6199,14 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
+                "is_seal": {
+                    "type": "boolean"
+                },
                 "modified_at": {
                     "type": "string"
                 },
                 "modified_by": {
                     "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "packet_id": {
-                    "type": "string"
-                },
-                "price_final": {
-                    "type": "number"
-                },
-                "price_usd": {
-                    "type": "number"
                 },
                 "product_id": {
                     "description": "join",
@@ -5705,8 +6215,18 @@ const docTemplate = `{
                 "rack_id": {
                     "type": "string"
                 },
-                "variant_id": {
+                "remaining_value": {
+                    "type": "number"
+                },
+                "remaining_value_before": {
+                    "type": "number"
+                },
+                "stock_rack_id": {
+                    "description": "fk",
                     "type": "string"
+                },
+                "value": {
+                    "type": "number"
                 }
             }
         },
@@ -5718,6 +6238,30 @@ const docTemplate = `{
                     "properties": {
                         "data": {
                             "$ref": "#/definitions/dto.StockLookupViewResponse"
+                        },
+                        "meta": {
+                            "$ref": "#/definitions/response.Meta"
+                        }
+                    }
+                }
+            }
+        },
+        "dto.StockMovementResponse": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.StockMovementResponseDoc": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "$ref": "#/definitions/dto.StockMovementResponse"
                         },
                         "meta": {
                             "$ref": "#/definitions/response.Meta"
@@ -5855,9 +6399,14 @@ const docTemplate = `{
         },
         "dto.TransactionStockRequest": {
             "type": "object",
+            "required": [
+                "products",
+                "trx_type"
+            ],
             "properties": {
                 "products": {
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "$ref": "#/definitions/dto.TransactionStockProductRequest"
                     }
@@ -6160,6 +6709,177 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.UpsertOrderItemLookupRequest": {
+            "type": "object",
+            "required": [
+                "action",
+                "id"
+            ],
+            "properties": {
+                "action": {
+                    "type": "string",
+                    "enum": [
+                        "insert",
+                        "update",
+                        "delete"
+                    ]
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UpsertOrderItemRequest": {
+            "type": "object",
+            "required": [
+                "action",
+                "price",
+                "product_id",
+                "quantity"
+            ],
+            "properties": {
+                "action": {
+                    "type": "string",
+                    "enum": [
+                        "insert",
+                        "update",
+                        "delete"
+                    ]
+                },
+                "id": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "product_id": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "stock_lookups": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.UpsertOrderItemLookupRequest"
+                    }
+                },
+                "stock_rack_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UpsertOrderReceiptRequest": {
+            "type": "object",
+            "required": [
+                "action",
+                "receipt_url"
+            ],
+            "properties": {
+                "action": {
+                    "type": "string",
+                    "enum": [
+                        "insert",
+                        "update",
+                        "delete"
+                    ]
+                },
+                "id": {
+                    "type": "string"
+                },
+                "receipt_url": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UpsertOrderRequest": {
+            "type": "object",
+            "required": [
+                "final_price",
+                "items",
+                "payment_status",
+                "pic_id",
+                "price",
+                "status",
+                "stock_status",
+                "trx_type"
+            ],
+            "properties": {
+                "customer_id": {
+                    "type": "string"
+                },
+                "final_price": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_read": {
+                    "type": "boolean"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.UpsertOrderItemRequest"
+                    }
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "payment_status": {
+                    "type": "string",
+                    "enum": [
+                        "paid",
+                        "unpaid",
+                        "dp"
+                    ]
+                },
+                "pic_id": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "receipts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.UpsertOrderReceiptRequest"
+                    }
+                },
+                "shipment_number": {
+                    "type": "string"
+                },
+                "shipment_price": {
+                    "type": "integer"
+                },
+                "shipment_type": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "pending",
+                        "progress",
+                        "completed",
+                        "canceled"
+                    ]
+                },
+                "stock_status": {
+                    "type": "string"
+                },
+                "supplier_id": {
+                    "type": "string"
+                },
+                "trx_type": {
+                    "type": "string",
+                    "enum": [
+                        "in",
+                        "out"
+                    ]
+                }
+            }
+        },
         "dto.UserResponse": {
             "type": "object",
             "properties": {
@@ -6308,6 +7028,82 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/entity.VariantModel"
                     }
+                }
+            }
+        },
+        "entity.OrderView": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "created_by": {
+                    "type": "string"
+                },
+                "customer_id": {
+                    "type": "string"
+                },
+                "customer_name": {
+                    "description": "join",
+                    "type": "string"
+                },
+                "final_price": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_read": {
+                    "type": "boolean"
+                },
+                "modified_at": {
+                    "type": "string"
+                },
+                "modified_by": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "payment_status": {
+                    "type": "string"
+                },
+                "pic_id": {
+                    "description": "fk",
+                    "type": "string"
+                },
+                "pic_name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "shipment_number": {
+                    "type": "string"
+                },
+                "shipment_price": {
+                    "type": "integer"
+                },
+                "shipment_type": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "stock_status": {
+                    "type": "string"
+                },
+                "supplier_id": {
+                    "type": "string"
+                },
+                "supplier_name": {
+                    "type": "string"
+                },
+                "trx_type": {
+                    "type": "string"
                 }
             }
         },

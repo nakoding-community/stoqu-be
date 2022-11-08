@@ -45,3 +45,10 @@ const (
 	CONVERT_TYPE_ORIGIN      = "origin"
 	CONVERT_TYPE_DESTINATION = "destination"
 )
+
+// action
+const (
+	ACTION_INSERT = "insert"
+	ACTION_UPDATE = "update"
+	ACTION_DELETE = "delete"
+)

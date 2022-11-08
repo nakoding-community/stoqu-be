@@ -106,6 +106,43 @@ definitions:
             $ref: '#/definitions/response.Meta'
         type: object
     type: object
+  dto.ConvertionStocDestinationRequest:
+    properties:
+      packet_id:
+        type: string
+      total:
+        minimum: 1
+        type: integer
+    required:
+    - packet_id
+    - total
+    type: object
+  dto.ConvertionStocOriginkRequest:
+    properties:
+      product_id:
+        type: string
+      rack_id:
+        type: string
+      stock_lookup_ids:
+        items:
+          type: string
+        minItems: 1
+        type: array
+    required:
+    - product_id
+    - rack_id
+    - stock_lookup_ids
+    type: object
+  dto.ConvertionStockRequest:
+    properties:
+      destination:
+        $ref: '#/definitions/dto.ConvertionStocDestinationRequest'
+      origin:
+        $ref: '#/definitions/dto.ConvertionStocOriginkRequest'
+    required:
+    - destination
+    - origin
+    type: object
   dto.ConvertionUnitResponse:
     properties:
       Destination:
@@ -308,6 +345,64 @@ definitions:
     required:
     - email
     - password
+    type: object
+  dto.MovementDestinationRequest:
+    properties:
+      rack_id:
+        type: string
+    required:
+    - rack_id
+    type: object
+  dto.MovementOriginRequest:
+    properties:
+      product_id:
+        type: string
+      rack_id:
+        type: string
+      stock_lookup_ids:
+        items:
+          type: string
+        minItems: 1
+        type: array
+    required:
+    - product_id
+    - rack_id
+    - stock_lookup_ids
+    type: object
+  dto.MovementStockRequest:
+    properties:
+      destination:
+        $ref: '#/definitions/dto.MovementDestinationRequest'
+      origin:
+        $ref: '#/definitions/dto.MovementOriginRequest'
+    required:
+    - destination
+    - origin
+    type: object
+  dto.OrderUpsertResponse:
+    properties:
+      status:
+        type: string
+    type: object
+  dto.OrderUpsertResponseDoc:
+    properties:
+      body:
+        properties:
+          data:
+            $ref: '#/definitions/dto.OrderUpsertResponse'
+          meta:
+            $ref: '#/definitions/response.Meta'
+        type: object
+    type: object
+  dto.OrderViewResponseDoc:
+    properties:
+      body:
+        properties:
+          data:
+            $ref: '#/definitions/entity.OrderView'
+          meta:
+            $ref: '#/definitions/response.Meta'
+        type: object
     type: object
   dto.PacketResponse:
     properties:
@@ -549,6 +644,21 @@ definitions:
             $ref: '#/definitions/response.Meta'
         type: object
     type: object
+  dto.StockConvertionResponse:
+    properties:
+      status:
+        type: string
+    type: object
+  dto.StockConvertionResponseDoc:
+    properties:
+      body:
+        properties:
+          data:
+            $ref: '#/definitions/dto.StockConvertionResponse'
+          meta:
+            $ref: '#/definitions/response.Meta'
+        type: object
+    type: object
   dto.StockLookupResponse:
     properties:
       code:
@@ -587,9 +697,6 @@ definitions:
     type: object
   dto.StockLookupViewResponse:
     properties:
-      brand_id:
-        description: fk
-        type: string
       code:
         type: string
       created_at:
@@ -598,25 +705,26 @@ definitions:
         type: string
       id:
         type: string
+      is_seal:
+        type: boolean
       modified_at:
         type: string
       modified_by:
         type: string
-      name:
-        type: string
-      packet_id:
-        type: string
-      price_final:
-        type: number
-      price_usd:
-        type: number
       product_id:
         description: join
         type: string
       rack_id:
         type: string
-      variant_id:
+      remaining_value:
+        type: number
+      remaining_value_before:
+        type: number
+      stock_rack_id:
+        description: fk
         type: string
+      value:
+        type: number
     type: object
   dto.StockLookupViewResponseDoc:
     properties:
@@ -624,6 +732,21 @@ definitions:
         properties:
           data:
             $ref: '#/definitions/dto.StockLookupViewResponse'
+          meta:
+            $ref: '#/definitions/response.Meta'
+        type: object
+    type: object
+  dto.StockMovementResponse:
+    properties:
+      status:
+        type: string
+    type: object
+  dto.StockMovementResponseDoc:
+    properties:
+      body:
+        properties:
+          data:
+            $ref: '#/definitions/dto.StockMovementResponse'
           meta:
             $ref: '#/definitions/response.Meta'
         type: object
@@ -717,12 +840,16 @@ definitions:
       products:
         items:
           $ref: '#/definitions/dto.TransactionStockProductRequest'
+        minItems: 1
         type: array
       trx_type:
         enum:
         - in
         - out
         type: string
+    required:
+    - products
+    - trx_type
     type: object
   dto.UnitResponse:
     properties:
@@ -911,6 +1038,127 @@ definitions:
     required:
     - id
     type: object
+  dto.UpsertOrderItemLookupRequest:
+    properties:
+      action:
+        enum:
+        - insert
+        - update
+        - delete
+        type: string
+      id:
+        type: string
+    required:
+    - action
+    - id
+    type: object
+  dto.UpsertOrderItemRequest:
+    properties:
+      action:
+        enum:
+        - insert
+        - update
+        - delete
+        type: string
+      id:
+        type: string
+      price:
+        type: number
+      product_id:
+        type: string
+      quantity:
+        minimum: 1
+        type: integer
+      stock_lookups:
+        items:
+          $ref: '#/definitions/dto.UpsertOrderItemLookupRequest'
+        type: array
+      stock_rack_id:
+        type: string
+    required:
+    - action
+    - price
+    - product_id
+    - quantity
+    type: object
+  dto.UpsertOrderReceiptRequest:
+    properties:
+      action:
+        enum:
+        - insert
+        - update
+        - delete
+        type: string
+      id:
+        type: string
+      receipt_url:
+        type: string
+    required:
+    - action
+    - receipt_url
+    type: object
+  dto.UpsertOrderRequest:
+    properties:
+      customer_id:
+        type: string
+      final_price:
+        type: number
+      id:
+        type: string
+      is_read:
+        type: boolean
+      items:
+        items:
+          $ref: '#/definitions/dto.UpsertOrderItemRequest'
+        type: array
+      notes:
+        type: string
+      payment_status:
+        enum:
+        - paid
+        - unpaid
+        - dp
+        type: string
+      pic_id:
+        type: string
+      price:
+        type: number
+      receipts:
+        items:
+          $ref: '#/definitions/dto.UpsertOrderReceiptRequest'
+        type: array
+      shipment_number:
+        type: string
+      shipment_price:
+        type: integer
+      shipment_type:
+        type: string
+      status:
+        enum:
+        - pending
+        - progress
+        - completed
+        - canceled
+        type: string
+      stock_status:
+        type: string
+      supplier_id:
+        type: string
+      trx_type:
+        enum:
+        - in
+        - out
+        type: string
+    required:
+    - final_price
+    - items
+    - payment_status
+    - pic_id
+    - price
+    - status
+    - stock_status
+    - trx_type
+    type: object
   dto.UserResponse:
     properties:
       created_at:
@@ -1010,6 +1258,57 @@ definitions:
         items:
           $ref: '#/definitions/entity.VariantModel'
         type: array
+    type: object
+  entity.OrderView:
+    properties:
+      code:
+        type: string
+      created_at:
+        type: string
+      created_by:
+        type: string
+      customer_id:
+        type: string
+      customer_name:
+        description: join
+        type: string
+      final_price:
+        type: number
+      id:
+        type: string
+      is_read:
+        type: boolean
+      modified_at:
+        type: string
+      modified_by:
+        type: string
+      notes:
+        type: string
+      payment_status:
+        type: string
+      pic_id:
+        description: fk
+        type: string
+      pic_name:
+        type: string
+      price:
+        type: number
+      shipment_number:
+        type: string
+      shipment_price:
+        type: integer
+      shipment_type:
+        type: string
+      status:
+        type: string
+      stock_status:
+        type: string
+      supplier_id:
+        type: string
+      supplier_name:
+        type: string
+      trx_type:
+        type: string
     type: object
   entity.PacketModel:
     properties:
@@ -2039,6 +2338,194 @@ paths:
       summary: Convert currency
       tags:
       - currency
+  /api/orders:
+    get:
+      consumes:
+      - application/json
+      description: Get order
+      parameters:
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: page_size
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - example:
+        - asc_column
+        - -dsc_column
+        in: query
+        items:
+          type: string
+        name: sort_by
+        type: array
+      - in: query
+        name: code
+        type: string
+      - in: query
+        name: created_at
+        type: string
+      - in: query
+        name: created_by
+        type: string
+      - in: query
+        name: customer_id
+        type: string
+      - description: join
+        in: query
+        name: customer_name
+        type: string
+      - in: query
+        name: final_price
+        type: number
+      - in: query
+        name: id
+        type: string
+      - in: query
+        name: is_read
+        type: boolean
+      - in: query
+        name: modified_at
+        type: string
+      - in: query
+        name: modified_by
+        type: string
+      - in: query
+        name: notes
+        type: string
+      - in: query
+        name: payment_status
+        type: string
+      - description: fk
+        in: query
+        name: pic_id
+        type: string
+      - in: query
+        name: pic_name
+        type: string
+      - in: query
+        name: price
+        type: number
+      - in: query
+        name: shipment_number
+        type: string
+      - in: query
+        name: shipment_price
+        type: integer
+      - in: query
+        name: shipment_type
+        type: string
+      - in: query
+        name: status
+        type: string
+      - in: query
+        name: stock_status
+        type: string
+      - in: query
+        name: supplier_id
+        type: string
+      - in: query
+        name: supplier_name
+        type: string
+      - in: query
+        name: trx_type
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.OrderViewResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get order
+      tags:
+      - order
+    put:
+      consumes:
+      - application/json
+      description: Upsert order
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpsertOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.OrderUpsertResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Upsert order
+      tags:
+      - order
+  /api/orders/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get order by id
+      parameters:
+      - description: id path
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.OrderViewResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get order by id
+      tags:
+      - order
   /api/packets:
     get:
       consumes:
@@ -3335,10 +3822,6 @@ paths:
           type: string
         name: sort_by
         type: array
-      - description: fk
-        in: query
-        name: brand_id
-        type: string
       - in: query
         name: code
         type: string
@@ -3352,23 +3835,14 @@ paths:
         name: id
         type: string
       - in: query
+        name: is_seal
+        type: boolean
+      - in: query
         name: modified_at
         type: string
       - in: query
         name: modified_by
         type: string
-      - in: query
-        name: name
-        type: string
-      - in: query
-        name: packet_id
-        type: string
-      - in: query
-        name: price_final
-        type: number
-      - in: query
-        name: price_usd
-        type: number
       - description: join
         in: query
         name: product_id
@@ -3377,8 +3851,18 @@ paths:
         name: rack_id
         type: string
       - in: query
-        name: variant_id
+        name: remaining_value
+        type: number
+      - in: query
+        name: remaining_value_before
+        type: number
+      - description: fk
+        in: query
+        name: stock_rack_id
         type: string
+      - in: query
+        name: value
+        type: number
       produces:
       - application/json
       responses:
@@ -3653,41 +4137,6 @@ paths:
       summary: Get stock
       tags:
       - stock
-    put:
-      consumes:
-      - application/json
-      description: Transaction stock
-      parameters:
-      - description: request body
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/dto.TransactionStockRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.StockTransactionResponseDoc'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.errorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/response.errorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.errorResponse'
-      security:
-      - BearerAuth: []
-      summary: Transaction stock
-      tags:
-      - stock
   /api/stocks/{id}:
     get:
       consumes:
@@ -3721,6 +4170,78 @@ paths:
       security:
       - BearerAuth: []
       summary: Get stock by id
+      tags:
+      - stock
+  /api/stocks/convertion:
+    put:
+      consumes:
+      - application/json
+      description: Movement stock
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.MovementStockRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.StockMovementResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Movement stock
+      tags:
+      - stock
+  /api/stocks/transaction:
+    put:
+      consumes:
+      - application/json
+      description: Transaction stock
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.TransactionStockRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.StockTransactionResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Transaction stock
       tags:
       - stock
   /api/units:

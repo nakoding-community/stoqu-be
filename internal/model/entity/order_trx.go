@@ -8,7 +8,6 @@ type OrderTrxEntity struct {
 	ShipmentPrice  int     `json:"shipment_price" gorm:"not null;default:0"`
 	Price          float64 `json:"price" gorm:"not null"`
 	FinalPrice     float64 `json:"final_price" gorm:"not null"`
-	PaymentTerm    int     `json:"payment_term" gorm:"not null"`
 	Notes          string  `json:"notes"`
 	PaymentStatus  string  `json:"payment_status" gorm:"size:10;not null"`
 	StockStatus    string  `json:"stock_status" gorm:"size:20;not null"`
@@ -33,4 +32,14 @@ type OrderTrxModel struct {
 
 func (OrderTrxModel) TableName() string {
 	return "order_trxs"
+}
+
+type OrderView struct {
+	Entity
+	OrderTrxEntity
+
+	// join
+	CustomerName string `json:"customer_name" filter:"column:customers.name"`
+	SupplierName string `json:"supplier_name" filter:"column:suppliers.name"`
+	PicName      string `json:"pic_name" filter:"column:pics.name"`
 }
