@@ -10,6 +10,9 @@ type OrderTrxReceiptEntity struct {
 type OrderTrxReceiptModel struct {
 	Entity
 	OrderTrxReceiptEntity
+
+	// helper
+	Action string `json:"-" gorm:"-"`
 }
 
 func (OrderTrxReceiptModel) TableName() string {

@@ -6,8 +6,8 @@ type OrderTrxItemEntity struct {
 	Status string  `json:"status" gorm:"type:varchar(20);not null"`
 
 	// fk
-	OrderTrxItemID string `json:"order_trx_id" gorm:"not null"`
-	ProductID      string `json:"product_id" gorm:"not null"`
+	OrderTrxID string `json:"order_trx_id" gorm:"not null"`
+	ProductID  string `json:"product_id" gorm:"not null"`
 }
 
 type OrderTrxItemModel struct {
@@ -18,6 +18,9 @@ type OrderTrxItemModel struct {
 	OrderTrxItemLookups []OrderTrxItemLookupModel `json:"order_trx_item_lookups" gorm:"foreignKey:OrderTrxItemID;constraint:OnDelete:CASCADE;"`
 	Product             *ProductModel             `json:"product" gorm:"foreignKey:ProductID;"`
 	OrderTrx            *OrderTrxModel            `json:"order_trx" gorm:"foreignKey:OrderTrxID;"`
+
+	// helper
+	Action string `json:"-" gorm:"-"`
 }
 
 func (OrderTrxItemModel) TableName() string {

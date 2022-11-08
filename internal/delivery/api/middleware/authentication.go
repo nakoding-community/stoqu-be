@@ -7,8 +7,6 @@ import (
 
 	"gitlab.com/stoqu/stoqu-be/internal/config"
 
-	"github.com/google/uuid"
-
 	baseModel "gitlab.com/stoqu/stoqu-be/internal/model/abstraction"
 	ctxval "gitlab.com/stoqu/stoqu-be/pkg/util/ctxval"
 	res "gitlab.com/stoqu/stoqu-be/pkg/util/response"
@@ -41,29 +39,22 @@ func Authentication(next echo.HandlerFunc) echo.HandlerFunc {
 			return res.ErrorBuilder(res.Constant.Error.Unauthorized, err).Send(c)
 		}
 
-		var id uuid.UUID
+		var id string
 		destructID := token.Claims.(jwt.MapClaims)["id"]
 		if destructID != nil {
-			id, err = uuid.Parse(destructID.(string))
-			if err != nil {
-				return res.ErrorBuilder(res.Constant.Error.Unauthorized, err).Send(c)
-			}
+			id = destructID.(string)
 		}
 
 		var name string
 		destructName := token.Claims.(jwt.MapClaims)["name"]
 		if destructName != nil {
 			name = destructName.(string)
-		} else {
-			name = ""
 		}
 
 		var email string
 		destructEmail := token.Claims.(jwt.MapClaims)["email"]
 		if destructEmail != nil {
 			email = destructEmail.(string)
-		} else {
-			email = ""
 		}
 
 		authCtx := &baseModel.AuthContext{

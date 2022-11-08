@@ -1,12 +1,11 @@
 package abstraction
 
 import (
-	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type AuthContext struct {
-	ID    uuid.UUID
+	ID    string
 	Name  string
 	Email string
 }

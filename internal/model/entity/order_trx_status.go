@@ -11,6 +11,9 @@ type OrderTrxStatusEntity struct {
 type OrderTrxStatusModel struct {
 	Entity
 	OrderTrxStatusEntity
+
+	// helper
+	Action string `json:"-" gorm:"-"`
 }
 
 func (OrderTrxStatusModel) TableName() string {
