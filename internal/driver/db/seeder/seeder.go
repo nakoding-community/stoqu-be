@@ -33,19 +33,21 @@ func (seederEntity) TableName() string {
 func Init(cfg *config.Configuration) {
 	var mgConfigurations = map[string]Seeder{}
 	for _, v := range cfg.Databases {
-		if v.DbSeeder {
-			mgConfigurations[v.DBName] = &seeder{
-				Seeds: []seed.Seed{
-					&seed.RoleSeed{},
-					&seed.UserSeed{},
-					&seed.PacketSeed{},
-					&seed.CurrencySeed{},
-					&seed.RackSeed{},
-					&seed.ReminderStockSeed{},
-					&seed.ReminderStockHistorySeed{},
-					&seed.ProductSeed{},
-				},
-			}
+		if !v.SeederEnabled {
+			continue
+		}
+
+		mgConfigurations[v.DBName] = &seeder{
+			Seeds: []seed.Seed{
+				&seed.RoleSeed{},
+				&seed.UserSeed{},
+				&seed.PacketSeed{},
+				&seed.CurrencySeed{},
+				&seed.RackSeed{},
+				&seed.ReminderStockSeed{},
+				&seed.ReminderStockHistorySeed{},
+				&seed.ProductSeed{},
+			},
 		}
 	}
 

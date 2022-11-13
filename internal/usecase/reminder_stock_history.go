@@ -2,6 +2,8 @@ package usecase
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"strings"
 
 	"gitlab.com/stoqu/stoqu-be/internal/config"
@@ -24,6 +26,7 @@ type ReminderStockHistory interface {
 	// Custom
 	UpdateBulkRead(ctx context.Context, payload dto.UpdateReminderStockHistoryBulkReadRequest) (result dto.ReminderStockHistoryBulkReadResponse, err error)
 	CountUnread(ctx context.Context) (result dto.ReminderStockHistoryCountUnreadResponse, err error)
+	GenerateRecurring(ctx context.Context, reminderType string) error
 }
 
 type reminderStockHistory struct {
@@ -152,4 +155,40 @@ func (u *reminderStockHistory) CountUnread(ctx context.Context) (result dto.Remi
 	result.Count = count
 
 	return result, nil
+}
+
+func (u *reminderStockHistory) GenerateRecurring(ctx context.Context, reminderType string) error {
+	reminderStocks, _, err := u.Repo.ReminderStock.Find(ctx, abstraction.Filter{}, &abstraction.Search{})
+	if err != nil {
+		return err
+	}
+	if len(reminderStocks) == 0 {
+		return res.ErrorBuilder(res.Constant.Error.NotFound, errors.New("find reminder stock not found"))
+	}
+
+	reminderStock := reminderStocks[0]
+	if reminderType != reminderStock.ReminderType {
+		return nil
+	}
+
+	stocks, err := u.Repo.Stock.FindByTotalLessThan(ctx, reminderStock.MinStock)
+	if err != nil {
+		return err
+	}
+
+	histories := []model.ReminderStockHistoryModel{}
+	for _, stock := range stocks {
+		histories = append(histories, model.ReminderStockHistoryModel{
+			ReminderStockHistoryEntity: model.ReminderStockHistoryEntity{
+				Title: "Reminder Stock",
+				Body:  fmt.Sprintf("Stok produk %s brand %s, tersisa %d", stock.ProductName, stock.BrandName, stock.Total),
+			},
+		})
+	}
+	_, err = u.Repo.ReminderStockHistory.Creates(ctx, histories)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

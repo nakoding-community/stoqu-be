@@ -52,3 +52,9 @@ const (
 	ACTION_UPDATE = "update"
 	ACTION_DELETE = "delete"
 )
+
+// reminder_ stock
+const (
+	REMINDER_STOCK_SECOND = "second"
+	REMINDER_STOCK_DAILY  = "daily"
+)

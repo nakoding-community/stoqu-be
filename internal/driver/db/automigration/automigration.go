@@ -23,38 +23,40 @@ type automigration struct {
 func Init(cfg *config.Configuration) {
 	var mgConfigurations = map[string]AutoMigration{}
 	for _, v := range cfg.Databases {
-		if v.DBAutomigrate {
-			mgConfigurations[v.DBName] = &automigration{
-				DbModels: &[]interface{}{
-					&entity.RoleModel{},
-					&entity.UserModel{},
-					&entity.UserProfileModel{},
-					&entity.ReminderStockModel{},
-					&entity.ReminderStockHistoryModel{},
-					&entity.RackModel{},
-					&entity.ConvertionUnitModel{},
-					&entity.UnitModel{},
-					&entity.PacketModel{},
-					&entity.CurrencyModel{},
+		if !v.AutoMigrateEnabled {
+			continue
+		}
 
-					&entity.VariantModel{},
-					&entity.BrandModel{},
-					&entity.ProductModel{},
+		mgConfigurations[v.DBName] = &automigration{
+			DbModels: &[]interface{}{
+				&entity.RoleModel{},
+				&entity.UserModel{},
+				&entity.UserProfileModel{},
+				&entity.ReminderStockModel{},
+				&entity.ReminderStockHistoryModel{},
+				&entity.RackModel{},
+				&entity.ConvertionUnitModel{},
+				&entity.UnitModel{},
+				&entity.PacketModel{},
+				&entity.CurrencyModel{},
 
-					&entity.StockModel{},
-					&entity.StockRackModel{},
-					&entity.StockLookupModel{},
-					&entity.StockTrxModel{},
-					&entity.StockTrxItemModel{},
-					&entity.StockTrxItemLookupModel{},
+				&entity.VariantModel{},
+				&entity.BrandModel{},
+				&entity.ProductModel{},
 
-					&entity.OrderTrxModel{},
-					&entity.OrderTrxItemModel{},
-					&entity.OrderTrxItemLookupModel{},
-					&entity.OrderTrxStatusModel{},
-					&entity.OrderTrxReceiptModel{},
-				},
-			}
+				&entity.StockModel{},
+				&entity.StockRackModel{},
+				&entity.StockLookupModel{},
+				&entity.StockTrxModel{},
+				&entity.StockTrxItemModel{},
+				&entity.StockTrxItemLookupModel{},
+
+				&entity.OrderTrxModel{},
+				&entity.OrderTrxItemModel{},
+				&entity.OrderTrxItemLookupModel{},
+				&entity.OrderTrxStatusModel{},
+				&entity.OrderTrxReceiptModel{},
+			},
 		}
 	}
 

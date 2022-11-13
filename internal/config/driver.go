@@ -2,9 +2,14 @@ package config
 
 type (
 	Driver struct {
+		Cron          Cron          `json:"cron"`
 		Firestore     Firestore     `json:"firestore"`
 		Elasticsearch Elasticsearch `json:"elasticsearch"`
 		Sentry        Sentry        `json:"dsn"`
+	}
+
+	Cron struct {
+		Enabled bool `json:"enabled"`
 	}
 
 	Firestore struct {

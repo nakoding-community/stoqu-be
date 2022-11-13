@@ -23,9 +23,11 @@ databases:
     dbprovider: postgresql
     dbssl: disable
     dbtz: Asia/Jakarta
-    dbautomigrate: true
-    dbseeder: true
+    automigrate_enabled: true
+    seeder_enabled: true
 driver:
+  cron:
+    enabled: true
   firestore:
     credentials: ""
     projectid: ""
