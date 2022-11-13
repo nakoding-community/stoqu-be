@@ -43,7 +43,7 @@ type (
 		Price     float64 `json:"price" validate:"required"`
 		Status    string  `json:"status" validate:"required"`
 
-		StockRackID  string                         `json:"stock_rack_id"`
+		RackID       string                         `json:"rack_id"`
 		StockLookups []UpsertOrderItemLookupRequest `json:"stock_lookups"`
 
 		Action string `json:"action" validate:"required,oneof=insert update delete"`
@@ -127,8 +127,9 @@ func (dto *UpsertOrderRequest) ToOrderTrx(mapStockLookups map[string]model.Stock
 				Total:      item.Total,
 				Price:      item.Price,
 				Status:     item.Status,
-				ProductID:  item.ProductID,
 				OrderTrxID: orderTrxID,
+				ProductID:  item.ProductID,
+				RackID:     item.RackID,
 			},
 			Action: item.Action,
 		}

@@ -15,9 +15,9 @@ type OrderTrxEntity struct {
 	IsRead         bool    `json:"is_read" gorm:"size:20;not null;default:0"`
 
 	// fk
-	PicID      string `json:"pic_id" gorm:"type:uuid;not null"`
-	SupplierID string `json:"supplier_id" gorm:"type:uuid;not null"`
-	CustomerID string `json:"customer_id" gorm:"type:uuid;not null"`
+	PicID      string `json:"pic_id" gorm:"not null"`
+	SupplierID string `json:"supplier_id" gorm:"not null"`
+	CustomerID string `json:"customer_id" gorm:"not null"`
 }
 
 type OrderTrxModel struct {

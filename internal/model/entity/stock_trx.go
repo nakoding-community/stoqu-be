@@ -1,8 +1,9 @@
 package entity
 
 type StockTrxEntity struct {
-	TrxType string `json:"trx_type" gorm:"size:20;not null"`
-	Code    string `json:"code" gorm:"size:50;not null"`
+	Code       string `json:"code" gorm:"size:50;not null"`
+	TrxType    string `json:"trx_type" gorm:"size:20;not null"`
+	OrderTrxID string `json:"order_trx_id"`
 }
 
 type StockTrxModel struct {

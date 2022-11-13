@@ -25,12 +25,12 @@ type User interface {
 }
 
 type user struct {
-	Repo repository.Factory
 	Cfg  *config.Configuration
+	Repo repository.Factory
 }
 
 func NewUser(cfg *config.Configuration, f repository.Factory) User {
-	return &user{f, cfg}
+	return &user{cfg, f}
 }
 
 func (u *user) Find(ctx context.Context, filterParam abstraction.Filter) (result []dto.UserResponse, pagination abstraction.PaginationInfo, err error) {

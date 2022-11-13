@@ -30,12 +30,12 @@ type Currency interface {
 }
 
 type currency struct {
-	Repo repository.Factory
 	Cfg  *config.Configuration
+	Repo repository.Factory
 }
 
 func NewCurrency(cfg *config.Configuration, f repository.Factory) Currency {
-	return &currency{f, cfg}
+	return &currency{cfg, f}
 }
 
 func (u *currency) Find(ctx context.Context, filterParam abstraction.Filter) (result []dto.CurrencyResponse, pagination abstraction.PaginationInfo, err error) {

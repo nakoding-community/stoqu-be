@@ -26,12 +26,12 @@ type Unit interface {
 }
 
 type unit struct {
-	Repo repository.Factory
 	Cfg  *config.Configuration
+	Repo repository.Factory
 }
 
 func NewUnit(cfg *config.Configuration, f repository.Factory) Unit {
-	return &unit{f, cfg}
+	return &unit{cfg, f}
 }
 
 func (u *unit) Find(ctx context.Context, filterParam abstraction.Filter) (result []dto.UnitResponse, pagination abstraction.PaginationInfo, err error) {

@@ -51,7 +51,7 @@ func Init(cfg *config.Configuration, r repository.Factory) Factory {
 	f.Stock = usecase.NewStock(cfg, r)
 	f.StockLookup = usecase.NewStockLookup(cfg, r)
 
-	f.Order = usecase.NewOrder(cfg, r)
+	f.Order = usecase.NewOrder(cfg, r, f.Stock)
 
 	return f
 }

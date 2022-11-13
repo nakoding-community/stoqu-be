@@ -8,8 +8,9 @@ import (
 // request
 type (
 	TransactionStockRequest struct {
-		TrxType  string                           `json:"trx_type" validate:"required,oneof=in out"`
-		Products []TransactionStockProductRequest `json:"products" validate:"required,min=1,dive"`
+		TrxType    string                           `json:"trx_type" validate:"required,oneof=in out"`
+		OrderTrxID string                           `json:"order_trx_id"`
+		Products   []TransactionStockProductRequest `json:"products" validate:"required,min=1,dive"`
 	}
 
 	TransactionStockProductRequest struct {

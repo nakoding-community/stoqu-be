@@ -27,12 +27,12 @@ type ConvertionUnit interface {
 }
 
 type convertionUnit struct {
-	Repo repository.Factory
 	Cfg  *config.Configuration
+	Repo repository.Factory
 }
 
 func NewConvertionUnit(cfg *config.Configuration, f repository.Factory) ConvertionUnit {
-	return &convertionUnit{f, cfg}
+	return &convertionUnit{cfg, f}
 }
 
 func (u *convertionUnit) Find(ctx context.Context, filterParam abstraction.Filter) (result []dto.ConvertionUnitResponse, pagination abstraction.PaginationInfo, err error) {

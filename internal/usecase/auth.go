@@ -23,12 +23,12 @@ type Auth interface {
 }
 
 type auth struct {
-	Repo repository.Factory
 	Cfg  *config.Configuration
+	Repo repository.Factory
 }
 
 func NewAuth(cfg *config.Configuration, f repository.Factory) Auth {
-	return &auth{f, cfg}
+	return &auth{cfg, f}
 }
 
 func (u *auth) Login(ctx context.Context, payload dto.LoginAuthRequest) (dto.AuthLoginResponse, error) {

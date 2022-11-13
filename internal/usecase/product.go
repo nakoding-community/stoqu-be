@@ -27,12 +27,12 @@ type Product interface {
 }
 
 type product struct {
-	Repo repository.Factory
 	Cfg  *config.Configuration
+	Repo repository.Factory
 }
 
 func NewProduct(cfg *config.Configuration, f repository.Factory) Product {
-	return &product{f, cfg}
+	return &product{cfg, f}
 }
 
 func (u *product) Find(ctx context.Context, filterParam abstraction.Filter) (result []dto.ProductViewResponse, pagination abstraction.PaginationInfo, err error) {

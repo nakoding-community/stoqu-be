@@ -26,12 +26,12 @@ type ReminderStock interface {
 }
 
 type reminderStock struct {
-	Repo repository.Factory
 	Cfg  *config.Configuration
+	Repo repository.Factory
 }
 
 func NewReminderStock(cfg *config.Configuration, f repository.Factory) ReminderStock {
-	return &reminderStock{f, cfg}
+	return &reminderStock{cfg, f}
 }
 
 func (u *reminderStock) Find(ctx context.Context, filterParam abstraction.Filter) (result []dto.ReminderStockResponse, pagination abstraction.PaginationInfo, err error) {

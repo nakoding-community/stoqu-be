@@ -27,12 +27,12 @@ type StockLookup interface {
 }
 
 type stockLookup struct {
-	Repo repository.Factory
 	Cfg  *config.Configuration
+	Repo repository.Factory
 }
 
 func NewStockLookup(cfg *config.Configuration, f repository.Factory) StockLookup {
-	return &stockLookup{f, cfg}
+	return &stockLookup{cfg, f}
 }
 
 func (u *stockLookup) Find(ctx context.Context, filterParam abstraction.Filter) (result []dto.StockLookupViewResponse, pagination abstraction.PaginationInfo, err error) {

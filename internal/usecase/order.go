@@ -23,12 +23,13 @@ type Order interface {
 }
 
 type order struct {
-	Repo repository.Factory
-	Cfg  *config.Configuration
+	Cfg     *config.Configuration
+	Repo    repository.Factory
+	stockUC Stock
 }
 
-func NewOrder(cfg *config.Configuration, f repository.Factory) Order {
-	return &order{f, cfg}
+func NewOrder(cfg *config.Configuration, f repository.Factory, stockUC Stock) Order {
+	return &order{cfg, f, stockUC}
 }
 
 func (u *order) Find(ctx context.Context, filterParam abstraction.Filter) (result []dto.OrderViewResponse, pagination abstraction.PaginationInfo, err error) {
@@ -153,6 +154,7 @@ func (u *order) buildMapStockLookups(ctx context.Context, payload dto.UpsertOrde
 }
 
 func (u *order) create(ctx context.Context, payload dto.UpsertOrderRequest, orderTrx entity.OrderTrxModel) error {
+	// create order
 	_, err := u.Repo.OrderTrx.Create(ctx, orderTrx)
 	if err != nil {
 		return err
@@ -161,10 +163,26 @@ func (u *order) create(ctx context.Context, payload dto.UpsertOrderRequest, orde
 	if err != nil {
 		return err
 	}
+
+	trxStockProducts := []dto.TransactionStockProductRequest{}
 	for _, item := range orderTrx.OrderTrxItems {
 		_, err = u.Repo.OrderTrxItemLookup.Creates(ctx, item.OrderTrxItemLookups)
 		if err != nil {
 			return err
+		}
+
+		if len(item.OrderTrxItemLookups) > 0 {
+			trxStockLookupIDs := []string{}
+			for _, lookup := range item.OrderTrxItemLookups {
+				trxStockLookupIDs = append(trxStockLookupIDs, lookup.ID)
+			}
+			trxStockProduct := dto.TransactionStockProductRequest{
+				ID:             item.ProductID,
+				Quantity:       len(item.OrderTrxItemLookups),
+				RackID:         item.RackID,
+				StockLookupIDs: trxStockLookupIDs,
+			}
+			trxStockProducts = append(trxStockProducts, trxStockProduct)
 		}
 	}
 	_, err = u.Repo.OrderTrxReceipt.Creates(ctx, orderTrx.OrderTrxReceipts)
@@ -172,64 +190,127 @@ func (u *order) create(ctx context.Context, payload dto.UpsertOrderRequest, orde
 		return err
 	}
 
+	// transaction stock
+	if len(trxStockProducts) > 0 {
+		_, err := u.stockUC.Transaction(ctx, dto.TransactionStockRequest{
+			TrxType:    constant.TRX_TYPE_OUT,
+			OrderTrxID: orderTrx.ID,
+			Products:   trxStockProducts,
+		})
+
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
 func (u *order) update(ctx context.Context, payload dto.UpsertOrderRequest, orderTrx entity.OrderTrxModel) error {
+	// upsert order
 	_, err := u.Repo.OrderTrx.UpdateByID(ctx, orderTrx.ID, orderTrx)
 	if err != nil {
 		return err
 	}
 
+	trxStockProductsIn := []dto.TransactionStockProductRequest{}
+	trxStockProductsOut := []dto.TransactionStockProductRequest{}
 	for _, item := range orderTrx.OrderTrxItems {
+		trxStockProduct := dto.TransactionStockProductRequest{
+			ID:     item.ProductID,
+			RackID: item.RackID,
+		}
+		trxStockProductIn := trxStockProduct
+		trxStockProductOut := trxStockProduct
+
 		if item.Action == constant.ACTION_DELETE {
 			err = u.Repo.OrderTrxItem.DeleteByID(ctx, item.ID)
 			if err != nil {
 				return err
 			}
 
+			trxStockLookupIDsIn := []string{}
 			for _, lookup := range item.OrderTrxItemLookups {
 				err = u.Repo.OrderTrxItemLookup.DeleteByID(ctx, lookup.ID)
 				if err != nil {
 					return err
 				}
+				trxStockLookupIDsIn = append(trxStockLookupIDsIn, lookup.ID)
+				trxStockProductIn.Quantity++
 			}
-		}
-		if item.Action == constant.ACTION_UPDATE {
-			_, err = u.Repo.OrderTrxItem.UpdateByID(ctx, item.ID, item)
-			if err != nil {
-				return err
+			trxStockProductIn.StockLookupIDs = trxStockLookupIDsIn
+		} else {
+			if item.Action == constant.ACTION_UPDATE {
+				_, err = u.Repo.OrderTrxItem.UpdateByID(ctx, item.ID, item)
+				if err != nil {
+					return err
+				}
 			}
-		}
-		if item.Action == constant.ACTION_INSERT {
-			_, err = u.Repo.OrderTrxItem.Create(ctx, item)
-			if err != nil {
-				return err
+			if item.Action == constant.ACTION_INSERT {
+				_, err = u.Repo.OrderTrxItem.Create(ctx, item)
+				if err != nil {
+					return err
+				}
 			}
+
+			trxStockLookupIDsOut := []string{}
+			for _, lookup := range item.OrderTrxItemLookups {
+				if lookup.Action == constant.ACTION_DELETE {
+					err = u.Repo.OrderTrxItemLookup.DeleteByID(ctx, lookup.ID)
+					if err != nil {
+						return err
+					}
+					trxStockProductIn.Quantity++
+				}
+				if lookup.Action == constant.ACTION_UPDATE {
+					_, err = u.Repo.OrderTrxItemLookup.UpdateByID(ctx, lookup.ID, lookup)
+					if err != nil {
+						return err
+					}
+				}
+				if lookup.Action == constant.ACTION_INSERT {
+					_, err = u.Repo.OrderTrxItemLookup.Create(ctx, lookup)
+					if err != nil {
+						return err
+					}
+					trxStockLookupIDsOut = append(trxStockLookupIDsOut, lookup.ID)
+					trxStockProductOut.Quantity++
+				}
+			}
+			trxStockProductOut.StockLookupIDs = trxStockLookupIDsOut
 		}
 
-		for _, lookup := range item.OrderTrxItemLookups {
-			if lookup.Action == constant.ACTION_DELETE {
-				err = u.Repo.OrderTrxItemLookup.DeleteByID(ctx, lookup.ID)
-				if err != nil {
-					return err
-				}
-			}
-			if lookup.Action == constant.ACTION_UPDATE {
-				_, err = u.Repo.OrderTrxItemLookup.UpdateByID(ctx, lookup.ID, lookup)
-				if err != nil {
-					return err
-				}
-			}
-			if lookup.Action == constant.ACTION_INSERT {
-				_, err = u.Repo.OrderTrxItemLookup.Create(ctx, lookup)
-				if err != nil {
-					return err
-				}
-			}
+		if trxStockProductIn.Quantity > 0 {
+			trxStockProductsIn = append(trxStockProductsIn, trxStockProduct)
+		}
+		if trxStockProductOut.Quantity > 0 {
+			trxStockProductsOut = append(trxStockProductsOut, trxStockProduct)
 		}
 	}
 
+	// transaction stock
+	if len(trxStockProductsIn) > 0 {
+		_, err := u.stockUC.Transaction(ctx, dto.TransactionStockRequest{
+			TrxType:    constant.TRX_TYPE_OUT,
+			OrderTrxID: orderTrx.ID,
+			Products:   trxStockProductsIn,
+		})
+		if err != nil {
+			return err
+		}
+	}
+	if len(trxStockProductsOut) > 0 {
+		_, err := u.stockUC.Transaction(ctx, dto.TransactionStockRequest{
+			TrxType:    constant.TRX_TYPE_IN,
+			OrderTrxID: orderTrx.ID,
+			Products:   trxStockProductsOut,
+		})
+		if err != nil {
+			return err
+		}
+	}
+
+	// upsert receipt
 	for _, receipt := range orderTrx.OrderTrxReceipts {
 		if receipt.Action == constant.ACTION_DELETE {
 			err = u.Repo.OrderTrxReceipt.DeleteByID(ctx, receipt.ID)

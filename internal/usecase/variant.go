@@ -26,12 +26,12 @@ type Variant interface {
 }
 
 type variant struct {
-	Repo repository.Factory
 	Cfg  *config.Configuration
+	Repo repository.Factory
 }
 
 func NewVariant(cfg *config.Configuration, f repository.Factory) Variant {
-	return &variant{f, cfg}
+	return &variant{cfg, f}
 }
 
 func (u *variant) Find(ctx context.Context, filterParam abstraction.Filter) (result []dto.VariantResponse, pagination abstraction.PaginationInfo, err error) {

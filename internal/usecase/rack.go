@@ -26,12 +26,12 @@ type Rack interface {
 }
 
 type rack struct {
-	Repo repository.Factory
 	Cfg  *config.Configuration
+	Repo repository.Factory
 }
 
 func NewRack(cfg *config.Configuration, f repository.Factory) Rack {
-	return &rack{f, cfg}
+	return &rack{cfg, f}
 }
 
 func (u *rack) Find(ctx context.Context, filterParam abstraction.Filter) (result []dto.RackResponse, pagination abstraction.PaginationInfo, err error) {

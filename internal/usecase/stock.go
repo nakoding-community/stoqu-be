@@ -29,12 +29,12 @@ type Stock interface {
 }
 
 type stock struct {
-	Repo repository.Factory
 	Cfg  *config.Configuration
+	Repo repository.Factory
 }
 
 func NewStock(cfg *config.Configuration, f repository.Factory) Stock {
-	return &stock{f, cfg}
+	return &stock{cfg, f}
 }
 
 func (u *stock) Find(ctx context.Context, filterParam abstraction.Filter) (result []dto.StockViewResponse, pagination abstraction.PaginationInfo, err error) {
@@ -99,6 +99,7 @@ func (u *stock) FindByID(ctx context.Context, payload dto.ByIDRequest) (dto.Stoc
 	return result, nil
 }
 
+// !TODO: type in with spesific lookup, need for reuse from order usecase
 func (u *stock) Transaction(ctx context.Context, payload dto.TransactionStockRequest) (result dto.StockTransactionResponse, err error) {
 	if err = trxmanager.New(u.Repo.Db).WithTrx(ctx, func(ctx context.Context) error {
 		stockTrxID := uuid.New().String()
@@ -107,8 +108,9 @@ func (u *stock) Transaction(ctx context.Context, payload dto.TransactionStockReq
 				ID: stockTrxID,
 			},
 			StockTrxEntity: model.StockTrxEntity{
-				TrxType: payload.TrxType,
-				Code:    str.GenCode(constant.CODE_STOCK_TRX_PREFIX),
+				Code:       str.GenCode(constant.CODE_STOCK_TRX_PREFIX),
+				TrxType:    payload.TrxType,
+				OrderTrxID: payload.OrderTrxID,
 			},
 		}
 		stockTrxItems := []model.StockTrxItemModel{}

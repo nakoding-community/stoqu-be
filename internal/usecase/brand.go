@@ -26,12 +26,12 @@ type Brand interface {
 }
 
 type brand struct {
-	Repo repository.Factory
 	Cfg  *config.Configuration
+	Repo repository.Factory
 }
 
 func NewBrand(cfg *config.Configuration, f repository.Factory) Brand {
-	return &brand{f, cfg}
+	return &brand{cfg, f}
 }
 
 func (u *brand) Find(ctx context.Context, filterParam abstraction.Filter) (result []dto.BrandResponse, pagination abstraction.PaginationInfo, err error) {

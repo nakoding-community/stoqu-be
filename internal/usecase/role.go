@@ -26,12 +26,12 @@ type Role interface {
 }
 
 type role struct {
-	Repo repository.Factory
 	Cfg  *config.Configuration
+	Repo repository.Factory
 }
 
 func NewRole(cfg *config.Configuration, f repository.Factory) Role {
-	return &role{f, cfg}
+	return &role{cfg, f}
 }
 
 func (u *role) Find(ctx context.Context, filterParam abstraction.Filter) (result []dto.RoleResponse, pagination abstraction.PaginationInfo, err error) {

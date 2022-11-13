@@ -26,12 +26,12 @@ type Packet interface {
 }
 
 type packet struct {
-	Repo repository.Factory
 	Cfg  *config.Configuration
+	Repo repository.Factory
 }
 
 func NewPacket(cfg *config.Configuration, f repository.Factory) Packet {
-	return &packet{f, cfg}
+	return &packet{cfg, f}
 }
 
 func (u *packet) Find(ctx context.Context, filterParam abstraction.Filter) (result []dto.PacketResponse, pagination abstraction.PaginationInfo, err error) {
