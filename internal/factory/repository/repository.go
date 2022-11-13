@@ -6,6 +6,7 @@ import (
 	el "github.com/olivere/elastic/v7"
 	"gitlab.com/stoqu/stoqu-be/internal/config"
 	dbRepository "gitlab.com/stoqu/stoqu-be/internal/repository/db"
+	fbRepository "gitlab.com/stoqu/stoqu-be/internal/repository/firebase"
 	"gorm.io/gorm"
 )
 
@@ -43,11 +44,14 @@ type Factory struct {
 	OrderTrxItemLookup dbRepository.OrderTrxItemLookup
 	OrderTrxStatus     dbRepository.OrderTrxStatus
 	OrderTrxReceipt    dbRepository.OrderTrxReceipt
+
+	OrderFs fbRepository.OrderFs
 }
 
-func Init(cfg *config.Configuration, db *gorm.DB) Factory {
+func Init(cfg *config.Configuration, db *gorm.DB, fsClient *firestore.Client) Factory {
 	f := Factory{}
 
+	// db
 	f.Db = db
 	f.Role = dbRepository.NewRole(f.Db)
 	f.User = dbRepository.NewUser(f.Db)
@@ -77,6 +81,10 @@ func Init(cfg *config.Configuration, db *gorm.DB) Factory {
 	f.OrderTrxItemLookup = dbRepository.NewOrderTrxItemLookup(f.Db)
 	f.OrderTrxStatus = dbRepository.NewOrderTrxStatus(f.Db)
 	f.OrderTrxReceipt = dbRepository.NewOrderTrxReceipt(f.Db)
+
+	// firestore
+	f.Firestore = fsClient
+	f.OrderFs = fbRepository.NewOrderFs(f.Firestore)
 
 	return f
 }

@@ -5,11 +5,8 @@ const DB_DEFAULT_SYSTEM = "system"
 
 // code
 const (
-	LENGTH_CODE = 5
-)
+	CODE_LENGTH = 5
 
-// master
-const (
 	CODE_ROLE_PREFIX            = "R-"
 	CODE_UNIT_PREFIX            = "U-"
 	CODE_PACKET_PREFIX          = "PKT-"
@@ -53,8 +50,13 @@ const (
 	ACTION_DELETE = "delete"
 )
 
-// reminder_ stock
+// reminder stock
 const (
 	REMINDER_STOCK_SECOND = "second"
 	REMINDER_STOCK_DAILY  = "daily"
+)
+
+// firebase
+const (
+	FIRESTORE_MAX_DATA = 50
 )

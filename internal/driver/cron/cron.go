@@ -8,11 +8,15 @@ import (
 	"gitlab.com/stoqu/stoqu-be/internal/config"
 	"gitlab.com/stoqu/stoqu-be/internal/factory"
 	"gitlab.com/stoqu/stoqu-be/pkg/constant"
+	"gitlab.com/stoqu/stoqu-be/pkg/util/gracefull"
 )
 
-func Init(cfg *config.Configuration, f factory.Factory) {
+var stopper = gracefull.NilStopper
+
+// !TODO: add stopper
+func Init(cfg *config.Configuration, f factory.Factory) gracefull.ProcessStopper {
 	if !cfg.Driver.Cron.Enabled {
-		return
+		return stopper
 	}
 
 	loc, _ := time.LoadLocation("Asia/Jakarta")
@@ -31,4 +35,6 @@ func Init(cfg *config.Configuration, f factory.Factory) {
 	jobDaily.SingletonMode()
 
 	s.StartAsync()
+
+	return stopper
 }

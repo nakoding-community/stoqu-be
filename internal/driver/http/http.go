@@ -9,7 +9,7 @@ import (
 	echoSwagger "github.com/swaggo/echo-swagger"
 	"gitlab.com/stoqu/stoqu-be/docs"
 	"gitlab.com/stoqu/stoqu-be/internal/config"
-	rest "gitlab.com/stoqu/stoqu-be/internal/delivery/api"
+	api "gitlab.com/stoqu/stoqu-be/internal/delivery/api"
 	"gitlab.com/stoqu/stoqu-be/internal/delivery/api/middleware"
 	"gitlab.com/stoqu/stoqu-be/internal/factory"
 	"gitlab.com/stoqu/stoqu-be/pkg/util/gracefull"
@@ -40,7 +40,7 @@ func Init(cfg *config.Configuration, f factory.Factory) (gracefull.ProcessStarte
 
 	// delivery
 	middleware.Init(e)
-	rest.Init(e, f)
+	api.Init(e, f)
 	// ws.Init(e, f)
 
 	return func() error {

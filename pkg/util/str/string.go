@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/dustin/go-humanize"
+	"gitlab.com/stoqu/stoqu-be/pkg/constant"
 )
 
 func GenRandStr(length int) string {
@@ -18,7 +19,7 @@ func GenRandStr(length int) string {
 }
 
 func GenCode(prefix string) string {
-	length := 5
+	length := constant.CODE_LENGTH
 	return prefix + strings.ToUpper(GenRandStr(length))
 }
 
