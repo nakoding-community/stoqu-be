@@ -23,7 +23,7 @@ type automigration struct {
 func Init(cfg *config.Configuration) {
 	var mgConfigurations = map[string]AutoMigration{}
 	for _, v := range cfg.Databases {
-		if !v.AutoMigrateEnabled {
+		if !v.DBAutoMigrate {
 			continue
 		}
 

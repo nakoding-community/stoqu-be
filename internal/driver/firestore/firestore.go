@@ -1,4 +1,4 @@
-package firebase
+package firestore
 
 import (
 	"context"
@@ -18,9 +18,9 @@ var (
 	stopper         = gracefull.NilStopper
 )
 
-func FirestoreInit() (gracefull.ProcessStopper, error) {
+func Init() (gracefull.ProcessStopper, error) {
 	ctx := context.Background()
-	opt := option.WithCredentialsJSON([]byte(config.Config.Driver.Firestore.Credentials))
+	opt := option.WithCredentialsFile(config.Config.Driver.Firestore.Credentials)
 	config := &firebase.Config{ProjectID: config.Config.Driver.Firestore.ProjectID}
 	app, err := firebase.NewApp(ctx, config, opt)
 	if err != nil {

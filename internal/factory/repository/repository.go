@@ -11,10 +11,10 @@ import (
 )
 
 type Factory struct {
-	Db        *gorm.DB
-	Es        *el.Client
-	Fcm       *messaging.Client
-	Firestore *firestore.Client
+	Db  *gorm.DB
+	Es  *el.Client
+	Fcm *messaging.Client
+	Fs  *firestore.Client
 
 	Role        dbRepository.Role
 	User        dbRepository.User
@@ -48,7 +48,7 @@ type Factory struct {
 	OrderFs fbRepository.OrderFs
 }
 
-func Init(cfg *config.Configuration, db *gorm.DB, fsClient *firestore.Client) Factory {
+func Init(cfg *config.Configuration, db *gorm.DB, fs *firestore.Client) Factory {
 	f := Factory{}
 
 	// db
@@ -83,8 +83,8 @@ func Init(cfg *config.Configuration, db *gorm.DB, fsClient *firestore.Client) Fa
 	f.OrderTrxReceipt = dbRepository.NewOrderTrxReceipt(f.Db)
 
 	// firestore
-	f.Firestore = fsClient
-	f.OrderFs = fbRepository.NewOrderFs(f.Firestore)
+	f.Fs = fs
+	f.OrderFs = fbRepository.NewOrderFs(f.Fs)
 
 	return f
 }

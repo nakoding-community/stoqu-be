@@ -58,5 +58,7 @@ const (
 
 // firebase
 const (
-	FIRESTORE_MAX_DATA = 50
+	FIRESTORE_MAX_DATA                   = 50
+	FIRESTORE_COLLECTION_DASHBOARD_ORDER = "dashboard-order"
+	FIRESTORE_COLLECTION_TOTAL_ORDER     = "total-order"
 )

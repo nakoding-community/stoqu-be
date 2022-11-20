@@ -33,7 +33,7 @@ func (seederEntity) TableName() string {
 func Init(cfg *config.Configuration) {
 	var mgConfigurations = map[string]Seeder{}
 	for _, v := range cfg.Databases {
-		if !v.SeederEnabled {
+		if !v.DBSeeder {
 			continue
 		}
 

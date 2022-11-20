@@ -39,7 +39,28 @@ type OrderView struct {
 	OrderTrxEntity
 
 	// join
-	CustomerName string `json:"customer_name" filter:"column:customers.name"`
-	SupplierName string `json:"supplier_name" filter:"column:suppliers.name"`
-	PicName      string `json:"pic_name" filter:"column:pics.name"`
+	CustomerName  string `json:"customer_name" filter:"column:customers.name"`
+	CustomerPhone string `json:"customer_phone" filter:"column:customer_profiles.phone"`
+	SupplierName  string `json:"supplier_name" filter:"column:suppliers.name"`
+	PicName       string `json:"pic_name" filter:"column:pics.name"`
+}
+
+func (m *OrderTrxModel) ToOrderTrxFs(v OrderView) OrderTrxFs {
+	data := OrderTrxFs{
+		ID:           m.ID,
+		Code:         m.Code,
+		TrxType:      m.TrxType,
+		CustomerName: v.CustomerName,
+		SupplierName: v.SupplierName,
+		PicName:      v.PicName,
+		PhoneNumber:  v.CustomerPhone,
+		Price:        m.Price,
+		FinalPrice:   m.FinalPrice,
+		CreatedAt:    m.CreatedAt.Format("2006-01-02 15:04:05"),
+		Status:       m.Status,
+		StockStatus:  m.StockStatus,
+		IsRead:       m.IsRead,
+	}
+
+	return data
 }

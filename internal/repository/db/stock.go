@@ -119,3 +119,9 @@ func (m *stock) FindByTotalLessThan(ctx context.Context, total int64) ([]model.S
 	}
 	return result, nil
 }
+
+func (m *stock) Count(ctx context.Context) (int64, error) {
+	var count int64
+	err := m.GetConn(ctx).Model(m.entity).Raw(`select coalesce(sum(stocks.total_seal+stocks.total_not_seal), 0) as total from stocks`).Scan(&count).Error
+	return count, err
+}

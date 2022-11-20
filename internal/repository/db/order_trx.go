@@ -4,6 +4,7 @@ import (
 	"context"
 
 	abstraction "gitlab.com/stoqu/stoqu-be/internal/model/abstraction"
+	"gitlab.com/stoqu/stoqu-be/internal/model/dto"
 	model "gitlab.com/stoqu/stoqu-be/internal/model/entity"
 
 	"gorm.io/gorm"
@@ -29,6 +30,7 @@ type (
 		// Custom
 		Find(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.OrderView, *abstraction.PaginationInfo, error)
 		FindByID(ctx context.Context, id string) (*model.OrderView, error)
+		CountLastWeek(ctx context.Context) ([]dto.DashboardOrderDailyResponse, error)
 	}
 
 	orderTrx struct {
@@ -54,10 +56,12 @@ func (m *orderTrx) Find(ctx context.Context, filterParam abstraction.Filter, sea
 		Select(`
 			order_trxs.*, 
 			customers.name as customer_name, 
+			customer_profiles.phone as customer_phone, 
 			suppliers.name as supplier_name,
 			pics.name as pic_name
 		`).
 		Joins(`join users as customers on customers.id = order_trxs.customer_id`).
+		Joins(`join user_profiles as customer_profiles on customer_profiles.user_id = customers.id`).
 		Joins(`join users as suppliers on suppliers.id = order_trxs.supplier_id`).
 		Joins(`join users as pics on pic.id = order_trxs.pic_id`)
 
@@ -95,4 +99,15 @@ func (m *orderTrx) FindByID(ctx context.Context, id string) (*model.OrderView, e
 		return nil, m.MaskError(err)
 	}
 	return result, nil
+}
+
+func (m *orderTrx) CountLastWeek(ctx context.Context) ([]dto.DashboardOrderDailyResponse, error) {
+	results := []dto.DashboardOrderDailyResponse{}
+	err := m.GetConn(ctx).Model(m.entity).
+		Select(`lower( to_char(order_trxs.created_at, 'Day')) as day, count(order_trxs.created_at) as total`).
+		Where(`order_trxs.created_at BETWEEN NOW() - INTERVAL '1 week' AND NOW() `).
+		Group(`to_char(order_trxs.created_at, 'Day')`).
+		Find(&results).Error
+
+	return results, err
 }

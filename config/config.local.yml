@@ -23,14 +23,14 @@ databases:
     dbprovider: postgresql
     dbssl: disable
     dbtz: Asia/Jakarta
-    automigrate_enabled: true
-    seeder_enabled: true
+    dbautomigrate: true
+    dbseeder: false
 driver:
   cron:
     enabled: true
   firestore:
-    credentials: ""
-    projectid: ""
+    credentials: "./firebase-admin-sdk.json"
+    projectid: "inamawangi-d1766"
   elasticsearch:
     credentials: ""
     url: ""

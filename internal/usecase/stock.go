@@ -26,6 +26,7 @@ type Stock interface {
 	Transaction(ctx context.Context, payload dto.TransactionStockRequest) (dto.StockTransactionResponse, error)
 	Convertion(ctx context.Context, payload dto.ConvertionStockRequest) (dto.StockConvertionResponse, error)
 	Movement(ctx context.Context, payload dto.MovementStockRequest) (result dto.StockMovementResponse, err error)
+	History(ctx context.Context, filterParam abstraction.Filter) ([]dto.StockHistoryResponse, abstraction.PaginationInfo, error)
 }
 
 type stock struct {
@@ -626,4 +627,64 @@ func (u *stock) convertionMutation(ctx context.Context, wrapper *convertionDataW
 	}
 
 	return nil
+}
+
+func (u *stock) History(ctx context.Context, filterParam abstraction.Filter) (result []dto.StockHistoryResponse, pagination abstraction.PaginationInfo, err error) {
+	var search *abstraction.Search
+	if filterParam.Search != "" {
+		searchQuery := `
+			lower(stock_trxs.code) LIKE ? OR 
+			lower(stock_trxs.trx_type) LIKE ? OR 
+		`
+		searchVal := "%" + strings.ToLower(filterParam.Search) + "%"
+		search = &abstraction.Search{
+			Query: searchQuery,
+			Args: []interface{}{
+				searchVal,
+				searchVal,
+			},
+		}
+	}
+
+	stockTrxs, info, err := u.Repo.StockTrx.Find(ctx, filterParam, search)
+	if err != nil {
+		return nil, pagination, err
+	}
+	pagination = *info
+
+	for i, stockTrx := range stockTrxs {
+		stockTrxItems, _, err := u.Repo.StockTrxItem.Find(ctx, abstraction.Filter{
+			Query: []abstraction.FilterQuery{
+				{
+					Field: "stock_trx_id",
+					Value: stockTrx.ID,
+				},
+			},
+		}, search)
+		if err != nil {
+			return nil, pagination, err
+		}
+
+		for j, stockTrxItem := range stockTrxItems {
+			stockTrxItemLookups, _, err := u.Repo.StockTrxItemLookup.Find(ctx, abstraction.Filter{
+				Query: []abstraction.FilterQuery{
+					{
+						Field: "stock_trx_item_id",
+						Value: stockTrxItem.ID,
+					},
+				},
+			}, search)
+			if err != nil {
+				return nil, pagination, err
+			}
+			stockTrxItems[j].StockTrxItemLookups = stockTrxItemLookups
+		}
+		stockTrxs[i].StockTrxItems = stockTrxItems
+
+		result = append(result, dto.StockHistoryResponse{
+			StockTrxModel: stockTrx,
+		})
+	}
+
+	return result, pagination, nil
 }

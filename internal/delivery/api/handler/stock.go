@@ -66,6 +66,35 @@ func (h *stock) Get(c echo.Context) error {
 	return res.CustomSuccessBuilder(200, result, "Get stocks success", &pagination).Send(c)
 }
 
+// Get stock history
+// @Summary Get stock history
+// @Description Get stock history
+// @Tags stock history
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @param request query abstraction.Filter true "request query"
+// @Param entity query model.StockTrx false "entity query"
+// @Success 200 {object} dto.StockResponseDoc
+// @Failure 400 {object} res.errorResponse
+// @Failure 404 {object} res.errorResponse
+// @Failure 500 {object} res.errorResponse
+// @Router /api/stocks/history [get]
+func (h *stock) History(c echo.Context) error {
+	filter := abstraction.NewFilterBuiler[model.StockTrxModel](c, "stock_trxs")
+	if err := c.Bind(filter.Payload); err != nil {
+		return res.ErrorBuilder(res.Constant.Error.BadRequest, err).Send(c)
+	}
+	filter.Bind()
+
+	result, pagination, err := h.Factory.Usecase.Stock.History(c.Request().Context(), *filter.Payload)
+	if err != nil {
+		return res.ErrorResponse(err).Send(c)
+	}
+
+	return res.CustomSuccessBuilder(200, result, "Get stock histories success", &pagination).Send(c)
+}
+
 // Get stock by id
 // @Summary Get stock by id
 // @Description Get stock by id

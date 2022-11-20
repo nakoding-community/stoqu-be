@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/sirupsen/logrus"
 	"gitlab.com/stoqu/stoqu-be/internal/config"
 
 	"gitlab.com/stoqu/stoqu-be/internal/factory/repository"
@@ -101,7 +102,6 @@ func (u *order) FindByID(ctx context.Context, payload dto.ByIDRequest) (dto.Orde
 }
 
 func (u *order) Upsert(ctx context.Context, payload dto.UpsertOrderRequest) (result dto.OrderUpsertResponse, err error) {
-	//!TODO:need calculation stock in whole function
 	mapStockLookups, err := u.buildMapStockLookups(ctx, payload)
 	if err != nil {
 		return result, err
@@ -124,6 +124,23 @@ func (u *order) Upsert(ctx context.Context, payload dto.UpsertOrderRequest) (res
 		return nil
 	}); err != nil {
 		return result, err
+	}
+
+	orderView, err := u.Repo.OrderTrx.FindByID(ctx, orderTrx.ID)
+	if err != nil {
+		return result, err
+	}
+
+	// sync firestore
+	orderTrxFs := orderTrx.ToOrderTrxFs(*orderView)
+	if payload.ID == "" {
+		if err = u.Repo.OrderFs.Add(constant.FIRESTORE_COLLECTION_DASHBOARD_ORDER, orderTrx.ID, orderTrxFs); err != nil {
+			logrus.Error("error add order fs, in collection `dashboard-order`", err)
+		}
+	} else {
+		if err = u.Repo.OrderFs.Update(constant.FIRESTORE_COLLECTION_DASHBOARD_ORDER, orderTrx.ID, orderTrxFs); err != nil {
+			logrus.Error("error update order fs, in collection `dashboard-order`", err)
+		}
 	}
 
 	result = dto.OrderUpsertResponse{

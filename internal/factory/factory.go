@@ -7,7 +7,7 @@ import (
 	"gitlab.com/stoqu/stoqu-be/internal/driver/db"
 	"gitlab.com/stoqu/stoqu-be/internal/driver/db/automigration"
 	"gitlab.com/stoqu/stoqu-be/internal/driver/db/seeder"
-	"gitlab.com/stoqu/stoqu-be/internal/driver/firebase"
+	"gitlab.com/stoqu/stoqu-be/internal/driver/firestore"
 	"gitlab.com/stoqu/stoqu-be/internal/driver/ws"
 	"gitlab.com/stoqu/stoqu-be/internal/factory/repository"
 	"gitlab.com/stoqu/stoqu-be/internal/factory/usecase"
@@ -44,10 +44,8 @@ func Init(cfg *config.Configuration) (Factory, gracefull.ProcessStopper, error) 
 	if err != nil {
 		return f, stopper, err
 	}
-
 	// migration
 	automigration.Init(cfg)
-
 	// seeder
 	seeder.Init(cfg)
 
@@ -55,9 +53,9 @@ func Init(cfg *config.Configuration) (Factory, gracefull.ProcessStopper, error) 
 	f.WsHub = ws.NewHub()
 
 	// firestore
-	stopperFs, err := firebase.FirestoreInit()
+	stopperFs, err := firestore.Init()
 	stoppers = append(stoppers, stopperFs)
-	fsClient := firebase.GetFirestoreClient()
+	fsClient := firestore.GetFirestoreClient()
 	if err != nil {
 		return f, stopper, err
 	}

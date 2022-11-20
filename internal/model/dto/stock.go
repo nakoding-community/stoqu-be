@@ -103,4 +103,14 @@ type (
 			Data StockMovementResponse `json:"data"`
 		} `json:"body"`
 	}
+
+	StockHistoryResponse struct {
+		model.StockTrxModel
+	}
+	StockHistoryResponseDoc struct {
+		Body struct {
+			Meta res.Meta               `json:"meta"`
+			Data []StockHistoryResponse `json:"data"`
+		} `json:"body"`
+	}
 )

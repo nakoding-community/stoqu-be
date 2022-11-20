@@ -4,12 +4,15 @@ import (
 	"context"
 
 	xfirestore "cloud.google.com/go/firestore"
+	"gitlab.com/stoqu/stoqu-be/internal/model/entity"
 	"gitlab.com/stoqu/stoqu-be/pkg/constant"
 	"google.golang.org/api/iterator"
 )
 
 type (
 	OrderFs interface {
+		Add(collection string, ID string, data entity.OrderTrxFs) error
+		Update(collection string, doc string, data entity.OrderTrxFs) (err error)
 	}
 
 	orderFs struct {
@@ -21,7 +24,7 @@ func NewOrderFs(client *xfirestore.Client) OrderFs {
 	return &orderFs{client}
 }
 
-func (f *orderFs) Add(collection string, ID string, data interface{}) error {
+func (f *orderFs) Add(collection string, ID string, data entity.OrderTrxFs) error {
 	err := f.client.RunTransaction(context.Background(), func(ctx context.Context, tx *xfirestore.Transaction) error {
 		// check limit
 		sanpShot, err := f.client.Collection(collection).Documents(ctx).GetAll()
@@ -63,7 +66,7 @@ func (f *orderFs) Add(collection string, ID string, data interface{}) error {
 	return nil
 }
 
-func (f *orderFs) Update(collection string, doc string, data interface{}) (err error) {
+func (f *orderFs) Update(collection string, doc string, data entity.OrderTrxFs) (err error) {
 	err = f.client.RunTransaction(context.Background(), func(ctx context.Context, tx *xfirestore.Transaction) (err error) {
 		xcol := f.client.Collection(collection)
 		xdoc := xcol.Doc(doc)
