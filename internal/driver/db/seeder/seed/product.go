@@ -68,10 +68,11 @@ func (s *ProductSeed) Run(conn *gorm.DB) error {
 	var products []entity.ProductModel
 	for _, v := range variants {
 		for _, v2 := range packets {
+			code := str.GenCode(constant.CODE_PACKET_PREFIX)
 			product := entity.ProductModel{
 				ProductEntity: entity.ProductEntity{
-					Code:       str.GenCode(constant.CODE_PACKET_PREFIX),
-					Name:       "Product " + str.GenCode(constant.CODE_PACKET_PREFIX),
+					Code:       code,
+					Name:       "Product " + code,
 					PriceUSD:   1,
 					PriceFinal: 15000,
 					BrandID:    v.BrandID,

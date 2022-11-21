@@ -24,7 +24,7 @@ databases:
     dbssl: disable
     dbtz: Asia/Jakarta
     dbautomigrate: true
-    dbseeder: false
+    dbseeder: true
 driver:
   cron:
     enabled: true

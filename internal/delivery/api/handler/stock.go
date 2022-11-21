@@ -74,7 +74,7 @@ func (h *stock) Get(c echo.Context) error {
 // @Produce json
 // @Security BearerAuth
 // @param request query abstraction.Filter true "request query"
-// @Param entity query model.StockTrx false "entity query"
+// @Param entity query model.StockTrxModel false "entity query"
 // @Success 200 {object} dto.StockResponseDoc
 // @Failure 400 {object} res.errorResponse
 // @Failure 404 {object} res.errorResponse
@@ -203,7 +203,7 @@ func (h *stock) Convertion(c echo.Context) error {
 // @Failure 400 {object} res.errorResponse
 // @Failure 404 {object} res.errorResponse
 // @Failure 500 {object} res.errorResponse
-// @Router /api/stocks/convertion [put]
+// @Router /api/stocks/movement [put]
 func (h *stock) Movement(c echo.Context) error {
 	ctx := c.Request().Context()
 

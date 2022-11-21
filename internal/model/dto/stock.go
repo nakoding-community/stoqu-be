@@ -14,10 +14,11 @@ type (
 	}
 
 	TransactionStockProductRequest struct {
-		ID             string   `json:"id" validate:"required"`
-		Quantity       int      `json:"quantity" validate:"required,min=1"`
-		RackID         string   `json:"rack_id" validate:"required"`
-		StockLookupIDs []string `json:"stock_lookup_ids"`
+		ID                    string   `json:"id" validate:"required"`
+		Quantity              int      `json:"quantity" validate:"required,min=1"`
+		RackID                string   `json:"rack_id" validate:"required"`
+		StockLookupIDs        []string `json:"stock_lookup_ids"`          // only for type out
+		StockTrxItemLookupIDs []string `json:"stock_trx_item_lookup_ids"` // only for type in, optional
 	}
 
 	ConvertionStockRequest struct {
@@ -75,7 +76,12 @@ type (
 	}
 
 	StockTransactionResponse struct {
-		Status string `json:"status"`
+		Status   string                            `json:"status"`
+		Products []StockTransactionProductResponse `json:"products"`
+	}
+	StockTransactionProductResponse struct {
+		ID          string   `json:"id"`
+		LookupCodes []string `json:"lookup_codes"`
 	}
 	StockTransactionResponseDoc struct {
 		Body struct {

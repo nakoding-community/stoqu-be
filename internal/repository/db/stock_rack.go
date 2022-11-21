@@ -30,6 +30,7 @@ type (
 
 		// Custom
 		FindByStockAndRackID(ctx context.Context, stockID, rackID string) (*model.StockRackModel, error)
+		FindByStockID(ctx context.Context, stockID string) ([]model.StockRackModel, error)
 	}
 
 	stockRack struct {
@@ -54,6 +55,16 @@ func (m *stockRack) FindByStockAndRackID(ctx context.Context, stockID, rackID st
 	query := m.GetConn(ctx).Model(m.entity)
 	result := new(model.StockRackModel)
 	err := query.WithContext(ctx).Where("stock_id = ? AND rack_id = ?", stockID, rackID).First(result).Error
+	if err != nil {
+		return nil, m.MaskError(err)
+	}
+	return result, nil
+}
+
+func (m *stockRack) FindByStockID(ctx context.Context, stockID string) ([]model.StockRackModel, error) {
+	query := m.GetConn(ctx).Model(m.entity)
+	result := []model.StockRackModel{}
+	err := query.WithContext(ctx).Where("stock_id = ?", stockID).Find(&result).Error
 	if err != nil {
 		return nil, m.MaskError(err)
 	}

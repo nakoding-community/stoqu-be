@@ -3,7 +3,7 @@ package entity
 type StockRackEntity struct {
 	TotalSeal    int64 `json:"price_usd" gorm:"not null"`
 	TotalNotSeal int64 `json:"price_final" gorm:"not null"`
-	Total        int64 `json:"toital" gorm:"not null"`
+	Total        int64 `json:"total" gorm:"not null"`
 
 	// fk
 	StockID string `json:"stock_id" gorm:"not null"`

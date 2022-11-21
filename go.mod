@@ -78,7 +78,7 @@ require (
 	github.com/stretchr/objx v0.5.0 // indirect
 	github.com/swaggo/echo-swagger v1.3.4 // indirect
 	github.com/swaggo/files v0.0.0-20220728132757-551d4a08d97a // indirect
-	github.com/swaggo/swag v1.8.6 // indirect
+	github.com/swaggo/swag v1.8.7 // indirect
 	github.com/urfave/cli/v2 v2.3.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.1 // indirect

@@ -38,7 +38,7 @@ func NewStockLookup(cfg *config.Configuration, f repository.Factory) StockLookup
 func (u *stockLookup) Find(ctx context.Context, filterParam abstraction.Filter) (result []dto.StockLookupViewResponse, pagination abstraction.PaginationInfo, err error) {
 	var search *abstraction.Search
 	if filterParam.Search != "" {
-		searchQuery := "lower(code) LIKE ? OR type_value = ? OR remaining_type_value = ? OR remaining_type_value_before = ?"
+		searchQuery := "lower(code) LIKE ? OR type_value = ? OR remaining_value = ? OR remaining_value_before = ?"
 		searchVal := "%" + strings.ToLower(filterParam.Search) + "%"
 		searchValFloat, _ := strconv.ParseFloat(filterParam.Search, 64)
 		search = &abstraction.Search{

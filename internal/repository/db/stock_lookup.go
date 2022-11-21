@@ -79,9 +79,10 @@ func (m *stockLookup) Find(ctx context.Context, filterParam abstraction.Filter, 
 func (m *stockLookup) SumByIDs(ctx context.Context, ids []string) (*model.StockLookupSum, error) {
 	query := m.GetConn(ctx).Model(m.entity).
 		Select(`
-			sum(remaining_type_value) as remaining_type_value 
+			sum(remaining_value) as remaining_value 
 		`).
-		Where(`id IN ?`, ids)
+		Where(`id in ?`, ids).
+		Group(`id`)
 
 	result := new(model.StockLookupSum)
 	err := query.WithContext(ctx).First(result).Error
