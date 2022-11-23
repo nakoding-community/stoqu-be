@@ -3995,7 +3995,7 @@
                     },
                     {
                         "type": "integer",
-                        "name": "toital",
+                        "name": "total",
                         "in": "query"
                     },
                     {
@@ -6594,7 +6594,7 @@
                         "$ref": "#/definitions/entity.StockRackModel"
                     }
                 },
-                "toital": {
+                "total": {
                     "type": "integer"
                 },
                 "variant": {
@@ -7658,7 +7658,7 @@
                         "$ref": "#/definitions/entity.StockRackModel"
                     }
                 },
-                "toital": {
+                "total": {
                     "type": "integer"
                 },
                 "variant": {
@@ -7710,7 +7710,7 @@
                         "$ref": "#/definitions/entity.StockLookupModel"
                     }
                 },
-                "toital": {
+                "total": {
                     "type": "integer"
                 }
             }

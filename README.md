@@ -7,6 +7,13 @@ Stoqu Backend Service With Clean Architecture
 
 ## How To Run
 ``` bash
+# setup db
+$ docker compose -f deployments/docker/docker-compose.yml up -d
+
+# setup swagger 
+$ go install github.com/swaggo/swag/cmd/swag@latest
+$ swag init --propertyStrategy snakecase
+
 # mod
 $ go mod tidy
 

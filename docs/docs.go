@@ -4002,7 +4002,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "name": "toital",
+                        "name": "total",
                         "in": "query"
                     },
                     {
@@ -6601,7 +6601,7 @@ const docTemplate = `{
                         "$ref": "#/definitions/entity.StockRackModel"
                     }
                 },
-                "toital": {
+                "total": {
                     "type": "integer"
                 },
                 "variant": {
@@ -7665,7 +7665,7 @@ const docTemplate = `{
                         "$ref": "#/definitions/entity.StockRackModel"
                     }
                 },
-                "toital": {
+                "total": {
                     "type": "integer"
                 },
                 "variant": {
@@ -7717,7 +7717,7 @@ const docTemplate = `{
                         "$ref": "#/definitions/entity.StockLookupModel"
                     }
                 },
-                "toital": {
+                "total": {
                     "type": "integer"
                 }
             }

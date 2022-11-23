@@ -819,7 +819,7 @@ definitions:
         items:
           $ref: '#/definitions/entity.StockRackModel'
         type: array
-      toital:
+      total:
         type: integer
       variant:
         $ref: '#/definitions/entity.VariantModel'
@@ -1530,7 +1530,7 @@ definitions:
         items:
           $ref: '#/definitions/entity.StockRackModel'
         type: array
-      toital:
+      total:
         type: integer
       variant:
         $ref: '#/definitions/entity.VariantModel'
@@ -1565,7 +1565,7 @@ definitions:
         items:
           $ref: '#/definitions/entity.StockLookupModel'
         type: array
-      toital:
+      total:
         type: integer
     type: object
   entity.StockTrxItemLookupModel:
@@ -4257,7 +4257,7 @@ paths:
         name: supplier_name
         type: string
       - in: query
-        name: toital
+        name: total
         type: integer
       - in: query
         name: unit_name
