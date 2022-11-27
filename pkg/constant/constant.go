@@ -62,3 +62,10 @@ const (
 	FIRESTORE_COLLECTION_DASHBOARD_ORDER = "dashboard-order"
 	FIRESTORE_COLLECTION_TOTAL_ORDER     = "total-order"
 )
+
+// report order product
+const (
+	GROUP_BY_BRAND   = "brand"
+	GROUP_BY_VARIANT = "variant"
+	GROUP_BY_PACKET  = "packet"
+)

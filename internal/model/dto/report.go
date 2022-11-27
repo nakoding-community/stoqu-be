@@ -1,8 +1,6 @@
 package dto
 
 import (
-	"time"
-
 	model "gitlab.com/stoqu/stoqu-be/internal/model/entity"
 	res "gitlab.com/stoqu/stoqu-be/pkg/util/response"
 )
@@ -16,11 +14,8 @@ type (
 	}
 
 	ProductReportQuery struct {
-		StartDate     string `json:"start_date"`
-		EndDate       string `json:"end_date"`
-		StartDateTime time.Time
-		EndDateTime   time.Time
-		Group         string `json:"group"`
+		StartDate string `json:"start_date"`
+		EndDate   string `json:"end_date"`
 	}
 )
 
@@ -36,13 +31,13 @@ type (
 		} `json:"body"`
 	}
 
-	ProductReportResponse struct {
-		model.OrderView
+	OrderProductReportResponse struct {
+		model.OrderViewProduct
 	}
-	ProductReportResponseDoc struct {
+	OrderProductReportResponseDoc struct {
 		Body struct {
-			Meta res.Meta          `json:"meta"`
-			Data model.ProductView `json:"data"`
+			Meta res.Meta               `json:"meta"`
+			Data model.OrderViewProduct `json:"data"`
 		} `json:"body"`
 	}
 )
