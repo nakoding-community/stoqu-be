@@ -87,6 +87,11 @@ func (a *FilterBuilder[T]) ConstructFilter(structType reflect.Type, field string
 						if filterTagValue[0] == "operator" {
 							operatorValue = filterTagValue[1]
 						}
+						if filterTagValue[0] == "ignore" {
+							valueQuery = ""
+							fieldQuery = ""
+							operatorValue = ""
+						}
 					}
 				}
 			} else {
