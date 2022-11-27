@@ -10,10 +10,9 @@ import (
 // request
 type (
 	OrderReportQuery struct {
-		StartDate     string `json:"start_date"`
-		EndDate       string `json:"end_date"`
-		StartDateTime time.Time
-		EndDateTime   time.Time
+		StartDate string `json:"start_date" filter:"column:order_trxs.created_at;operator:>="`
+		EndDate   string `json:"end_date" filter:"column:order_trxs.created_at;operator:<="`
+		Status    string `json:"status" filter:"column:order_trxs.status"`
 	}
 
 	ProductReportQuery struct {

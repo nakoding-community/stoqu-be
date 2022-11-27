@@ -13,7 +13,7 @@ import (
 
 // !TODO: whole report function still need to restructure
 type Report interface {
-	Order(ctx context.Context, filterParam abstraction.Filter, query dto.OrderReportQuery) ([]dto.OrderReportResponse, abstraction.PaginationInfo, error)
+	FindOrder(ctx context.Context, filterParam abstraction.Filter, query dto.OrderReportQuery) (result []dto.OrderReportResponse, pagination abstraction.PaginationInfo, err error)
 	Product(ctx context.Context, filterParam abstraction.Filter, query dto.ProductReportQuery) ([]dto.ProductReportResponse, abstraction.PaginationInfo, error)
 }
 
@@ -26,21 +26,8 @@ func NewReport(cfg *config.Configuration, f repository.Factory) Report {
 	return &report{cfg, f}
 }
 
-func (u *report) Order(ctx context.Context, filterParam abstraction.Filter, query dto.OrderReportQuery) (result []dto.OrderReportResponse, pagination abstraction.PaginationInfo, err error) {
+func (u *report) FindOrder(ctx context.Context, filterParam abstraction.Filter, query dto.OrderReportQuery) (result []dto.OrderReportResponse, pagination abstraction.PaginationInfo, err error) {
 	var search *abstraction.Search
-	if filterParam.Search != "" {
-		searchQuery := `
-			order_trxs.created_at >= ? and order_trxs.created_at <= ? 
-		`
-		search = &abstraction.Search{
-			Query: searchQuery,
-			Args: []interface{}{
-				query.StartDateTime,
-				query.EndDateTime,
-			},
-		}
-	}
-
 	orders, info, err := u.Repo.OrderTrx.Find(ctx, filterParam, search)
 	if err != nil {
 		return nil, pagination, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
