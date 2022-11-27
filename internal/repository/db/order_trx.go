@@ -63,7 +63,7 @@ func (m *orderTrx) Find(ctx context.Context, filterParam abstraction.Filter, sea
 		Joins(`join users as customers on customers.id = order_trxs.customer_id`).
 		Joins(`join user_profiles as customer_profiles on customer_profiles.user_id = customers.id`).
 		Joins(`join users as suppliers on suppliers.id = order_trxs.supplier_id`).
-		Joins(`join users as pics on pic.id = order_trxs.pic_id`)
+		Joins(`join users as pics on pics.id = order_trxs.pic_id`)
 
 	if search != nil {
 		query = query.Where(search.Query, search.Args...)
