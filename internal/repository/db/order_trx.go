@@ -31,6 +31,7 @@ type (
 		Find(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.OrderView, *abstraction.PaginationInfo, error)
 		FindByID(ctx context.Context, id string) (*model.OrderView, error)
 		CountLastWeek(ctx context.Context) ([]dto.DashboardOrderDailyResponse, error)
+		CountIncome(ctx context.Context) (int64, error)
 		FindGroupByBrand(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.OrderViewProduct, *abstraction.PaginationInfo, error)
 		FindGroupByVariant(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.OrderViewProduct, *abstraction.PaginationInfo, error)
 		FindGroupByPacket(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.OrderViewProduct, *abstraction.PaginationInfo, error)
@@ -52,6 +53,18 @@ func NewOrderTrx(conn *gorm.DB) OrderTrx {
 		entity:     model,
 		entityName: model.TableName(),
 	}
+}
+
+func (m *orderTrx) CountIncome(ctx context.Context) (int64, error) {
+	query := m.GetConn(ctx).Model(m.entity).
+		Select(`
+			sum(order_trxs.price)
+		`)
+
+	var count int64
+	err := query.WithContext(ctx).Scan(&count).Error
+
+	return count, err
 }
 
 func (m *orderTrx) Find(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.OrderView, *abstraction.PaginationInfo, error) {

@@ -14,9 +14,8 @@ import (
 	res "gitlab.com/stoqu/stoqu-be/pkg/util/response"
 )
 
-// !TODO: whole report function still need to restructure
 type Report interface {
-	FindOrder(ctx context.Context, filterParam abstraction.Filter) (result []dto.OrderReportResponse, pagination abstraction.PaginationInfo, err error)
+	FindOrder(ctx context.Context, filterParam abstraction.Filter) (result dto.OrderReportResponse, pagination abstraction.PaginationInfo, err error)
 	FindOrderProduct(ctx context.Context, filterParam abstraction.Filter, query dto.ProductReportQuery) (result []dto.OrderProductReportResponse, pagination abstraction.PaginationInfo, err error)
 }
 
@@ -29,19 +28,30 @@ func NewReport(cfg *config.Configuration, f repository.Factory) Report {
 	return &report{cfg, f}
 }
 
-func (u *report) FindOrder(ctx context.Context, filterParam abstraction.Filter) (result []dto.OrderReportResponse, pagination abstraction.PaginationInfo, err error) {
+func (u *report) FindOrder(ctx context.Context, filterParam abstraction.Filter) (result dto.OrderReportResponse, pagination abstraction.PaginationInfo, err error) {
 	var search *abstraction.Search
 	orders, info, err := u.Repo.OrderTrx.Find(ctx, filterParam, search)
 	if err != nil {
-		return nil, pagination, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
+		return dto.OrderReportResponse{}, pagination, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
 	}
 	pagination = *info
 
 	for _, order := range orders {
-		result = append(result, dto.OrderReportResponse{
-			OrderView: order,
-		})
+		result.Orders = append(result.Orders, order)
 	}
+
+	totalOrder, err := u.Repo.OrderTrx.Count(ctx)
+	if err != nil {
+		return dto.OrderReportResponse{}, pagination, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
+	}
+
+	totalIncome, err := u.Repo.OrderTrx.CountIncome(ctx)
+	if err != nil {
+		return dto.OrderReportResponse{}, pagination, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
+	}
+
+	result.TotalIncome = totalIncome
+	result.TotalOrder = totalOrder
 
 	return result, pagination, nil
 }
