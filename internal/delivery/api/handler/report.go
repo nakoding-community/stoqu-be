@@ -67,7 +67,7 @@ func (h *report) GetOrder(c echo.Context) error {
 // @Security BearerAuth
 // @param request query abstraction.Filter true "request query"
 // @Param entity query dto.ProductReportQuery false "entity query"
-// @Success 200 {object} dto.OrderReportResponseDoc
+// @Success 200 {object} dto.OrderProductReportResponseDoc
 // @Failure 400 {object} res.errorResponse
 // @Failure 404 {object} res.errorResponse
 // @Failure 500 {object} res.errorResponse

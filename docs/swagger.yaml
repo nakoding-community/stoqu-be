@@ -411,12 +411,42 @@ definitions:
     - destination
     - origin
     type: object
+  dto.OrderProductReportResponse:
+    properties:
+      orders:
+        items:
+          $ref: '#/definitions/entity.OrderViewProduct'
+        type: array
+      total:
+        type: integer
+    type: object
+  dto.OrderProductReportResponseDoc:
+    properties:
+      body:
+        properties:
+          data:
+            $ref: '#/definitions/dto.OrderProductReportResponse'
+          meta:
+            $ref: '#/definitions/response.Meta'
+        type: object
+    type: object
+  dto.OrderReportResponse:
+    properties:
+      orders:
+        items:
+          $ref: '#/definitions/entity.OrderView'
+        type: array
+      total_income:
+        type: integer
+      total_order:
+        type: integer
+    type: object
   dto.OrderReportResponseDoc:
     properties:
       body:
         properties:
           data:
-            $ref: '#/definitions/entity.OrderView'
+            $ref: '#/definitions/dto.OrderReportResponse'
           meta:
             $ref: '#/definitions/response.Meta'
         type: object
@@ -1382,6 +1412,23 @@ definitions:
       supplier_name:
         type: string
       trx_type:
+        type: string
+    type: object
+  entity.OrderViewProduct:
+    properties:
+      brand_id:
+        type: string
+      brand_name:
+        type: string
+      count:
+        type: number
+      packet_id:
+        type: string
+      packet_name:
+        type: string
+      variant_id:
+        type: string
+      variant_name:
         type: string
     type: object
   entity.PacketModel:
@@ -3814,7 +3861,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.OrderReportResponseDoc'
+            $ref: '#/definitions/dto.OrderProductReportResponseDoc'
         "400":
           description: Bad Request
           schema:

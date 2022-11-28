@@ -3266,7 +3266,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.OrderReportResponseDoc"
+                            "$ref": "#/definitions/dto.OrderProductReportResponseDoc"
                         }
                     },
                     "400": {
@@ -6153,6 +6153,53 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.OrderProductReportResponse": {
+            "type": "object",
+            "properties": {
+                "orders": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.OrderViewProduct"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.OrderProductReportResponseDoc": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "$ref": "#/definitions/dto.OrderProductReportResponse"
+                        },
+                        "meta": {
+                            "$ref": "#/definitions/response.Meta"
+                        }
+                    }
+                }
+            }
+        },
+        "dto.OrderReportResponse": {
+            "type": "object",
+            "properties": {
+                "orders": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.OrderView"
+                    }
+                },
+                "total_income": {
+                    "type": "integer"
+                },
+                "total_order": {
+                    "type": "integer"
+                }
+            }
+        },
         "dto.OrderReportResponseDoc": {
             "type": "object",
             "properties": {
@@ -6160,7 +6207,7 @@ const docTemplate = `{
                     "type": "object",
                     "properties": {
                         "data": {
-                            "$ref": "#/definitions/entity.OrderView"
+                            "$ref": "#/definitions/dto.OrderReportResponse"
                         },
                         "meta": {
                             "$ref": "#/definitions/response.Meta"
@@ -7634,6 +7681,32 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "trx_type": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.OrderViewProduct": {
+            "type": "object",
+            "properties": {
+                "brand_id": {
+                    "type": "string"
+                },
+                "brand_name": {
+                    "type": "string"
+                },
+                "count": {
+                    "type": "number"
+                },
+                "packet_id": {
+                    "type": "string"
+                },
+                "packet_name": {
+                    "type": "string"
+                },
+                "variant_id": {
+                    "type": "string"
+                },
+                "variant_name": {
                     "type": "string"
                 }
             }
