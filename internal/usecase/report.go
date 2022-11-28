@@ -2,8 +2,8 @@ package usecase
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/sirupsen/logrus"
 	"gitlab.com/stoqu/stoqu-be/internal/config"
 
 	"gitlab.com/stoqu/stoqu-be/internal/factory/repository"
@@ -16,7 +16,7 @@ import (
 
 type Report interface {
 	FindOrder(ctx context.Context, filterParam abstraction.Filter) (result dto.OrderReportResponse, pagination abstraction.PaginationInfo, err error)
-	FindOrderProduct(ctx context.Context, filterParam abstraction.Filter, query dto.ProductReportQuery) (result []dto.OrderProductReportResponse, pagination abstraction.PaginationInfo, err error)
+	FindOrderProduct(ctx context.Context, filterParam abstraction.Filter, query dto.ProductReportQuery) (result dto.OrderProductReportResponse, pagination abstraction.PaginationInfo, err error)
 }
 
 type report struct {
@@ -56,38 +56,39 @@ func (u *report) FindOrder(ctx context.Context, filterParam abstraction.Filter) 
 	return result, pagination, nil
 }
 
-func (u *report) FindOrderProduct(ctx context.Context, filterParam abstraction.Filter, query dto.ProductReportQuery) (result []dto.OrderProductReportResponse, pagination abstraction.PaginationInfo, err error) {
+func (u *report) FindOrderProduct(ctx context.Context, filterParam abstraction.Filter, query dto.ProductReportQuery) (result dto.OrderProductReportResponse, pagination abstraction.PaginationInfo, err error) {
 	var search *abstraction.Search
 
 	var (
 		orders []entity.OrderViewProduct //!TODO, why this was define as entity.OrderViewProduct not model.OrderViewProduct ?
 		info   *abstraction.PaginationInfo
+		count  int64
 	)
 	switch query.Group {
 	case constant.GROUP_BY_VARIANT:
-		fmt.Println("FindGroupByVariant")
-		orders, info, err = u.Repo.OrderTrx.FindGroupByVariant(ctx, filterParam, search)
+		logrus.Info("FindGroupByVariant")
+		orders, count, info, err = u.Repo.OrderTrx.FindGroupByVariant(ctx, filterParam, search)
 		break
 	case constant.GROUP_BY_PACKET:
-		fmt.Println("FindGroupByPacket")
-		orders, info, err = u.Repo.OrderTrx.FindGroupByPacket(ctx, filterParam, search)
+		logrus.Info("FindGroupByPacket")
+		orders, count, info, err = u.Repo.OrderTrx.FindGroupByPacket(ctx, filterParam, search)
 		break
 	default: //constant.GROUP_BY_BRAND
-		fmt.Println("FindGroupByBrand")
-		orders, info, err = u.Repo.OrderTrx.FindGroupByBrand(ctx, filterParam, search)
+		logrus.Info("FindGroupByBrand")
+		orders, count, info, err = u.Repo.OrderTrx.FindGroupByBrand(ctx, filterParam, search)
 		break
 	}
 
 	if err != nil {
-		return nil, pagination, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
+		return dto.OrderProductReportResponse{}, pagination, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
 	}
 	pagination = *info
 
 	for _, order := range orders {
-		result = append(result, dto.OrderProductReportResponse{
-			OrderViewProduct: order,
-		})
+		result.Orders = append(result.Orders, order)
 	}
+
+	result.Total = count
 
 	return result, pagination, nil
 }

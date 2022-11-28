@@ -32,9 +32,9 @@ type (
 		FindByID(ctx context.Context, id string) (*model.OrderView, error)
 		CountLastWeek(ctx context.Context) ([]dto.DashboardOrderDailyResponse, error)
 		CountIncome(ctx context.Context) (int64, error)
-		FindGroupByBrand(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.OrderViewProduct, *abstraction.PaginationInfo, error)
-		FindGroupByVariant(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.OrderViewProduct, *abstraction.PaginationInfo, error)
-		FindGroupByPacket(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.OrderViewProduct, *abstraction.PaginationInfo, error)
+		FindGroupByBrand(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.OrderViewProduct, int64, *abstraction.PaginationInfo, error)
+		FindGroupByVariant(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.OrderViewProduct, int64, *abstraction.PaginationInfo, error)
+		FindGroupByPacket(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.OrderViewProduct, int64, *abstraction.PaginationInfo, error)
 	}
 
 	orderTrx struct {
@@ -97,7 +97,7 @@ func (m *orderTrx) Find(ctx context.Context, filterParam abstraction.Filter, sea
 	return result, info, nil
 }
 
-func (m *orderTrx) FindGroupByBrand(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.OrderViewProduct, *abstraction.PaginationInfo, error) {
+func (m *orderTrx) FindGroupByBrand(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.OrderViewProduct, int64, *abstraction.PaginationInfo, error) {
 	query := m.GetConn(ctx).Model(m.entity).
 		Select(`
 			b.id as brand_id, 
@@ -112,6 +112,14 @@ func (m *orderTrx) FindGroupByBrand(ctx context.Context, filterParam abstraction
 		Joins("join brands b on b.id = p.brand_id").
 		Group("pt.id, b.id")
 
+	// count total
+	var count int64
+	err := query.WithContext(ctx).Count(&count).Error
+	if err != nil {
+		return nil, count, nil, err
+	}
+
+	// find data
 	if search != nil {
 		query = query.Where(search.Query, search.Args...)
 	}
@@ -120,15 +128,14 @@ func (m *orderTrx) FindGroupByBrand(ctx context.Context, filterParam abstraction
 	info := m.BuildPagination(ctx, query, filterParam.Pagination)
 
 	result := []model.OrderViewProduct{}
-	err := query.WithContext(ctx).Find(&result).Error
-
+	err = query.WithContext(ctx).Find(&result).Error
 	if err != nil {
-		return nil, info, err
+		return nil, count, info, err
 	}
-	return result, info, nil
+	return result, count, info, nil
 }
 
-func (m *orderTrx) FindGroupByVariant(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.OrderViewProduct, *abstraction.PaginationInfo, error) {
+func (m *orderTrx) FindGroupByVariant(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.OrderViewProduct, int64, *abstraction.PaginationInfo, error) {
 	query := m.GetConn(ctx).Model(m.entity).
 		Select(`
 			b.id as brand_id, 
@@ -146,6 +153,14 @@ func (m *orderTrx) FindGroupByVariant(ctx context.Context, filterParam abstracti
 		Joins("join variants v on v.id = p.variant_id").
 		Group("pt.id, b.id, v.id")
 
+	// count total
+	var count int64
+	err := query.WithContext(ctx).Count(&count).Error
+	if err != nil {
+		return nil, count, nil, err
+	}
+
+	// find data
 	if search != nil {
 		query = query.Where(search.Query, search.Args...)
 	}
@@ -154,15 +169,15 @@ func (m *orderTrx) FindGroupByVariant(ctx context.Context, filterParam abstracti
 	info := m.BuildPagination(ctx, query, filterParam.Pagination)
 
 	result := []model.OrderViewProduct{}
-	err := query.WithContext(ctx).Find(&result).Error
+	err = query.WithContext(ctx).Find(&result).Error
 
 	if err != nil {
-		return nil, info, err
+		return nil, count, info, err
 	}
-	return result, info, nil
+	return result, count, info, nil
 }
 
-func (m *orderTrx) FindGroupByPacket(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.OrderViewProduct, *abstraction.PaginationInfo, error) {
+func (m *orderTrx) FindGroupByPacket(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.OrderViewProduct, int64, *abstraction.PaginationInfo, error) {
 	query := m.GetConn(ctx).Model(m.entity).
 		Select(`
 			pt.id as packet_id, 
@@ -174,6 +189,14 @@ func (m *orderTrx) FindGroupByPacket(ctx context.Context, filterParam abstractio
 		Joins("join packets pt on pt.id = p.packet_id").
 		Group("pt.id")
 
+	// count total
+	var count int64
+	err := query.WithContext(ctx).Count(&count).Error
+	if err != nil {
+		return nil, count, nil, err
+	}
+
+	// find data
 	if search != nil {
 		query = query.Where(search.Query, search.Args...)
 	}
@@ -182,12 +205,12 @@ func (m *orderTrx) FindGroupByPacket(ctx context.Context, filterParam abstractio
 	info := m.BuildPagination(ctx, query, filterParam.Pagination)
 
 	result := []model.OrderViewProduct{}
-	err := query.WithContext(ctx).Find(&result).Error
+	err = query.WithContext(ctx).Find(&result).Error
 
 	if err != nil {
-		return nil, info, err
+		return nil, count, info, err
 	}
-	return result, info, nil
+	return result, count, info, nil
 }
 
 func (m *orderTrx) FindByID(ctx context.Context, id string) (*model.OrderView, error) {

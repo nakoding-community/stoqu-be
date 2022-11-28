@@ -89,5 +89,5 @@ func (h *report) GetOrderProduct(c echo.Context) error {
 		return res.ErrorResponse(err).Send(c)
 	}
 
-	return res.CustomSuccessBuilder(200, result, "Get order reports success", &pagination).Send(c)
+	return res.CustomSuccessBuilder(200, result, "Get order report products success", &pagination).Send(c)
 }

@@ -35,12 +35,13 @@ type (
 	}
 
 	OrderProductReportResponse struct {
-		model.OrderViewProduct
+		Total  int64                    `json:"total"`
+		Orders []model.OrderViewProduct `json:"orders"`
 	}
 	OrderProductReportResponseDoc struct {
 		Body struct {
-			Meta res.Meta               `json:"meta"`
-			Data model.OrderViewProduct `json:"data"`
+			Meta res.Meta                   `json:"meta"`
+			Data OrderProductReportResponse `json:"data"`
 		} `json:"body"`
 	}
 )
