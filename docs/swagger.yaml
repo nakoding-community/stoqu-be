@@ -411,6 +411,16 @@ definitions:
     - destination
     - origin
     type: object
+  dto.OrderReportResponseDoc:
+    properties:
+      body:
+        properties:
+          data:
+            $ref: '#/definitions/entity.OrderView'
+          meta:
+            $ref: '#/definitions/response.Meta'
+        type: object
+    type: object
   dto.OrderUpsertResponse:
     properties:
       status:
@@ -453,7 +463,8 @@ definitions:
       name:
         type: string
       unit:
-        $ref: '#/definitions/entity.UnitModel'
+        allOf:
+        - $ref: '#/definitions/entity.UnitModel'
         description: relations
       unit_id:
         description: fk
@@ -474,7 +485,8 @@ definitions:
   dto.ProductResponse:
     properties:
       brand:
-        $ref: '#/definitions/entity.BrandModel'
+        allOf:
+        - $ref: '#/definitions/entity.BrandModel'
         description: relations
       brand_id:
         description: fk
@@ -810,7 +822,8 @@ definitions:
       price_usd:
         type: integer
       product:
-        $ref: '#/definitions/entity.ProductModel'
+        allOf:
+        - $ref: '#/definitions/entity.ProductModel'
         description: relations
       product_id:
         description: fk
@@ -1256,7 +1269,8 @@ definitions:
   dto.VariantResponse:
     properties:
       brand:
-        $ref: '#/definitions/entity.BrandModel'
+        allOf:
+        - $ref: '#/definitions/entity.BrandModel'
         description: relations
       brand_id:
         description: fk
@@ -1387,7 +1401,8 @@ definitions:
       name:
         type: string
       unit:
-        $ref: '#/definitions/entity.UnitModel'
+        allOf:
+        - $ref: '#/definitions/entity.UnitModel'
         description: relations
       unit_id:
         description: fk
@@ -1398,7 +1413,8 @@ definitions:
   entity.ProductModel:
     properties:
       brand:
-        $ref: '#/definitions/entity.BrandModel'
+        allOf:
+        - $ref: '#/definitions/entity.BrandModel'
         description: relations
       brand_id:
         description: fk
@@ -1521,7 +1537,8 @@ definitions:
       price_usd:
         type: integer
       product:
-        $ref: '#/definitions/entity.ProductModel'
+        allOf:
+        - $ref: '#/definitions/entity.ProductModel'
         description: relations
       product_id:
         description: fk
@@ -1554,7 +1571,8 @@ definitions:
       price_usd:
         type: integer
       rack:
-        $ref: '#/definitions/entity.RackModel'
+        allOf:
+        - $ref: '#/definitions/entity.RackModel'
         description: relations
       rack_id:
         type: string
@@ -1690,7 +1708,8 @@ definitions:
   entity.VariantModel:
     properties:
       brand:
-        $ref: '#/definitions/entity.BrandModel'
+        allOf:
+        - $ref: '#/definitions/entity.BrandModel'
         description: relations
       brand_id:
         description: fk
@@ -3757,6 +3776,118 @@ paths:
       summary: Get reminderStock
       tags:
       - reminderStock
+  /api/reports/order-products:
+    get:
+      consumes:
+      - application/json
+      description: Get report order products
+      parameters:
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: page_size
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - example:
+        - asc_column
+        - -dsc_column
+        in: query
+        items:
+          type: string
+        name: sort_by
+        type: array
+      - in: query
+        name: end_date
+        type: string
+      - in: query
+        name: group
+        type: string
+      - in: query
+        name: start_date
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.OrderReportResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get report order products
+      tags:
+      - report
+  /api/reports/orders:
+    get:
+      consumes:
+      - application/json
+      description: Get report orders
+      parameters:
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: page_size
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - example:
+        - asc_column
+        - -dsc_column
+        in: query
+        items:
+          type: string
+        name: sort_by
+        type: array
+      - in: query
+        name: end_date
+        type: string
+      - in: query
+        name: start_date
+        type: string
+      - in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.OrderReportResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get report orders
+      tags:
+      - report
   /api/roles:
     get:
       consumes:
