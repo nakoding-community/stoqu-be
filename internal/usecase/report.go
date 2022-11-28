@@ -49,7 +49,6 @@ func (u *report) FindOrder(ctx context.Context, filterParam abstraction.Filter) 
 func (u *report) FindOrderProduct(ctx context.Context, filterParam abstraction.Filter, query dto.ProductReportQuery) (result []dto.OrderProductReportResponse, pagination abstraction.PaginationInfo, err error) {
 	var search *abstraction.Search
 
-	// !FIXME, query.Group still empty
 	var (
 		orders []entity.OrderViewProduct //!TODO, why this was define as entity.OrderViewProduct not model.OrderViewProduct ?
 		info   *abstraction.PaginationInfo

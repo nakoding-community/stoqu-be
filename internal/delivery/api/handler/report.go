@@ -79,7 +79,12 @@ func (h *report) GetOrderProduct(c echo.Context) error {
 	}
 	filter.Bind()
 
-	result, pagination, err := h.Factory.Usecase.Report.FindOrderProduct(c.Request().Context(), *filter.Payload, dto.ProductReportQuery{})
+	query := new(dto.ProductReportQuery)
+	if err := c.Bind(query); err != nil {
+		return res.ErrorBuilder(res.Constant.Error.BadRequest, err).Send(c)
+	}
+
+	result, pagination, err := h.Factory.Usecase.Report.FindOrderProduct(c.Request().Context(), *filter.Payload, *query)
 	if err != nil {
 		return res.ErrorResponse(err).Send(c)
 	}

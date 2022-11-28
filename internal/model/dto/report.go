@@ -14,9 +14,9 @@ type (
 	}
 
 	ProductReportQuery struct {
-		StartDate string `json:"start_date"`
-		EndDate   string `json:"end_date"`
-		Group     string `json:"group" filter:"ignore"`
+		StartDate string `json:"start_date" filter:"column:order_trxs.created_at;operator:>="`
+		EndDate   string `json:"end_date" filter:"column:order_trxs.created_at;operator:>="`
+		Group     string `query:"group"`
 	}
 )
 
