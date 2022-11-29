@@ -68,15 +68,12 @@ func (u *report) FindOrderProduct(ctx context.Context, filterParam abstraction.F
 	case constant.GROUP_BY_VARIANT:
 		logrus.Info("FindGroupByVariant")
 		orders, count, info, err = u.Repo.OrderTrx.FindGroupByVariant(ctx, filterParam, search)
-		break
 	case constant.GROUP_BY_PACKET:
 		logrus.Info("FindGroupByPacket")
 		orders, count, info, err = u.Repo.OrderTrx.FindGroupByPacket(ctx, filterParam, search)
-		break
 	default: //constant.GROUP_BY_BRAND
 		logrus.Info("FindGroupByBrand")
 		orders, count, info, err = u.Repo.OrderTrx.FindGroupByBrand(ctx, filterParam, search)
-		break
 	}
 
 	if err != nil {
