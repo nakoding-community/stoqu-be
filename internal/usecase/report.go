@@ -32,7 +32,7 @@ func (u *report) FindOrder(ctx context.Context, filterParam abstraction.Filter) 
 	var search *abstraction.Search
 	orders, info, err := u.Repo.OrderTrx.Find(ctx, filterParam, search)
 	if err != nil {
-		return dto.OrderReportResponse{}, pagination, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
+		return result, pagination, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
 	}
 	pagination = *info
 
@@ -42,12 +42,12 @@ func (u *report) FindOrder(ctx context.Context, filterParam abstraction.Filter) 
 
 	totalOrder, err := u.Repo.OrderTrx.Count(ctx)
 	if err != nil {
-		return dto.OrderReportResponse{}, pagination, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
+		return result, pagination, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
 	}
 
 	totalIncome, err := u.Repo.OrderTrx.CountIncome(ctx)
 	if err != nil {
-		return dto.OrderReportResponse{}, pagination, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
+		return result, pagination, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
 	}
 
 	result.TotalIncome = totalIncome
@@ -60,7 +60,7 @@ func (u *report) FindOrderProduct(ctx context.Context, filterParam abstraction.F
 	var search *abstraction.Search
 
 	var (
-		orders []entity.OrderViewProduct //!TODO, why this was define as entity.OrderViewProduct not model.OrderViewProduct ?
+		orders []entity.OrderViewProduct
 		info   *abstraction.PaginationInfo
 		count  int64
 	)
@@ -77,7 +77,7 @@ func (u *report) FindOrderProduct(ctx context.Context, filterParam abstraction.F
 	}
 
 	if err != nil {
-		return dto.OrderProductReportResponse{}, pagination, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
+		return result, pagination, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
 	}
 	pagination = *info
 
