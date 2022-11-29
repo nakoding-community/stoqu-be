@@ -1,8 +1,6 @@
 package dto
 
 import (
-	"time"
-
 	model "gitlab.com/stoqu/stoqu-be/internal/model/entity"
 	res "gitlab.com/stoqu/stoqu-be/pkg/util/response"
 )
@@ -10,40 +8,40 @@ import (
 // request
 type (
 	OrderReportQuery struct {
-		StartDate     string `json:"start_date"`
-		EndDate       string `json:"end_date"`
-		StartDateTime time.Time
-		EndDateTime   time.Time
+		StartDate string `json:"start_date" filter:"column:order_trxs.created_at;operator:>="`
+		EndDate   string `json:"end_date" filter:"column:order_trxs.created_at;operator:<="`
+		Status    string `json:"status" filter:"column:order_trxs.status"`
 	}
 
 	ProductReportQuery struct {
-		StartDate     string `json:"start_date"`
-		EndDate       string `json:"end_date"`
-		StartDateTime time.Time
-		EndDateTime   time.Time
-		Group         string `json:"group"`
+		StartDate string `json:"start_date" filter:"column:order_trxs.created_at;operator:>="`
+		EndDate   string `json:"end_date" filter:"column:order_trxs.created_at;operator:>="`
+		Group     string `query:"group"`
 	}
 )
 
 // response
 type (
 	OrderReportResponse struct {
-		model.OrderView
+		TotalOrder  int64             `json:"total_order"`
+		TotalIncome int64             `json:"total_income"`
+		Orders      []model.OrderView `json:"orders"`
 	}
 	OrderReportResponseDoc struct {
 		Body struct {
-			Meta res.Meta        `json:"meta"`
-			Data model.OrderView `json:"data"`
+			Meta res.Meta            `json:"meta"`
+			Data OrderReportResponse `json:"data"`
 		} `json:"body"`
 	}
 
-	ProductReportResponse struct {
-		model.OrderView
+	OrderProductReportResponse struct {
+		Total  int64                    `json:"total"`
+		Orders []model.OrderViewProduct `json:"orders"`
 	}
-	ProductReportResponseDoc struct {
+	OrderProductReportResponseDoc struct {
 		Body struct {
-			Meta res.Meta          `json:"meta"`
-			Data model.ProductView `json:"data"`
+			Meta res.Meta                   `json:"meta"`
+			Data OrderProductReportResponse `json:"data"`
 		} `json:"body"`
 	}
 )

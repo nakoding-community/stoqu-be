@@ -15,8 +15,9 @@ type Filter struct {
 }
 
 type FilterQuery struct {
-	Field string
-	Value string
+	Field    string
+	Value    string
+	Operator string
 }
 
 type FilterBuilder[T any] struct {
@@ -71,6 +72,7 @@ func (a *FilterBuilder[T]) ConstructFilter(structType reflect.Type, field string
 		if jsonTag == field {
 			fieldQuery := ""
 			valueQuery := value
+			operatorValue := "=" //will be the default condition
 
 			filterTag := structType.Field(i).Tag.Get("filter")
 			if filterTag != "" {
@@ -82,6 +84,14 @@ func (a *FilterBuilder[T]) ConstructFilter(structType reflect.Type, field string
 						if filterTagValue[0] == "column" {
 							fieldQuery += filterTagValue[1]
 						}
+						if filterTagValue[0] == "operator" {
+							operatorValue = filterTagValue[1]
+						}
+						if filterTagValue[0] == "ignore" {
+							valueQuery = ""
+							fieldQuery = ""
+							operatorValue = ""
+						}
 					}
 				}
 			} else {
@@ -89,8 +99,9 @@ func (a *FilterBuilder[T]) ConstructFilter(structType reflect.Type, field string
 			}
 
 			a.Payload.Query = append(a.Payload.Query, FilterQuery{
-				Field: fieldQuery,
-				Value: valueQuery,
+				Field:    fieldQuery,
+				Value:    valueQuery,
+				Operator: operatorValue,
 			})
 		}
 	}

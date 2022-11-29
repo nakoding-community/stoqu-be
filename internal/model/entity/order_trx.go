@@ -45,6 +45,16 @@ type OrderView struct {
 	PicName       string `json:"pic_name" filter:"column:pics.name"`
 }
 
+type OrderViewProduct struct {
+	PacketID    string  `json:"packet_id"`
+	PacketName  string  `json:"packet_name"`
+	BrandID     string  `json:"brand_id"`
+	BrandName   string  `json:"brand_name"`
+	VariantID   string  `json:"variant_id"`
+	VariantName string  `json:"variant_name"`
+	Count       float64 `json:"count"`
+}
+
 func (m *OrderTrxModel) ToOrderTrxFs(v OrderView) OrderTrxFs {
 	data := OrderTrxFs{
 		ID:           m.ID,

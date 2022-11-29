@@ -31,6 +31,10 @@ type (
 		Find(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.OrderView, *abstraction.PaginationInfo, error)
 		FindByID(ctx context.Context, id string) (*model.OrderView, error)
 		CountLastWeek(ctx context.Context) ([]dto.DashboardOrderDailyResponse, error)
+		CountIncome(ctx context.Context) (int64, error)
+		FindGroupByBrand(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.OrderViewProduct, int64, *abstraction.PaginationInfo, error)
+		FindGroupByVariant(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.OrderViewProduct, int64, *abstraction.PaginationInfo, error)
+		FindGroupByPacket(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.OrderViewProduct, int64, *abstraction.PaginationInfo, error)
 	}
 
 	orderTrx struct {
@@ -51,6 +55,18 @@ func NewOrderTrx(conn *gorm.DB) OrderTrx {
 	}
 }
 
+func (m *orderTrx) CountIncome(ctx context.Context) (int64, error) {
+	query := m.GetConn(ctx).Model(m.entity).
+		Select(`
+			sum(order_trxs.price)
+		`)
+
+	var count int64
+	err := query.WithContext(ctx).Scan(&count).Error
+
+	return count, err
+}
+
 func (m *orderTrx) Find(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.OrderView, *abstraction.PaginationInfo, error) {
 	query := m.GetConn(ctx).Model(m.entity).
 		Select(`
@@ -63,7 +79,7 @@ func (m *orderTrx) Find(ctx context.Context, filterParam abstraction.Filter, sea
 		Joins(`join users as customers on customers.id = order_trxs.customer_id`).
 		Joins(`join user_profiles as customer_profiles on customer_profiles.user_id = customers.id`).
 		Joins(`join users as suppliers on suppliers.id = order_trxs.supplier_id`).
-		Joins(`join users as pics on pic.id = order_trxs.pic_id`)
+		Joins(`join users as pics on pics.id = order_trxs.pic_id`)
 
 	if search != nil {
 		query = query.Where(search.Query, search.Args...)
@@ -79,6 +95,122 @@ func (m *orderTrx) Find(ctx context.Context, filterParam abstraction.Filter, sea
 		return nil, info, err
 	}
 	return result, info, nil
+}
+
+func (m *orderTrx) FindGroupByBrand(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.OrderViewProduct, int64, *abstraction.PaginationInfo, error) {
+	query := m.GetConn(ctx).Model(m.entity).
+		Select(`
+			b.id as brand_id, 
+			b.name as brand_name, 
+			pt.id as packet_id, 
+			pt.name as packet_name, 
+			SUM(oti.total) as count
+		`).
+		Joins(`join order_trx_items as oti on oti.order_trx_id = order_trxs.id`).
+		Joins(`join products p on p.id = oti.product_id`).
+		Joins("join packets pt on pt.id = p.packet_id").
+		Joins("join brands b on b.id = p.brand_id").
+		Group("pt.id, b.id")
+
+	// count total
+	var count int64
+	err := query.WithContext(ctx).Count(&count).Error
+	if err != nil {
+		return nil, count, nil, err
+	}
+
+	// find data
+	if search != nil {
+		query = query.Where(search.Query, search.Args...)
+	}
+
+	m.BuildFilterSort(ctx, query, filterParam)
+	info := m.BuildPagination(ctx, query, filterParam.Pagination)
+
+	result := []model.OrderViewProduct{}
+	err = query.WithContext(ctx).Find(&result).Error
+	if err != nil {
+		return nil, count, info, err
+	}
+	return result, count, info, nil
+}
+
+func (m *orderTrx) FindGroupByVariant(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.OrderViewProduct, int64, *abstraction.PaginationInfo, error) {
+	query := m.GetConn(ctx).Model(m.entity).
+		Select(`
+			b.id as brand_id, 
+			b.name as brand_name, 
+			pt.id as packet_id, 
+			pt.name as packet_name, 
+			v.id as variant_id, 
+			v.name as variant_name, 
+			SUM(oti.total) as count
+		`).
+		Joins(`join order_trx_items as oti on oti.order_trx_id = order_trxs.id`).
+		Joins(`join products p on p.id = oti.product_id`).
+		Joins("join packets pt on pt.id = p.packet_id").
+		Joins("join brands b on b.id = p.brand_id").
+		Joins("join variants v on v.id = p.variant_id").
+		Group("pt.id, b.id, v.id")
+
+	// count total
+	var count int64
+	err := query.WithContext(ctx).Count(&count).Error
+	if err != nil {
+		return nil, count, nil, err
+	}
+
+	// find data
+	if search != nil {
+		query = query.Where(search.Query, search.Args...)
+	}
+
+	m.BuildFilterSort(ctx, query, filterParam)
+	info := m.BuildPagination(ctx, query, filterParam.Pagination)
+
+	result := []model.OrderViewProduct{}
+	err = query.WithContext(ctx).Find(&result).Error
+
+	if err != nil {
+		return nil, count, info, err
+	}
+	return result, count, info, nil
+}
+
+func (m *orderTrx) FindGroupByPacket(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.OrderViewProduct, int64, *abstraction.PaginationInfo, error) {
+	query := m.GetConn(ctx).Model(m.entity).
+		Select(`
+			pt.id as packet_id, 
+			pt.name as packet_name, 
+			SUM(oti.total) as count
+		`).
+		Joins(`join order_trx_items as oti on oti.order_trx_id = order_trxs.id`).
+		Joins(`join products p on p.id = oti.product_id`).
+		Joins("join packets pt on pt.id = p.packet_id").
+		Group("pt.id")
+
+	// count total
+	var count int64
+	err := query.WithContext(ctx).Count(&count).Error
+	if err != nil {
+		return nil, count, nil, err
+	}
+
+	// find data
+	if search != nil {
+		query = query.Where(search.Query, search.Args...)
+	}
+
+	m.BuildFilterSort(ctx, query, filterParam)
+	info := m.BuildPagination(ctx, query, filterParam.Pagination)
+
+	result := []model.OrderViewProduct{}
+	err = query.WithContext(ctx).Find(&result).Error
+
+	if err != nil {
+		return nil, count, info, err
+	}
+	return result, count, info, nil
 }
 
 func (m *orderTrx) FindByID(ctx context.Context, id string) (*model.OrderView, error) {

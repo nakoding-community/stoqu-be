@@ -28,6 +28,8 @@ type Factory struct {
 	Stock       usecase.Stock
 	StockLookup usecase.StockLookup
 
+	Report usecase.Report
+
 	Order usecase.Order
 }
 
@@ -54,6 +56,8 @@ func Init(cfg *config.Configuration, r repository.Factory) Factory {
 
 	f.Stock = usecase.NewStock(cfg, r)
 	f.StockLookup = usecase.NewStockLookup(cfg, r)
+
+	f.Report = usecase.NewReport(cfg, r)
 
 	f.Order = usecase.NewOrder(cfg, r, f.Stock)
 

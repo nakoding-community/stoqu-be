@@ -3200,6 +3200,186 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/reports/order-products": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get report order products",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "report"
+                ],
+                "summary": "Get report order products",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "example": [
+                            "asc_column",
+                            "-dsc_column"
+                        ],
+                        "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "end_date",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "group",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "start_date",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.OrderProductReportResponseDoc"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/reports/orders": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get report orders",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "report"
+                ],
+                "summary": "Get report orders",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "example": [
+                            "asc_column",
+                            "-dsc_column"
+                        ],
+                        "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "end_date",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "start_date",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.OrderReportResponseDoc"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/roles": {
             "get": {
                 "security": [
@@ -5973,6 +6153,69 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.OrderProductReportResponse": {
+            "type": "object",
+            "properties": {
+                "orders": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.OrderViewProduct"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.OrderProductReportResponseDoc": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "$ref": "#/definitions/dto.OrderProductReportResponse"
+                        },
+                        "meta": {
+                            "$ref": "#/definitions/response.Meta"
+                        }
+                    }
+                }
+            }
+        },
+        "dto.OrderReportResponse": {
+            "type": "object",
+            "properties": {
+                "orders": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.OrderView"
+                    }
+                },
+                "total_income": {
+                    "type": "integer"
+                },
+                "total_order": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.OrderReportResponseDoc": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "$ref": "#/definitions/dto.OrderReportResponse"
+                        },
+                        "meta": {
+                            "$ref": "#/definitions/response.Meta"
+                        }
+                    }
+                }
+            }
+        },
         "dto.OrderUpsertResponse": {
             "type": "object",
             "properties": {
@@ -6039,7 +6282,11 @@ const docTemplate = `{
                 },
                 "unit": {
                     "description": "relations",
-                    "$ref": "#/definitions/entity.UnitModel"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/entity.UnitModel"
+                        }
+                    ]
                 },
                 "unit_id": {
                     "description": "fk",
@@ -6071,7 +6318,11 @@ const docTemplate = `{
             "properties": {
                 "brand": {
                     "description": "relations",
-                    "$ref": "#/definitions/entity.BrandModel"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/entity.BrandModel"
+                        }
+                    ]
                 },
                 "brand_id": {
                     "description": "fk",
@@ -6589,7 +6840,11 @@ const docTemplate = `{
                 },
                 "product": {
                     "description": "relations",
-                    "$ref": "#/definitions/entity.ProductModel"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/entity.ProductModel"
+                        }
+                    ]
                 },
                 "product_id": {
                     "description": "fk",
@@ -7256,7 +7511,11 @@ const docTemplate = `{
             "properties": {
                 "brand": {
                     "description": "relations",
-                    "$ref": "#/definitions/entity.BrandModel"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/entity.BrandModel"
+                        }
+                    ]
                 },
                 "brand_id": {
                     "description": "fk",
@@ -7426,6 +7685,32 @@ const docTemplate = `{
                 }
             }
         },
+        "entity.OrderViewProduct": {
+            "type": "object",
+            "properties": {
+                "brand_id": {
+                    "type": "string"
+                },
+                "brand_name": {
+                    "type": "string"
+                },
+                "count": {
+                    "type": "number"
+                },
+                "packet_id": {
+                    "type": "string"
+                },
+                "packet_name": {
+                    "type": "string"
+                },
+                "variant_id": {
+                    "type": "string"
+                },
+                "variant_name": {
+                    "type": "string"
+                }
+            }
+        },
         "entity.PacketModel": {
             "type": "object",
             "properties": {
@@ -7452,7 +7737,11 @@ const docTemplate = `{
                 },
                 "unit": {
                     "description": "relations",
-                    "$ref": "#/definitions/entity.UnitModel"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/entity.UnitModel"
+                        }
+                    ]
                 },
                 "unit_id": {
                     "description": "fk",
@@ -7468,7 +7757,11 @@ const docTemplate = `{
             "properties": {
                 "brand": {
                     "description": "relations",
-                    "$ref": "#/definitions/entity.BrandModel"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/entity.BrandModel"
+                        }
+                    ]
                 },
                 "brand_id": {
                     "description": "fk",
@@ -7653,7 +7946,11 @@ const docTemplate = `{
                 },
                 "product": {
                     "description": "relations",
-                    "$ref": "#/definitions/entity.ProductModel"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/entity.ProductModel"
+                        }
+                    ]
                 },
                 "product_id": {
                     "description": "fk",
@@ -7702,7 +7999,11 @@ const docTemplate = `{
                 },
                 "rack": {
                     "description": "relations",
-                    "$ref": "#/definitions/entity.RackModel"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/entity.RackModel"
+                        }
+                    ]
                 },
                 "rack_id": {
                     "type": "string"
@@ -7905,7 +8206,11 @@ const docTemplate = `{
             "properties": {
                 "brand": {
                     "description": "relations",
-                    "$ref": "#/definitions/entity.BrandModel"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/entity.BrandModel"
+                        }
+                    ]
                 },
                 "brand_id": {
                     "description": "fk",
