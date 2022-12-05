@@ -2,9 +2,16 @@ package usecase
 
 import (
 	"context"
+	"fmt"
+	"os"
+	"reflect"
+	"strings"
+	"time"
 
 	"github.com/sirupsen/logrus"
+	"github.com/xuri/excelize/v2"
 	"gitlab.com/stoqu/stoqu-be/internal/config"
+	"golang.org/x/exp/maps"
 
 	"gitlab.com/stoqu/stoqu-be/internal/factory/repository"
 	"gitlab.com/stoqu/stoqu-be/internal/model/abstraction"
@@ -18,6 +25,7 @@ type Report interface {
 	FindOrder(ctx context.Context, filterParam abstraction.Filter) (result dto.OrderReportResponse, pagination abstraction.PaginationInfo, err error)
 	FindOrderExcel(ctx context.Context, filterParam abstraction.Filter) (f *os.File, err error)
 	FindOrderProduct(ctx context.Context, filterParam abstraction.Filter, query dto.ProductReportQuery) (result dto.OrderProductReportResponse, pagination abstraction.PaginationInfo, err error)
+	FindOrderProductExcel(ctx context.Context, filterParam abstraction.Filter, query dto.ProductReportQuery) (f *os.File, err error)
 }
 
 type report struct {
@@ -219,4 +227,104 @@ func (u *report) FindOrderProduct(ctx context.Context, filterParam abstraction.F
 	result.Total = count
 
 	return result, pagination, nil
+}
+
+func (u *report) FindOrderProductExcel(ctx context.Context, filterParam abstraction.Filter, query dto.ProductReportQuery) (f *os.File, err error) {
+	var search *abstraction.Search
+
+	// exclude pagination
+	filterParam.Pagination.Limit = nil
+	filterParam.Pagination.Page = nil
+
+	type ExcelEntity struct {
+		BrandID    string
+		BrandName  string
+		PacketID   string
+		PacketName string
+		Qty        float64
+	}
+
+	var excelData []ExcelEntity
+	var headers map[string]string
+
+	switch query.Group {
+	case constant.GROUP_BY_VARIANT:
+		logrus.Info("FindGroupByVariant")
+		orders, _, _, err := u.Repo.OrderTrx.FindGroupByVariant(ctx, filterParam, search)
+		if err != nil {
+			return nil, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
+		}
+
+		headers = map[string]string{
+			"A1": "No",
+			"B1": "Brand ID",
+			"C1": "Brand Name",
+			"D1": "Packet ID",
+			"E1": "Packet Name",
+			"F1": "Variant ID",
+			"G1": "Variant Name",
+			"H1": "Quantity",
+		}
+
+		for _, v := range orders {
+			excelData = append(excelData, ExcelEntity{
+				BrandID: v.BrandID,
+			})
+		}
+
+	case constant.GROUP_BY_PACKET:
+		logrus.Info("FindGroupByPacket")
+		orders, _, _, err := u.Repo.OrderTrx.FindGroupByPacket(ctx, filterParam, search)
+		if err != nil {
+			return nil, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
+		}
+
+		headers = map[string]string{
+			"A1": "No",
+			"B1": "Packet ID",
+			"C1": "Packet Name",
+			"D1": "Quantity",
+		}
+
+		for _, v := range orders {
+			excelData = append(excelData, ExcelEntity{
+				BrandID: v.BrandID,
+			})
+		}
+	default:
+		logrus.Info("FindGroupByBrand")
+		orders, _, _, err := u.Repo.OrderTrx.FindGroupByBrand(ctx, filterParam, search)
+		if err != nil {
+			return nil, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
+		}
+
+		headers = map[string]string{
+			"A1": "No",
+			"B1": "Brand ID",
+			"C1": "Brand Name",
+			"D1": "Packet ID",
+			"E1": "Packet Name",
+			"F1": "Quantity",
+		}
+
+		for _, v := range orders {
+			excelData = append(excelData, ExcelEntity{
+				BrandID:    v.BrandID,
+				BrandName:  v.BrandName,
+				PacketID:   v.PacketID,
+				PacketName: v.PacketName,
+				Qty:        v.Count,
+			})
+		}
+	}
+
+	return u.GenerateExcelReport(
+		ctx,
+		dto.GenerateExcelReportInput{
+			SheetName: "Laporan Produk",
+			FileName:  "report-summaries-1.xlsx",
+			Headers:   headers,
+			Data:      excelData,
+		},
+	)
 }
