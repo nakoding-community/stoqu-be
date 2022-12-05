@@ -21,6 +21,7 @@ require (
 	github.com/olivere/elastic/v7 v7.0.32
 	github.com/sirupsen/logrus v1.9.0
 	github.com/stretchr/testify v1.8.1
+	github.com/xuri/excelize/v2 v2.6.1
 	golang.org/x/crypto v0.0.0-20220926161630-eccd6366d1be
 	google.golang.org/api v0.59.0
 	gorm.io/driver/postgres v1.3.9
@@ -82,6 +83,8 @@ require (
 	github.com/urfave/cli/v2 v2.3.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.1 // indirect
+	github.com/xuri/efp v0.0.0-20220603152613-6918739fd470 // indirect
+	github.com/xuri/nfp v0.0.0-20220409054826-5e722a1d9e22 // indirect
 	github.com/yuin/gopher-lua v0.0.0-20220504180219-658193537a64 // indirect
 	go.opencensus.io v0.23.0 // indirect
 	golang.org/x/net v0.0.0-20221002022538-bcab6841153b // indirect
