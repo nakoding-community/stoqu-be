@@ -65,14 +65,42 @@ func (u *report) FindOrder(ctx context.Context, filterParam abstraction.Filter) 
 	return result, pagination, nil
 }
 
-func (u *report) FindOrderExcel(ctx context.Context, filterParam abstraction.Filter) (f *os.File, err error) {
+func (u *report) orderExcelData(ctx context.Context, filterParam abstraction.Filter) ([]entity.OrderView, error) {
 	var search *abstraction.Search
 
-	// exclude pagination
-	filterParam.Pagination.Limit = nil
-	filterParam.Pagination.Page = nil
+	// !TODO, able to exclude pagination or using concurrent instead
+	defaultLimit := 3
+	limit := func() int {
+		if filterParam.Limit == nil {
+			return defaultLimit
+		}
+		if *filterParam.Limit > defaultLimit {
+			return *filterParam.Limit
+		}
+		return defaultLimit
+	}()
 
-	orders, _, err := u.Repo.OrderTrx.Find(ctx, filterParam, search)
+	filterParam.Limit = &limit
+
+	orders, info, err := u.Repo.OrderTrx.Find(ctx, filterParam, search)
+	if err != nil {
+		return nil, err
+	}
+
+	if info.Count > int64(limit) {
+		limit = int(info.Count)
+		filterParam.Limit = &limit
+		orders, err = u.orderExcelData(ctx, filterParam)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return orders, nil
+}
+
+func (u *report) FindOrderExcel(ctx context.Context, filterParam abstraction.Filter) (f *os.File, err error) {
+	orders, err := u.orderExcelData(ctx, filterParam)
 	if err != nil {
 		return nil, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
 	}
@@ -97,8 +125,6 @@ func (u *report) FindOrderExcel(ctx context.Context, filterParam abstraction.Fil
 			Notes:         v.Notes,
 		})
 	}
-
-	fmt.Println(excelData, "excelData")
 
 	headers := map[string]string{
 		"A1": "No",
@@ -168,7 +194,6 @@ func (u *report) GenerateExcelReport(ctx context.Context, excel dto.GenerateExce
 	}
 
 	// set content
-	fmt.Println(excel.Data, "dafasdf")
 	slc := reflect.ValueOf(excel.Data)
 	for i := 0; i < slc.Len(); i++ {
 		for j := 0; j < slc.Index(i).NumField()+1; j++ {
@@ -229,14 +254,76 @@ func (u *report) FindOrderProduct(ctx context.Context, filterParam abstraction.F
 	return result, pagination, nil
 }
 
-func (u *report) FindOrderProductExcel(ctx context.Context, filterParam abstraction.Filter, query dto.ProductReportQuery) (f *os.File, err error) {
+func (u *report) orderProductExcelData(ctx context.Context, filterParam abstraction.Filter, query dto.ProductReportQuery) (orders []entity.OrderViewProduct, err error) {
 	var search *abstraction.Search
 
-	// exclude pagination
-	filterParam.Pagination.Limit = nil
-	filterParam.Pagination.Page = nil
+	// !TODO, able to exclude pagination or using concurrent instead
+	defaultLimit := 1
+	limit := func() int {
+		if filterParam.Limit == nil {
+			return defaultLimit
+		}
+		if *filterParam.Limit > defaultLimit {
+			return *filterParam.Limit
+		}
+		return defaultLimit
+	}()
 
-	type ExcelEntity struct {
+	filterParam.Limit = &limit
+
+	var info *abstraction.PaginationInfo
+
+	switch query.Group {
+	case constant.GROUP_BY_VARIANT:
+		logrus.Info("orderProductExcelDataByVariant")
+		orders, _, info, err = u.Repo.OrderTrx.FindGroupByVariant(ctx, filterParam, search)
+	case constant.GROUP_BY_PACKET:
+		logrus.Info("orderProductExcelDataByPacket")
+		orders, _, info, err = u.Repo.OrderTrx.FindGroupByPacket(ctx, filterParam, search)
+	default:
+		logrus.Info("orderProductExcelDataByBrand")
+		orders, _, info, err = u.Repo.OrderTrx.FindGroupByBrand(ctx, filterParam, search)
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	if info.Count > int64(limit) {
+		limit = int(info.Count)
+		filterParam.Pagination.Limit = &limit
+		orders, err = u.orderProductExcelData(ctx, filterParam, query)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return orders, nil
+}
+
+func (u *report) FindOrderProductExcel(ctx context.Context, filterParam abstraction.Filter, query dto.ProductReportQuery) (f *os.File, err error) {
+	orders, err := u.orderProductExcelData(ctx, filterParam, query)
+	if err != nil {
+		return nil, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
+	}
+
+	type ExcelEntityVariant struct {
+		BrandID     string
+		BrandName   string
+		PacketID    string
+		PacketName  string
+		VariantID   string
+		VariantName string
+		Qty         float64
+	}
+
+	type ExcelEntityPacket struct {
+		PacketID   string
+		PacketName string
+		Qty        float64
+	}
+
+	type ExcelEntityBrand struct {
 		BrandID    string
 		BrandName  string
 		PacketID   string
@@ -244,18 +331,10 @@ func (u *report) FindOrderProductExcel(ctx context.Context, filterParam abstract
 		Qty        float64
 	}
 
-	var excelData []ExcelEntity
-	var headers map[string]string
-
 	switch query.Group {
 	case constant.GROUP_BY_VARIANT:
-		logrus.Info("FindGroupByVariant")
-		orders, _, _, err := u.Repo.OrderTrx.FindGroupByVariant(ctx, filterParam, search)
-		if err != nil {
-			return nil, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
-		}
-
-		headers = map[string]string{
+		var excelData []ExcelEntityVariant
+		headers := map[string]string{
 			"A1": "No",
 			"B1": "Brand ID",
 			"C1": "Brand Name",
@@ -267,19 +346,30 @@ func (u *report) FindOrderProductExcel(ctx context.Context, filterParam abstract
 		}
 
 		for _, v := range orders {
-			excelData = append(excelData, ExcelEntity{
-				BrandID: v.BrandID,
+			excelData = append(excelData, ExcelEntityVariant{
+				BrandID:     v.BrandID,
+				BrandName:   v.BrandName,
+				PacketID:    v.PacketID,
+				PacketName:  v.PacketName,
+				VariantID:   v.VariantID,
+				VariantName: v.VariantName,
+				Qty:         v.Count,
 			})
 		}
 
-	case constant.GROUP_BY_PACKET:
-		logrus.Info("FindGroupByPacket")
-		orders, _, _, err := u.Repo.OrderTrx.FindGroupByPacket(ctx, filterParam, search)
-		if err != nil {
-			return nil, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
-		}
+		return u.GenerateExcelReport(
+			ctx,
+			dto.GenerateExcelReportInput{
+				SheetName: "Laporan Produk",
+				FileName:  "report-summaries-1.xlsx",
+				Headers:   headers,
+				Data:      excelData,
+			},
+		)
 
-		headers = map[string]string{
+	case constant.GROUP_BY_PACKET:
+		var excelData []ExcelEntityPacket
+		headers := map[string]string{
 			"A1": "No",
 			"B1": "Packet ID",
 			"C1": "Packet Name",
@@ -287,18 +377,25 @@ func (u *report) FindOrderProductExcel(ctx context.Context, filterParam abstract
 		}
 
 		for _, v := range orders {
-			excelData = append(excelData, ExcelEntity{
-				BrandID: v.BrandID,
+			excelData = append(excelData, ExcelEntityPacket{
+				PacketID:   v.PacketID,
+				PacketName: v.PacketName,
+				Qty:        v.Count,
 			})
 		}
-	default:
-		logrus.Info("FindGroupByBrand")
-		orders, _, _, err := u.Repo.OrderTrx.FindGroupByBrand(ctx, filterParam, search)
-		if err != nil {
-			return nil, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
-		}
 
-		headers = map[string]string{
+		return u.GenerateExcelReport(
+			ctx,
+			dto.GenerateExcelReportInput{
+				SheetName: "Laporan Produk",
+				FileName:  "report-summaries-1.xlsx",
+				Headers:   headers,
+				Data:      excelData,
+			},
+		)
+	default:
+		var excelData []ExcelEntityBrand
+		headers := map[string]string{
 			"A1": "No",
 			"B1": "Brand ID",
 			"C1": "Brand Name",
@@ -308,7 +405,7 @@ func (u *report) FindOrderProductExcel(ctx context.Context, filterParam abstract
 		}
 
 		for _, v := range orders {
-			excelData = append(excelData, ExcelEntity{
+			excelData = append(excelData, ExcelEntityBrand{
 				BrandID:    v.BrandID,
 				BrandName:  v.BrandName,
 				PacketID:   v.PacketID,
@@ -316,15 +413,15 @@ func (u *report) FindOrderProductExcel(ctx context.Context, filterParam abstract
 				Qty:        v.Count,
 			})
 		}
-	}
 
-	return u.GenerateExcelReport(
-		ctx,
-		dto.GenerateExcelReportInput{
-			SheetName: "Laporan Produk",
-			FileName:  "report-summaries-1.xlsx",
-			Headers:   headers,
-			Data:      excelData,
-		},
-	)
+		return u.GenerateExcelReport(
+			ctx,
+			dto.GenerateExcelReportInput{
+				SheetName: "Laporan Produk",
+				FileName:  "report-summaries-1.xlsx",
+				Headers:   headers,
+				Data:      excelData,
+			},
+		)
+	}
 }
