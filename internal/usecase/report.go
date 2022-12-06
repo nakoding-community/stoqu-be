@@ -69,7 +69,7 @@ func (u *report) orderExcelData(ctx context.Context, filterParam abstraction.Fil
 	var search *abstraction.Search
 
 	// !TODO, able to exclude pagination or using concurrent instead
-	defaultLimit := 3
+	defaultLimit := 50
 	limit := func() int {
 		if filterParam.Limit == nil {
 			return defaultLimit
@@ -147,79 +147,6 @@ func (u *report) FindOrderExcel(ctx context.Context, filterParam abstraction.Fil
 	)
 }
 
-func (u *report) GenerateExcelReport(ctx context.Context, excel dto.GenerateExcelReportInput) (f *os.File, err error) {
-	xlsx := excelize.NewFile()
-	sheet := excel.SheetName
-	xlsx.NewSheet(sheet)
-	xlsx.DeleteSheet("Sheet1")
-
-	styleHeaderAndBorder, err := xlsx.NewStyle(&excelize.Style{
-		Fill: excelize.Fill{
-			Type:    "pattern",
-			Pattern: 1,
-			Color:   []string{"bdc3c7"},
-		},
-		Font: &excelize.Font{
-			Bold:  true,
-			Size:  13,
-			Color: "000000",
-		},
-		Border: []excelize.Border{
-			{Type: "left", Color: "000000", Style: 2},
-			{Type: "top", Color: "000000", Style: 2},
-			{Type: "bottom", Color: "000000", Style: 2},
-			{Type: "right", Color: "000000", Style: 2},
-		},
-	})
-	if err != nil {
-		return nil, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
-	}
-	borderStyle, err := xlsx.NewStyle(&excelize.Style{
-		Border: []excelize.Border{
-			{Type: "left", Color: "000000", Style: 2},
-			{Type: "top", Color: "000000", Style: 2},
-			{Type: "bottom", Color: "000000", Style: 2},
-			{Type: "right", Color: "000000", Style: 2},
-		},
-	})
-	if err != nil {
-		return nil, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
-	}
-
-	// set headers
-	headerIdx := maps.Keys(excel.Headers)
-	for k, v := range excel.Headers {
-		xlsx.SetCellValue(sheet, k, v)
-		xlsx.SetCellStyle(sheet, k, k, styleHeaderAndBorder)
-	}
-
-	// set content
-	slc := reflect.ValueOf(excel.Data)
-	for i := 0; i < slc.Len(); i++ {
-		for j := 0; j < slc.Index(i).NumField()+1; j++ {
-			key := strings.Split(headerIdx[j], "1")[0]
-			if j == 0 {
-				xlsx.SetCellValue(sheet, fmt.Sprintf("%s%d", key, i+2), i+1) //numbering Ex: No. 1
-			} else {
-				xlsx.SetCellValue(sheet, fmt.Sprintf("%s%x", key, i+2), slc.Index(i).Field(j-1).Interface())
-			}
-			xlsx.SetCellStyle(sheet, fmt.Sprintf("%s%d", key, i+2), fmt.Sprintf("%s%d", key, i+2), borderStyle)
-		}
-	}
-
-	f, err = os.Create(excel.FileName)
-	if err != nil {
-		return nil, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
-	}
-
-	err = xlsx.Write(f)
-	if err != nil {
-		return nil, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
-	}
-
-	return f, nil
-}
-
 func (u *report) FindOrderProduct(ctx context.Context, filterParam abstraction.Filter, query dto.ProductReportQuery) (result dto.OrderProductReportResponse, pagination abstraction.PaginationInfo, err error) {
 	var search *abstraction.Search
 
@@ -258,7 +185,7 @@ func (u *report) orderProductExcelData(ctx context.Context, filterParam abstract
 	var search *abstraction.Search
 
 	// !TODO, able to exclude pagination or using concurrent instead
-	defaultLimit := 1
+	defaultLimit := 50
 	limit := func() int {
 		if filterParam.Limit == nil {
 			return defaultLimit
@@ -424,4 +351,81 @@ func (u *report) FindOrderProductExcel(ctx context.Context, filterParam abstract
 			},
 		)
 	}
+}
+
+func (u *report) GenerateExcelReport(ctx context.Context, excel dto.GenerateExcelReportInput) (f *os.File, err error) {
+	xlsx := excelize.NewFile()
+	sheet := excel.SheetName
+	xlsx.NewSheet(sheet)
+	xlsx.DeleteSheet("Sheet1")
+
+	styleHeaderAndBorder, err := xlsx.NewStyle(&excelize.Style{
+		Fill: excelize.Fill{
+			Type:    "pattern",
+			Pattern: 1,
+			Color:   []string{"bdc3c7"},
+		},
+		Font: &excelize.Font{
+			Bold:  true,
+			Size:  13,
+			Color: "000000",
+		},
+		Border: []excelize.Border{
+			{Type: "left", Color: "000000", Style: 2},
+			{Type: "top", Color: "000000", Style: 2},
+			{Type: "bottom", Color: "000000", Style: 2},
+			{Type: "right", Color: "000000", Style: 2},
+		},
+	})
+	if err != nil {
+		return nil, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
+	}
+	borderStyle, err := xlsx.NewStyle(&excelize.Style{
+		Border: []excelize.Border{
+			{Type: "left", Color: "000000", Style: 2},
+			{Type: "top", Color: "000000", Style: 2},
+			{Type: "bottom", Color: "000000", Style: 2},
+			{Type: "right", Color: "000000", Style: 2},
+		},
+	})
+	if err != nil {
+		return nil, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
+	}
+
+	// set headers
+	headerIdx := maps.Keys(excel.Headers)
+	for k, v := range excel.Headers {
+		xlsx.SetCellValue(sheet, k, v)
+		xlsx.SetCellStyle(sheet, k, k, styleHeaderAndBorder)
+	}
+
+	// set content
+	// !FIXME, the excel.Data value might not be ordered correctly, so the content messed up
+	// GC (standard go compiler) will reorder the struct for memory efficiency
+	// https://stackoverflow.com/questions/9486364/why-cant-c-compilers-rearrange-struct-members-to-eliminate-alignment-padding
+	// possible solution: set cell value base on map key
+	slc := reflect.ValueOf(excel.Data)
+	for i := 0; i < slc.Len(); i++ {
+		for j := 0; j < slc.Index(i).NumField()+1; j++ {
+			key := strings.Split(headerIdx[j], "1")[0]
+			if j == 0 {
+				xlsx.SetCellValue(sheet, fmt.Sprintf("%s%d", key, i+2), i+1) //numbering Ex: No. 1
+			} else {
+				xlsx.SetCellValue(sheet, fmt.Sprintf("%s%x", key, i+2), slc.Index(i).Field(j-1).Interface())
+			}
+			xlsx.SetCellStyle(sheet, fmt.Sprintf("%s%d", key, i+2), fmt.Sprintf("%s%d", key, i+2), borderStyle)
+		}
+	}
+
+	f, err = os.Create(excel.FileName)
+	if err != nil {
+		return nil, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
+	}
+
+	err = xlsx.Write(f)
+	if err != nil {
+		return nil, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
+	}
+
+	return f, nil
 }

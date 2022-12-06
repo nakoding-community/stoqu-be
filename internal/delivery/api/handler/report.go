@@ -28,9 +28,9 @@ func NewReport(f factory.Factory) Report {
 
 func (h *report) Route(g *echo.Group) {
 	g.GET("/orders", h.GetOrder, middleware.Authentication)
-	g.GET("/orders/excel", h.GetOrderExcel)
+	g.GET("/orders/excel", h.GetOrderExcel, middleware.Authentication)
 	g.GET("/order-products", h.GetOrderProduct, middleware.Authentication)
-	g.GET("/order-products/excel", h.GetOrderProductExcel)
+	g.GET("/order-products/excel", h.GetOrderProductExcel, middleware.Authentication)
 }
 
 // Get reportOrders
