@@ -18,6 +18,13 @@ type (
 		EndDate   string `json:"end_date" filter:"column:order_trxs.created_at;operator:>="`
 		Group     string `query:"group"`
 	}
+
+	GenerateExcelReportInput struct {
+		SheetName string            `query:"sheet_name"`
+		FileName  string            `query:"file_name"`
+		Headers   map[string]string `json:"headers"`
+		Data      interface{}       `json:"data"`
+	}
 )
 
 // response
