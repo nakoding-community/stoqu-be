@@ -1,5 +1,7 @@
 package entity
 
+import "encoding/json"
+
 type OrderTrxEntity struct {
 	TrxType        string  `json:"trx_type" gorm:"size:20;not null"`
 	Code           string  `json:"code" gorm:"size:50;not null"`
@@ -43,6 +45,13 @@ type OrderView struct {
 	CustomerPhone string `json:"customer_phone" filter:"column:customer_profiles.phone"`
 	SupplierName  string `json:"supplier_name" filter:"column:suppliers.name"`
 	PicName       string `json:"pic_name" filter:"column:pics.name"`
+}
+
+func (m *OrderView) ToMap() (data map[string]interface{}) {
+	jData, _ := json.Marshal(m)
+	json.Unmarshal(jData, &data)
+
+	return data
 }
 
 type OrderViewProduct struct {

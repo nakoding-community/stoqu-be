@@ -6,7 +6,6 @@ import (
 	"os"
 	"reflect"
 	"strings"
-	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/xuri/excelize/v2"
@@ -114,16 +113,11 @@ func (u *report) FindOrderExcel(ctx context.Context, filterParam abstraction.Fil
 		Status        string
 		Notes         string
 	}
-	var excelData []ExcelEntity
-	for _, v := range orders {
-		excelData = append(excelData, ExcelEntity{
-			CreatedAt:     v.CreatedAt.Format(time.RFC822Z),
-			CustomerName:  v.CustomerName,
-			CustomerPhone: v.CustomerPhone,
-			PriceFinal:    v.FinalPrice,
-			Status:        v.Status,
-			Notes:         v.Notes,
-		})
+	var excelData []map[string]interface{}
+	for i, v := range orders {
+		data := v.ToMap()
+		data["excel_no"] = i + 1
+		excelData = append(excelData, data)
 	}
 
 	headers := map[string]string{
@@ -136,16 +130,35 @@ func (u *report) FindOrderExcel(ctx context.Context, filterParam abstraction.Fil
 		"G1": "Keterangan",
 	}
 
+	dataMapping := map[string]string{
+		"A": "excel_no",
+		"B": "created_at",
+		"C": "customer_name",
+		"D": "customer_phone",
+		"E": "final_price",
+		"F": "status",
+		"G": "notes",
+	}
+
 	return u.GenerateExcelReport(
 		ctx,
 		dto.GenerateExcelReportInput{
-			SheetName: "Laporan Pemesanan",
-			FileName:  "report-summaries-1.xlsx",
-			Headers:   headers,
-			Data:      excelData,
+			SheetName:   "Laporan Pemesanan",
+			FileName:    "report-summaries-1.xlsx",
+			Headers:     headers,
+			Data:        excelData,
+			DataMapping: dataMapping,
 		},
 	)
 }
+
+// func (u *report) convertToMap(ctx context.Context, data ) map[string]interface {
+// 	var myMap map[string]interface{}
+// 	data, _ := json.Marshal(ms)
+// 	json.Unmarshal(data, &myMap)
+
+// 	return myMap
+// }
 
 func (u *report) FindOrderProduct(ctx context.Context, filterParam abstraction.Filter, query dto.ProductReportQuery) (result dto.OrderProductReportResponse, pagination abstraction.PaginationInfo, err error) {
 	var search *abstraction.Search
@@ -359,35 +372,11 @@ func (u *report) GenerateExcelReport(ctx context.Context, excel dto.GenerateExce
 	xlsx.NewSheet(sheet)
 	xlsx.DeleteSheet("Sheet1")
 
-	styleHeaderAndBorder, err := xlsx.NewStyle(&excelize.Style{
-		Fill: excelize.Fill{
-			Type:    "pattern",
-			Pattern: 1,
-			Color:   []string{"bdc3c7"},
-		},
-		Font: &excelize.Font{
-			Bold:  true,
-			Size:  13,
-			Color: "000000",
-		},
-		Border: []excelize.Border{
-			{Type: "left", Color: "000000", Style: 2},
-			{Type: "top", Color: "000000", Style: 2},
-			{Type: "bottom", Color: "000000", Style: 2},
-			{Type: "right", Color: "000000", Style: 2},
-		},
-	})
+	headerStyle, err := xlsx.NewStyle(constant.EXCEL_HEADER_STYLE)
 	if err != nil {
 		return nil, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
 	}
-	borderStyle, err := xlsx.NewStyle(&excelize.Style{
-		Border: []excelize.Border{
-			{Type: "left", Color: "000000", Style: 2},
-			{Type: "top", Color: "000000", Style: 2},
-			{Type: "bottom", Color: "000000", Style: 2},
-			{Type: "right", Color: "000000", Style: 2},
-		},
-	})
+	bodyStyle, err := xlsx.NewStyle(constant.EXCEL_BODY_STYLE)
 	if err != nil {
 		return nil, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
 	}
@@ -396,7 +385,16 @@ func (u *report) GenerateExcelReport(ctx context.Context, excel dto.GenerateExce
 	headerIdx := maps.Keys(excel.Headers)
 	for k, v := range excel.Headers {
 		xlsx.SetCellValue(sheet, k, v)
-		xlsx.SetCellStyle(sheet, k, k, styleHeaderAndBorder)
+		xlsx.SetCellStyle(sheet, k, k, headerStyle)
+	}
+
+	// headerIdx := maps.Keys(excel.DataMapping)
+	for _, d := range excel.Data {
+		for k, v := range excel.DataMapping {
+			key :=
+				xlsx.SetCellValue(sheet, k, d[v])
+			xlsx.SetCellStyle(sheet, key, key, bodyStyle)
+		}
 	}
 
 	// set content
@@ -413,7 +411,7 @@ func (u *report) GenerateExcelReport(ctx context.Context, excel dto.GenerateExce
 			} else {
 				xlsx.SetCellValue(sheet, fmt.Sprintf("%s%x", key, i+2), slc.Index(i).Field(j-1).Interface())
 			}
-			xlsx.SetCellStyle(sheet, fmt.Sprintf("%s%d", key, i+2), fmt.Sprintf("%s%d", key, i+2), borderStyle)
+			xlsx.SetCellStyle(sheet, fmt.Sprintf("%s%d", key, i+2), fmt.Sprintf("%s%d", key, i+2), bodyStyle)
 		}
 	}
 
