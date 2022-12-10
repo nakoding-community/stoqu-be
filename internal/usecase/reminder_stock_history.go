@@ -157,8 +157,15 @@ func (u *reminderStockHistory) CountUnread(ctx context.Context) (result dto.Remi
 	return result, nil
 }
 
-func (u *reminderStockHistory) GenerateRecurring(ctx context.Context, reminderType string) error {
-	reminderStocks, _, err := u.Repo.ReminderStock.Find(ctx, abstraction.Filter{}, &abstraction.Search{})
+func (u *reminderStockHistory) GenerateRecurring(ctx context.Context, reminderName string) error {
+	reminderStocks, _, err := u.Repo.ReminderStock.Find(ctx, abstraction.Filter{
+		Query: []abstraction.FilterQuery{
+			{
+				Field: "name",
+				Value: reminderName,
+			},
+		},
+	}, nil)
 	if err != nil {
 		return err
 	}
@@ -167,7 +174,7 @@ func (u *reminderStockHistory) GenerateRecurring(ctx context.Context, reminderTy
 	}
 
 	reminderStock := reminderStocks[0]
-	if reminderType != reminderStock.ReminderType {
+	if reminderName != reminderStock.Name {
 		return nil
 	}
 

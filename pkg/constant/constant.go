@@ -52,8 +52,8 @@ const (
 
 // reminder stock
 const (
-	REMINDER_STOCK_SECOND = "second"
-	REMINDER_STOCK_DAILY  = "daily"
+	REMINDER_STOCK_DAILY   = "daily"
+	REMINDER_STOCK_MONTHLY = "monthly"
 )
 
 // firebase

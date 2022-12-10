@@ -60,10 +60,11 @@ func (m *base[T]) GetConn(ctx context.Context) *gorm.DB {
 
 func (m *base[T]) BuildFilterSort(ctx context.Context, query *gorm.DB, filterParam abstraction.Filter) {
 	for _, filter := range filterParam.Query {
-
-		if filter.Operator != "" {
-			query.Where(filter.Field+" "+filter.Operator+" ?", filter.Value)
+		// handle default operator, if pass direct from usecase not handler
+		if filter.Operator == "" {
+			filter.Operator = "="
 		}
+		query.Where(filter.Field+" "+filter.Operator+" ?", filter.Value)
 		// !TODO: why we dont add a full query instead ? so we able to customize the operator
 		// ex: filter.Query = "order_trxs = ?"
 	}

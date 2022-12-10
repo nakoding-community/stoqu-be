@@ -113,7 +113,7 @@ func (m *stock) FindByTotalLessThan(ctx context.Context, total int64) ([]model.S
 		Joins(`join packets on packets.id = products.packet_id`).
 		Joins(`join units on units.id = packets.unit_id`)
 	result := []model.StockView{}
-	err := query.WithContext(ctx).Where("total <", total).Find(&result).Error
+	err := query.WithContext(ctx).Where("total < ?", total).Find(&result).Error
 	if err != nil {
 		return nil, m.MaskError(err)
 	}

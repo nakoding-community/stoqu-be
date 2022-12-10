@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/go-co-op/gocron"
+	"github.com/sirupsen/logrus"
 	"gitlab.com/stoqu/stoqu-be/internal/config"
 	"gitlab.com/stoqu/stoqu-be/internal/factory"
 	"gitlab.com/stoqu/stoqu-be/pkg/constant"
@@ -22,17 +23,25 @@ func Init(cfg *config.Configuration, f factory.Factory) gracefull.ProcessStopper
 	loc, _ := time.LoadLocation("Asia/Jakarta")
 	s := gocron.NewScheduler(loc)
 
-	// second_5
-	jobSec, _ := s.Every(5).Second().Do(func() {
-		f.Usecase.ReminderStockHistory.GenerateRecurring(context.Background(), constant.REMINDER_STOCK_SECOND)
-	})
-	jobSec.SingletonMode()
-
 	// daily
-	jobDaily, _ := s.Every(1).Day().Do(func() {
-		f.Usecase.ReminderStockHistory.GenerateRecurring(context.Background(), constant.REMINDER_STOCK_DAILY)
+	jobDaily, _ := s.Every(1).Day().At("06:00").Do(func() {
+		logrus.Info("Cron reminder stock daily, running ...")
+		err := f.Usecase.ReminderStockHistory.GenerateRecurring(context.Background(), constant.REMINDER_STOCK_DAILY)
+		if err != nil {
+			logrus.Error("Cron reminder stock error", err.Error())
+		}
 	})
 	jobDaily.SingletonMode()
+
+	// monthly
+	jobMonthly, _ := s.Every(1).Month().Do(func() {
+		logrus.Info("Cron reminder stock monthly, running ...")
+		err := f.Usecase.ReminderStockHistory.GenerateRecurring(context.Background(), constant.REMINDER_STOCK_DAILY)
+		if err != nil {
+			logrus.Error("Cron reminder stock error", err.Error())
+		}
+	})
+	jobMonthly.SingletonMode()
 
 	s.StartAsync()
 
