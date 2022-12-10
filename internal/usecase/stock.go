@@ -436,6 +436,7 @@ func (u *stock) Movement(ctx context.Context, payload dto.MovementStockRequest) 
 		return result, err
 	}
 
+	result.Status = constant.STATUS_SUCCESS
 	return result, nil
 }
 
@@ -792,7 +793,7 @@ func (u *stock) History(ctx context.Context, filterParam abstraction.Filter) (re
 		stockTrxs[i].StockTrxItems = stockTrxItems
 
 		result = append(result, dto.StockHistoryResponse{
-			StockTrxModel: stockTrx,
+			StockTrxModel: stockTrxs[i],
 		})
 	}
 
