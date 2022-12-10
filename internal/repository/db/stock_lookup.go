@@ -82,12 +82,18 @@ func (m *stockLookup) SumByIDs(ctx context.Context, ids []string) (*model.StockL
 			sum(remaining_value) as remaining_value 
 		`).
 		Where(`id in ?`, ids).
-		Group(`id`)
+		Order("sum(remaining_value) asc")
 
-	result := new(model.StockLookupSum)
-	err := query.WithContext(ctx).First(result).Error
+	results := []model.StockLookupSum{}
+	err := query.WithContext(ctx).Find(&results).Error
 	if err != nil {
 		return nil, m.MaskError(err)
 	}
+
+	result := new(model.StockLookupSum)
+	if len(results) > 0 {
+		result = &results[0]
+	}
+
 	return result, nil
 }
