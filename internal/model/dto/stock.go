@@ -91,7 +91,12 @@ type (
 	}
 
 	StockConvertionResponse struct {
-		Status string `json:"status"`
+		Status   string                           `json:"status"`
+		Products []StockConvertionProductResponse `json:"products"`
+	}
+	StockConvertionProductResponse struct {
+		ID          string   `json:"id"`
+		LookupCodes []string `json:"lookup_codes"`
 	}
 	StockConvertionResponseDoc struct {
 		Body struct {
