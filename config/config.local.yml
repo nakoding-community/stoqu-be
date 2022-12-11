@@ -30,7 +30,7 @@ driver:
     enabled: true
   firestore:
     credentials: "./firebase-admin-sdk.json"
-    projectid: "inamawangi-d1766"
+    projectid: "inamawangi-revamp-dev"
   elasticsearch:
     credentials: ""
     url: ""

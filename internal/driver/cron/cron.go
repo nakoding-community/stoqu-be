@@ -22,26 +22,26 @@ func Init(cfg *config.Configuration, f factory.Factory) gracefull.ProcessStopper
 
 	loc, _ := time.LoadLocation("Asia/Jakarta")
 	s := gocron.NewScheduler(loc)
+	s.SingletonModeAll()
+	s.WaitForScheduleAll()
 
 	// daily
-	jobDaily, _ := s.Every(1).Day().At("06:00").Do(func() {
+	_, _ = s.Every(1).Day().Do(func() {
 		logrus.Info("Cron reminder stock daily, running ...")
 		err := f.Usecase.ReminderStockHistory.GenerateRecurring(context.Background(), constant.REMINDER_STOCK_DAILY)
 		if err != nil {
-			logrus.Error("Cron reminder stock error", err.Error())
+			logrus.Error("Cron reminder stock daily error", err)
 		}
 	})
-	jobDaily.SingletonMode()
 
 	// monthly
-	jobMonthly, _ := s.Every(1).Month().Do(func() {
+	_, _ = s.Every(1).MonthLastDay().Do(func() {
 		logrus.Info("Cron reminder stock monthly, running ...")
-		err := f.Usecase.ReminderStockHistory.GenerateRecurring(context.Background(), constant.REMINDER_STOCK_DAILY)
+		err := f.Usecase.ReminderStockHistory.GenerateRecurring(context.Background(), constant.REMINDER_STOCK_MONTHLY)
 		if err != nil {
-			logrus.Error("Cron reminder stock error", err.Error())
+			logrus.Error("Cron reminder stock monthly error", err)
 		}
 	})
-	jobMonthly.SingletonMode()
 
 	s.StartAsync()
 

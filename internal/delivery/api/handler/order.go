@@ -30,7 +30,7 @@ func NewOrder(f factory.Factory) Order {
 func (h *order) Route(g *echo.Group) {
 	g.GET("", h.Get, middleware.Authentication)
 	g.GET("/:id", h.GetByID, middleware.Authentication)
-	g.PUT("/", h.Upsert, middleware.Authentication)
+	g.PUT("", h.Upsert, middleware.Authentication)
 }
 
 // Get order

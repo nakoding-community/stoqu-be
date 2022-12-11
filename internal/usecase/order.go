@@ -108,14 +108,14 @@ func (u *order) Upsert(ctx context.Context, payload dto.UpsertOrderRequest) (res
 	}
 	orderTrx := payload.ToOrderTrx(mapStockLookups)
 
-	if err = trxmanager.New(u.Repo.Db).WithTrx(ctx, func(ctx context.Context) error {
+	if err = trxmanager.New(u.Repo.Db).WithTrx(ctx, func(_ctx context.Context) error {
 		if payload.ID == "" {
-			err := u.create(ctx, payload, orderTrx)
+			err := u.create(_ctx, payload, orderTrx)
 			if err != nil {
 				return err
 			}
 		} else {
-			err := u.update(ctx, payload, orderTrx)
+			err := u.update(_ctx, payload, orderTrx)
 			if err != nil {
 				return err
 			}
@@ -143,6 +143,17 @@ func (u *order) Upsert(ctx context.Context, payload dto.UpsertOrderRequest) (res
 		}
 	}
 
+	count, err := u.Repo.OrderTrx.Count(ctx)
+	if err != nil {
+		return result, err
+	}
+	if err = u.Repo.OrderFs.UpdateTotal(constant.FIRESTORE_COLLECTION_TOTAL_ORDER, "1", entity.OrderTrxTotalFs{
+		ID:         "1",
+		TotalOrder: count,
+	}); err != nil {
+		logrus.Error("error update total order fs, in collection `total-order`", err)
+	}
+
 	result = dto.OrderUpsertResponse{
 		Status: constant.STATUS_SUCCESS,
 	}
@@ -150,6 +161,7 @@ func (u *order) Upsert(ctx context.Context, payload dto.UpsertOrderRequest) (res
 	return result, nil
 }
 
+// helper
 func (u *order) buildMapStockLookups(ctx context.Context, payload dto.UpsertOrderRequest) (map[string]entity.StockLookupModel, error) {
 	mapStockLookups := make(map[string]entity.StockLookupModel)
 	ids := []string{}
@@ -209,7 +221,7 @@ func (u *order) create(ctx context.Context, payload dto.UpsertOrderRequest, orde
 
 	// transaction stock
 	if len(trxStockProducts) > 0 {
-		_, err := u.stockUC.Transaction(ctx, dto.TransactionStockRequest{
+		_, err = u.stockUC.TransactionProcess(ctx, dto.TransactionStockRequest{
 			TrxType:    constant.TRX_TYPE_OUT,
 			OrderTrxID: orderTrx.ID,
 			Products:   trxStockProducts,
@@ -307,7 +319,7 @@ func (u *order) update(ctx context.Context, payload dto.UpsertOrderRequest, orde
 
 	// transaction stock
 	if len(trxStockProductsIn) > 0 {
-		_, err := u.stockUC.Transaction(ctx, dto.TransactionStockRequest{
+		_, err := u.stockUC.TransactionProcess(ctx, dto.TransactionStockRequest{
 			TrxType:    constant.TRX_TYPE_OUT,
 			OrderTrxID: orderTrx.ID,
 			Products:   trxStockProductsIn,
@@ -317,7 +329,7 @@ func (u *order) update(ctx context.Context, payload dto.UpsertOrderRequest, orde
 		}
 	}
 	if len(trxStockProductsOut) > 0 {
-		_, err := u.stockUC.Transaction(ctx, dto.TransactionStockRequest{
+		_, err := u.stockUC.TransactionProcess(ctx, dto.TransactionStockRequest{
 			TrxType:    constant.TRX_TYPE_IN,
 			OrderTrxID: orderTrx.ID,
 			Products:   trxStockProductsOut,
