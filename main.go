@@ -7,6 +7,7 @@ import (
 	"gitlab.com/stoqu/stoqu-be/internal/config"
 	"gitlab.com/stoqu/stoqu-be/internal/driver/cron"
 	"gitlab.com/stoqu/stoqu-be/internal/driver/http"
+	"gitlab.com/stoqu/stoqu-be/internal/driver/sentry"
 	"gitlab.com/stoqu/stoqu-be/internal/factory"
 	"gitlab.com/stoqu/stoqu-be/pkg/util/gracefull"
 )
@@ -34,6 +35,7 @@ func main() {
 		panic(err)
 	}
 
+	sentry.Init()
 	starterApi, stopperApi := http.Init(cfg, f)
 	cron.Init(cfg, f)
 

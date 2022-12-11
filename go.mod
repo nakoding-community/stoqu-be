@@ -7,7 +7,7 @@ require (
 	firebase.google.com/go v3.13.0+incompatible
 	github.com/alicebob/miniredis v2.5.0+incompatible
 	github.com/dustin/go-humanize v1.0.0
-	github.com/getsentry/sentry-go v0.15.0
+	github.com/getsentry/sentry-go v0.16.0
 	github.com/go-co-op/gocron v1.18.0
 	github.com/go-playground/validator/v10 v10.11.1
 	github.com/go-redis/redis/v8 v8.11.5
