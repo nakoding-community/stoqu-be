@@ -62,7 +62,6 @@ func (u *auth) Register(ctx context.Context, payload dto.RegisterAuthRequest) (d
 	var err error
 
 	if err = trxmanager.New(u.Repo.Db).WithTrx(ctx, func(ctx context.Context) error {
-
 		userID := uuid.New().String()
 		user = model.UserModel{
 			Entity: model.Entity{
