@@ -13,6 +13,7 @@ type (
 	OrderFs interface {
 		Add(collection string, ID string, data entity.OrderTrxFs) error
 		Update(collection string, doc string, data entity.OrderTrxFs) (err error)
+		UpdateTotal(collection string, doc string, data entity.OrderTrxTotalFs) (err error)
 	}
 
 	orderFs struct {
@@ -24,7 +25,7 @@ func NewOrderFs(client *xfirestore.Client) OrderFs {
 	return &orderFs{client}
 }
 
-func (f *orderFs) Add(collection string, ID string, data entity.OrderTrxFs) error {
+func (f *orderFs) add(collection string, ID string, data interface{}) error {
 	err := f.client.RunTransaction(context.Background(), func(ctx context.Context, tx *xfirestore.Transaction) error {
 		// check limit
 		sanpShot, err := f.client.Collection(collection).Documents(ctx).GetAll()
@@ -66,14 +67,26 @@ func (f *orderFs) Add(collection string, ID string, data entity.OrderTrxFs) erro
 	return nil
 }
 
-func (f *orderFs) Update(collection string, doc string, data entity.OrderTrxFs) (err error) {
+func (f *orderFs) update(collection string, ID string, data interface{}) (err error) {
 	err = f.client.RunTransaction(context.Background(), func(ctx context.Context, tx *xfirestore.Transaction) (err error) {
 		xcol := f.client.Collection(collection)
-		xdoc := xcol.Doc(doc)
+		xdoc := xcol.Doc(ID)
 		_, err = xdoc.Set(ctx, data)
 
 		return
 	})
 
 	return
+}
+
+func (f *orderFs) Add(collection string, ID string, data entity.OrderTrxFs) error {
+	return f.add(collection, ID, data)
+}
+
+func (f *orderFs) Update(collection string, ID string, data entity.OrderTrxFs) (err error) {
+	return f.update(collection, ID, data)
+}
+
+func (f *orderFs) UpdateTotal(collection string, ID string, data entity.OrderTrxTotalFs) (err error) {
+	return f.update(collection, ID, data)
 }

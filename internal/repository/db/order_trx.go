@@ -76,10 +76,10 @@ func (m *orderTrx) Find(ctx context.Context, filterParam abstraction.Filter, sea
 			suppliers.name as supplier_name,
 			pics.name as pic_name
 		`).
-		Joins(`join users as customers on customers.id = order_trxs.customer_id`).
-		Joins(`join user_profiles as customer_profiles on customer_profiles.user_id = customers.id`).
-		Joins(`join users as suppliers on suppliers.id = order_trxs.supplier_id`).
-		Joins(`join users as pics on pics.id = order_trxs.pic_id`)
+		Joins(`left join users as customers on customers.id = order_trxs.customer_id`).
+		Joins(`left join user_profiles as customer_profiles on customer_profiles.user_id = customers.id`).
+		Joins(`left join users as suppliers on suppliers.id = order_trxs.supplier_id`).
+		Joins(`left join users as pics on pics.id = order_trxs.pic_id`)
 
 	if search != nil {
 		query = query.Where(search.Query, search.Args...)
@@ -221,10 +221,10 @@ func (m *orderTrx) FindByID(ctx context.Context, id string) (*model.OrderView, e
 			suppliers.name as supplier_name,
 			pics.name as pic_name
 		`).
-		Joins(`join users as customers on customers.id = order_trxs.customer_id`).
-		Joins(`join users as suppliers on suppliers.id = order_trxs.supplier_id`).
-		Joins(`join users as pics on pic.id = order_trxs.pic_id`).
-		Where("id", id)
+		Joins(`left join users as customers on customers.id = order_trxs.customer_id`).
+		Joins(`left join users as suppliers on suppliers.id = order_trxs.supplier_id`).
+		Joins(`left join users as pics on pics.id = order_trxs.pic_id`).
+		Where("order_trxs.id = ?", id)
 	result := new(model.OrderView)
 	err := query.WithContext(ctx).First(result).Error
 	if err != nil {
