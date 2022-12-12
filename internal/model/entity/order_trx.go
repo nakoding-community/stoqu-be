@@ -64,6 +64,13 @@ type OrderViewProduct struct {
 	Count       float64 `json:"count"`
 }
 
+func (m *OrderViewProduct) ToMap() (data map[string]interface{}) {
+	jData, _ := json.Marshal(m)
+	json.Unmarshal(jData, &data)
+
+	return data
+}
+
 func (m *OrderTrxModel) ToOrderTrxFs(v OrderView) OrderTrxFs {
 	data := OrderTrxFs{
 		ID:           m.ID,

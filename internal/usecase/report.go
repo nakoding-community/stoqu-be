@@ -4,13 +4,9 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"reflect"
-	"strings"
 
-	"github.com/sirupsen/logrus"
 	"github.com/xuri/excelize/v2"
 	"gitlab.com/stoqu/stoqu-be/internal/config"
-	"golang.org/x/exp/maps"
 
 	"gitlab.com/stoqu/stoqu-be/internal/factory/repository"
 	"gitlab.com/stoqu/stoqu-be/internal/model/abstraction"
@@ -104,15 +100,6 @@ func (u *report) FindOrderExcel(ctx context.Context, filterParam abstraction.Fil
 		return nil, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
 	}
 
-	// !TODO, should implement flexible index excel reading, now redundant with excel cell value loop
-	type ExcelEntity struct {
-		CreatedAt     string
-		CustomerName  string
-		CustomerPhone string
-		PriceFinal    float64
-		Status        string
-		Notes         string
-	}
 	var excelData []map[string]interface{}
 	for i, v := range orders {
 		data := v.ToMap()
@@ -144,21 +131,13 @@ func (u *report) FindOrderExcel(ctx context.Context, filterParam abstraction.Fil
 		ctx,
 		dto.GenerateExcelReportInput{
 			SheetName:   "Laporan Pemesanan",
-			FileName:    "report-summaries-1.xlsx",
+			FileName:    "report-pemesanan-1.xlsx",
 			Headers:     headers,
 			Data:        excelData,
 			DataMapping: dataMapping,
 		},
 	)
 }
-
-// func (u *report) convertToMap(ctx context.Context, data ) map[string]interface {
-// 	var myMap map[string]interface{}
-// 	data, _ := json.Marshal(ms)
-// 	json.Unmarshal(data, &myMap)
-
-// 	return myMap
-// }
 
 func (u *report) FindOrderProduct(ctx context.Context, filterParam abstraction.Filter, query dto.ProductReportQuery) (result dto.OrderProductReportResponse, pagination abstraction.PaginationInfo, err error) {
 	var search *abstraction.Search
@@ -170,13 +149,10 @@ func (u *report) FindOrderProduct(ctx context.Context, filterParam abstraction.F
 	)
 	switch query.Group {
 	case constant.GROUP_BY_VARIANT:
-		logrus.Info("FindGroupByVariant")
 		orders, count, info, err = u.Repo.OrderTrx.FindGroupByVariant(ctx, filterParam, search)
 	case constant.GROUP_BY_PACKET:
-		logrus.Info("FindGroupByPacket")
 		orders, count, info, err = u.Repo.OrderTrx.FindGroupByPacket(ctx, filterParam, search)
 	default: //constant.GROUP_BY_BRAND
-		logrus.Info("FindGroupByBrand")
 		orders, count, info, err = u.Repo.OrderTrx.FindGroupByBrand(ctx, filterParam, search)
 	}
 
@@ -215,13 +191,10 @@ func (u *report) orderProductExcelData(ctx context.Context, filterParam abstract
 
 	switch query.Group {
 	case constant.GROUP_BY_VARIANT:
-		logrus.Info("orderProductExcelDataByVariant")
 		orders, _, info, err = u.Repo.OrderTrx.FindGroupByVariant(ctx, filterParam, search)
 	case constant.GROUP_BY_PACKET:
-		logrus.Info("orderProductExcelDataByPacket")
 		orders, _, info, err = u.Repo.OrderTrx.FindGroupByPacket(ctx, filterParam, search)
-	default:
-		logrus.Info("orderProductExcelDataByBrand")
+	default: //constant.GROUP_BY_BRAND
 		orders, _, info, err = u.Repo.OrderTrx.FindGroupByBrand(ctx, filterParam, search)
 	}
 
@@ -247,34 +220,19 @@ func (u *report) FindOrderProductExcel(ctx context.Context, filterParam abstract
 		return nil, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
 	}
 
-	type ExcelEntityVariant struct {
-		BrandID     string
-		BrandName   string
-		PacketID    string
-		PacketName  string
-		VariantID   string
-		VariantName string
-		Qty         float64
+	var excelData []map[string]interface{}
+	for i, v := range orders {
+		data := v.ToMap()
+		data["excel_no"] = i + 1
+		excelData = append(excelData, data)
 	}
 
-	type ExcelEntityPacket struct {
-		PacketID   string
-		PacketName string
-		Qty        float64
-	}
-
-	type ExcelEntityBrand struct {
-		BrandID    string
-		BrandName  string
-		PacketID   string
-		PacketName string
-		Qty        float64
-	}
+	var headers map[string]string
+	var dataMapping map[string]string
 
 	switch query.Group {
 	case constant.GROUP_BY_VARIANT:
-		var excelData []ExcelEntityVariant
-		headers := map[string]string{
+		headers = map[string]string{
 			"A1": "No",
 			"B1": "Brand ID",
 			"C1": "Brand Name",
@@ -285,85 +243,65 @@ func (u *report) FindOrderProductExcel(ctx context.Context, filterParam abstract
 			"H1": "Quantity",
 		}
 
-		for _, v := range orders {
-			excelData = append(excelData, ExcelEntityVariant{
-				BrandID:     v.BrandID,
-				BrandName:   v.BrandName,
-				PacketID:    v.PacketID,
-				PacketName:  v.PacketName,
-				VariantID:   v.VariantID,
-				VariantName: v.VariantName,
-				Qty:         v.Count,
-			})
+		dataMapping = map[string]string{
+			"A": "excel_no",
+			"B": "packet_id",
+			"C": "packet_name",
+			"D": "brand_id",
+			"E": "brand_name",
+			"F": "variant_id",
+			"G": "variant_name",
+			"H": "count",
 		}
 
-		return u.GenerateExcelReport(
-			ctx,
-			dto.GenerateExcelReportInput{
-				SheetName: "Laporan Produk",
-				FileName:  "report-summaries-1.xlsx",
-				Headers:   headers,
-				Data:      excelData,
-			},
-		)
-
 	case constant.GROUP_BY_PACKET:
-		var excelData []ExcelEntityPacket
-		headers := map[string]string{
+		headers = map[string]string{
 			"A1": "No",
 			"B1": "Packet ID",
 			"C1": "Packet Name",
 			"D1": "Quantity",
 		}
 
-		for _, v := range orders {
-			excelData = append(excelData, ExcelEntityPacket{
-				PacketID:   v.PacketID,
-				PacketName: v.PacketName,
-				Qty:        v.Count,
-			})
+		dataMapping = map[string]string{
+			"A": "excel_no",
+			"B": "brand_id",
+			"C": "brand_name",
+			"D": "count",
 		}
-
-		return u.GenerateExcelReport(
-			ctx,
-			dto.GenerateExcelReportInput{
-				SheetName: "Laporan Produk",
-				FileName:  "report-summaries-1.xlsx",
-				Headers:   headers,
-				Data:      excelData,
-			},
-		)
 	default:
-		var excelData []ExcelEntityBrand
-		headers := map[string]string{
+		headers = map[string]string{
 			"A1": "No",
 			"B1": "Brand ID",
 			"C1": "Brand Name",
 			"D1": "Packet ID",
 			"E1": "Packet Name",
-			"F1": "Quantity",
+			"F1": "Variant ID",
+			"G1": "Variant Name",
+			"H1": "Quantity",
 		}
 
-		for _, v := range orders {
-			excelData = append(excelData, ExcelEntityBrand{
-				BrandID:    v.BrandID,
-				BrandName:  v.BrandName,
-				PacketID:   v.PacketID,
-				PacketName: v.PacketName,
-				Qty:        v.Count,
-			})
+		dataMapping = map[string]string{
+			"A": "excel_no",
+			"B": "packet_id",
+			"C": "packet_name",
+			"D": "brand_id",
+			"E": "brand_name",
+			"F": "variant_id",
+			"G": "variant_name",
+			"H": "count",
 		}
-
-		return u.GenerateExcelReport(
-			ctx,
-			dto.GenerateExcelReportInput{
-				SheetName: "Laporan Produk",
-				FileName:  "report-summaries-1.xlsx",
-				Headers:   headers,
-				Data:      excelData,
-			},
-		)
 	}
+
+	return u.GenerateExcelReport(
+		ctx,
+		dto.GenerateExcelReportInput{
+			SheetName:   "Laporan Produk",
+			FileName:    "laporan-produk-1.xlsx",
+			Headers:     headers,
+			Data:        excelData,
+			DataMapping: dataMapping,
+		},
+	)
 }
 
 func (u *report) GenerateExcelReport(ctx context.Context, excel dto.GenerateExcelReportInput) (f *os.File, err error) {
@@ -382,36 +320,18 @@ func (u *report) GenerateExcelReport(ctx context.Context, excel dto.GenerateExce
 	}
 
 	// set headers
-	headerIdx := maps.Keys(excel.Headers)
-	for k, v := range excel.Headers {
-		xlsx.SetCellValue(sheet, k, v)
-		xlsx.SetCellStyle(sheet, k, k, headerStyle)
-	}
-
-	// headerIdx := maps.Keys(excel.DataMapping)
-	for _, d := range excel.Data {
-		for k, v := range excel.DataMapping {
-			key :=
-				xlsx.SetCellValue(sheet, k, d[v])
-			xlsx.SetCellStyle(sheet, key, key, bodyStyle)
-		}
+	for ax, v := range excel.Headers {
+		xlsx.SetCellValue(sheet, ax, v)
+		xlsx.SetCellStyle(sheet, ax, ax, headerStyle)
 	}
 
 	// set content
-	// !FIXME, the excel.Data value might not be ordered correctly, so the content messed up
-	// GC (standard go compiler) will reorder the struct for memory efficiency
-	// https://stackoverflow.com/questions/9486364/why-cant-c-compilers-rearrange-struct-members-to-eliminate-alignment-padding
-	// possible solution: set cell value base on map key
-	slc := reflect.ValueOf(excel.Data)
-	for i := 0; i < slc.Len(); i++ {
-		for j := 0; j < slc.Index(i).NumField()+1; j++ {
-			key := strings.Split(headerIdx[j], "1")[0]
-			if j == 0 {
-				xlsx.SetCellValue(sheet, fmt.Sprintf("%s%d", key, i+2), i+1) //numbering Ex: No. 1
-			} else {
-				xlsx.SetCellValue(sheet, fmt.Sprintf("%s%x", key, i+2), slc.Index(i).Field(j-1).Interface())
-			}
-			xlsx.SetCellStyle(sheet, fmt.Sprintf("%s%d", key, i+2), fmt.Sprintf("%s%d", key, i+2), bodyStyle)
+	for i, d := range excel.Data {
+		r := i + 2 //start from second row
+		for k, v := range excel.DataMapping {
+			ax := fmt.Sprintf("%s%d", k, r)
+			xlsx.SetCellValue(sheet, ax, d[v])
+			xlsx.SetCellStyle(sheet, ax, ax, bodyStyle)
 		}
 	}
 
