@@ -1,2 +1,4 @@
 .idea
 .vscode
+__debug_bin
+firebase-admin-sdk.json

@@ -30,9 +30,9 @@ driver:
     enabled: true
   firestore:
     credentials: "./firebase-admin-sdk.json"
-    projectid: "inamawangi-d1766"
+    projectid: "inamawangi-revamp-dev"
   elasticsearch:
     credentials: ""
     url: ""
   sentry:
-    dsn: ""
+    dsn: "https://cb052e3de08040488f5f77cf83822967@o1285810.ingest.sentry.io/4504312102387712"

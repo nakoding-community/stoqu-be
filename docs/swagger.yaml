@@ -720,8 +720,21 @@ definitions:
             $ref: '#/definitions/response.Meta'
         type: object
     type: object
+  dto.StockConvertionProductResponse:
+    properties:
+      id:
+        type: string
+      lookup_codes:
+        items:
+          type: string
+        type: array
+    type: object
   dto.StockConvertionResponse:
     properties:
+      products:
+        items:
+          $ref: '#/definitions/dto.StockConvertionProductResponse'
+        type: array
       status:
         type: string
     type: object
@@ -3879,6 +3892,62 @@ paths:
       summary: Get report order products
       tags:
       - report
+  /api/reports/order-products/excel:
+    get:
+      consumes:
+      - application/json
+      description: Get report order product excel
+      parameters:
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: page_size
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - example:
+        - asc_column
+        - -dsc_column
+        in: query
+        items:
+          type: string
+        name: sort_by
+        type: array
+      - in: query
+        name: end_date
+        type: string
+      - in: query
+        name: group
+        type: string
+      - in: query
+        name: start_date
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.OrderProductReportResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get report order product excel
+      tags:
+      - report
   /api/reports/orders:
     get:
       consumes:
@@ -3933,6 +4002,62 @@ paths:
       security:
       - BearerAuth: []
       summary: Get report orders
+      tags:
+      - report
+  /api/reports/orders/excel:
+    get:
+      consumes:
+      - application/json
+      description: Get report order excel
+      parameters:
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: page_size
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - example:
+        - asc_column
+        - -dsc_column
+        in: query
+        items:
+          type: string
+        name: sort_by
+        type: array
+      - in: query
+        name: end_date
+        type: string
+      - in: query
+        name: start_date
+        type: string
+      - in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.OrderReportResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get report order excel
       tags:
       - report
   /api/roles:

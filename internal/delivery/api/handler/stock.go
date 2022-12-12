@@ -31,6 +31,7 @@ func NewStock(f factory.Factory) Stock {
 
 func (h *stock) Route(g *echo.Group) {
 	g.GET("", h.Get, middleware.Authentication)
+	g.GET("/history", h.History, middleware.Authentication)
 	g.GET("/:id", h.GetByID, middleware.Authentication)
 	g.PUT("/transaction", h.Transaction, middleware.Authentication)
 	g.PUT("/convertion", h.Convertion, middleware.Authentication)

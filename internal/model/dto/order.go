@@ -1,6 +1,8 @@
 package dto
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 	model "gitlab.com/stoqu/stoqu-be/internal/model/entity"
 	"gitlab.com/stoqu/stoqu-be/pkg/constant"
@@ -22,9 +24,9 @@ type (
 
 		Notes string `json:"notes"`
 
-		PaymentStatus string `json:"payment_status" validate:"required,oneof=paid unpaid dp"`
-		StockStatus   string `json:"stock_status" validate:"required"`
-		Status        string `json:"status" validate:"required,oneof=pending progress completed canceled"`
+		PaymentStatus string `json:"payment_status" validate:"required,oneof=UNPAID DP PAID"`
+		StockStatus   string `json:"stock_status" validate:"required,oneof=NORMAL ABNORMAL"`
+		Status        string `json:"status" validate:"required,oneof=PENDING PROGRESS COMPLETED CANCELED"`
 
 		IsRead bool `json:"is_read"`
 
@@ -41,7 +43,7 @@ type (
 		ProductID string  `json:"product_id" validate:"required"`
 		Total     int     `json:"total" validate:"required,min=1"`
 		Price     float64 `json:"price" validate:"required"`
-		Status    string  `json:"status" validate:"required"`
+		Status    string  `json:"status" validate:"required,oneof=PENDING PROGRESS COMPLETED"`
 
 		RackID       string                         `json:"rack_id"`
 		StockLookups []UpsertOrderItemLookupRequest `json:"stock_lookups"`
@@ -90,9 +92,13 @@ func (dto *UpsertOrderRequest) ToOrderTrx(mapStockLookups map[string]model.Stock
 	if dto.ID != "" {
 		orderTrxID = dto.ID
 	}
+
+	now := time.Now()
 	orderTrx := model.OrderTrxModel{
 		Entity: model.Entity{
-			ID: orderTrxID,
+			ID:         orderTrxID,
+			CreatedAt:  &now,
+			ModifiedAt: &now,
 		},
 		OrderTrxEntity: model.OrderTrxEntity{
 			TrxType:        dto.TrxType,
@@ -155,7 +161,7 @@ func (dto *UpsertOrderRequest) ToOrderTrx(mapStockLookups map[string]model.Stock
 	}
 
 	// receipts
-	for _, receipt := range orderTrx.OrderTrxReceipts {
+	for _, receipt := range dto.Receipts {
 		orderTrxReceiptID := uuid.New().String()
 		if receipt.ID != "" {
 			orderTrxReceiptID = receipt.ID

@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	sentryecho "github.com/getsentry/sentry-go/echo"
 	"gitlab.com/stoqu/stoqu-be/internal/config"
 
 	"gitlab.com/stoqu/stoqu-be/pkg/util/validator"
@@ -31,6 +32,7 @@ func Init(e *echo.Echo) {
 			CustomTimeFormat: "2006/01/02 15:04:05",
 			Output:           os.Stdout,
 		}),
+		sentryecho.New(sentryecho.Options{}),
 	)
 	e.HTTPErrorHandler = ErrorHandler
 	e.Validator = &validator.CustomValidator{Validator: validator.NewValidator()}

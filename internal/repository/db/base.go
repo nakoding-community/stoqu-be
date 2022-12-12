@@ -13,6 +13,7 @@ import (
 
 	"github.com/jackc/pgconn"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type (
@@ -60,10 +61,11 @@ func (m *base[T]) GetConn(ctx context.Context) *gorm.DB {
 
 func (m *base[T]) BuildFilterSort(ctx context.Context, query *gorm.DB, filterParam abstraction.Filter) {
 	for _, filter := range filterParam.Query {
-
-		if filter.Operator != "" {
-			query.Where(filter.Field+" "+filter.Operator+" ?", filter.Value)
+		// handle default operator, if pass direct from usecase not handler
+		if filter.Operator == "" {
+			filter.Operator = "="
 		}
+		query.Where(filter.Field+" "+filter.Operator+" ?", filter.Value)
 		// !TODO: why we dont add a full query instead ? so we able to customize the operator
 		// ex: filter.Query = "order_trxs = ?"
 	}
@@ -188,28 +190,33 @@ func (m *base[T]) FindByName(ctx context.Context, name string) (*T, error) {
 }
 
 func (m *base[T]) Create(ctx context.Context, data T) (T, error) {
-	query := m.GetConn(ctx).Model(m.entity)
-	err := query.WithContext(ctx).Create(&data).Error
+	err := m.GetConn(ctx).Model(m.entity).WithContext(ctx).Omit(clause.Associations).Create(&data).Error
 	return data, m.MaskError(err)
 }
 
 func (m *base[T]) Creates(ctx context.Context, data []T) ([]T, error) {
-	err := m.GetConn(ctx).Model(m.entity).WithContext(ctx).Create(&data).Error
+	if len(data) == 0 {
+		return data, nil
+	}
+	err := m.GetConn(ctx).Model(m.entity).WithContext(ctx).Omit(clause.Associations).Create(&data).Error
 	return data, m.MaskError(err)
 }
 
 func (m *base[T]) UpdateByID(ctx context.Context, id string, data T) (T, error) {
-	err := m.GetConn(ctx).Model(&data).WithContext(ctx).Where("id = ?", id).Updates(&data).Error
+	err := m.GetConn(ctx).Model(&data).WithContext(ctx).Omit(clause.Associations).Where("id = ?", id).Updates(&data).Error
 	return data, m.MaskError(err)
 }
 
 func (m *base[T]) DeleteByID(ctx context.Context, id string) error {
-	err := m.GetConn(ctx).WithContext(ctx).Where("id = ?", id).Delete(m.entity).Error
+	err := m.GetConn(ctx).WithContext(ctx).Where("id = ?", id).Omit(clause.Associations).Delete(m.entity).Error
 	return m.MaskError(err)
 }
 
 func (m *base[T]) DeleteByIDs(ctx context.Context, ids []string) error {
-	err := m.GetConn(ctx).WithContext(ctx).Where("id IN ?", ids).Delete(m.entity).Error
+	if len(ids) == 0 {
+		return nil
+	}
+	err := m.GetConn(ctx).WithContext(ctx).Where("id IN ?", ids).Omit(clause.Associations).Delete(m.entity).Error
 	return m.MaskError(err)
 }
 
