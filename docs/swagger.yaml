@@ -1180,6 +1180,10 @@ definitions:
       rack_id:
         type: string
       status:
+        enum:
+        - PENDING
+        - PROGRESS
+        - COMPLETED
         type: string
       stock_lookups:
         items:
@@ -1229,9 +1233,9 @@ definitions:
         type: string
       payment_status:
         enum:
-        - paid
-        - unpaid
-        - dp
+        - UNPAID
+        - DP
+        - PAID
         type: string
       pic_id:
         type: string
@@ -1249,12 +1253,15 @@ definitions:
         type: string
       status:
         enum:
-        - pending
-        - progress
-        - completed
-        - canceled
+        - PENDING
+        - PROGRESS
+        - COMPLETED
+        - CANCELED
         type: string
       stock_status:
+        enum:
+        - NORMAL
+        - ABNORMAL
         type: string
       supplier_id:
         type: string

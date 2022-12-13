@@ -7520,7 +7520,12 @@
                     "type": "string"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "PENDING",
+                        "PROGRESS",
+                        "COMPLETED"
+                    ]
                 },
                 "stock_lookups": {
                     "type": "array",
@@ -7594,9 +7599,9 @@
                 "payment_status": {
                     "type": "string",
                     "enum": [
-                        "paid",
-                        "unpaid",
-                        "dp"
+                        "UNPAID",
+                        "DP",
+                        "PAID"
                     ]
                 },
                 "pic_id": {
@@ -7623,14 +7628,18 @@
                 "status": {
                     "type": "string",
                     "enum": [
-                        "pending",
-                        "progress",
-                        "completed",
-                        "canceled"
+                        "PENDING",
+                        "PROGRESS",
+                        "COMPLETED",
+                        "CANCELED"
                     ]
                 },
                 "stock_status": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "NORMAL",
+                        "ABNORMAL"
+                    ]
                 },
                 "supplier_id": {
                     "type": "string"

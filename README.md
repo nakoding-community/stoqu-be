@@ -21,7 +21,7 @@ $ go mod tidy
 $ ENV=local go run main.go
 
 # open
-$ Open url http://localhost:3000
+$ Open url http://localhost:3000/swagger/index.html
 ```
 
 ## Architecture 

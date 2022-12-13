@@ -7527,7 +7527,12 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "PENDING",
+                        "PROGRESS",
+                        "COMPLETED"
+                    ]
                 },
                 "stock_lookups": {
                     "type": "array",
@@ -7601,9 +7606,9 @@ const docTemplate = `{
                 "payment_status": {
                     "type": "string",
                     "enum": [
-                        "paid",
-                        "unpaid",
-                        "dp"
+                        "UNPAID",
+                        "DP",
+                        "PAID"
                     ]
                 },
                 "pic_id": {
@@ -7630,14 +7635,18 @@ const docTemplate = `{
                 "status": {
                     "type": "string",
                     "enum": [
-                        "pending",
-                        "progress",
-                        "completed",
-                        "canceled"
+                        "PENDING",
+                        "PROGRESS",
+                        "COMPLETED",
+                        "CANCELED"
                     ]
                 },
                 "stock_status": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "NORMAL",
+                        "ABNORMAL"
+                    ]
                 },
                 "supplier_id": {
                     "type": "string"
