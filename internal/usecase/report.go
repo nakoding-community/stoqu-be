@@ -107,24 +107,25 @@ func (u *report) FindOrderExcel(ctx context.Context, filterParam abstraction.Fil
 		excelData = append(excelData, data)
 	}
 
-	headers := map[string]string{
-		"A1": "No",
-		"B1": "Tanggal",
-		"C1": "Customer",
-		"D1": "No. Handphone",
-		"E1": "Harga",
-		"F1": "Status",
-		"G1": "Keterangan",
-	}
-
-	dataMapping := map[string]string{
-		"A": "excel_no",
-		"B": "created_at",
-		"C": "customer_name",
-		"D": "customer_phone",
-		"E": "final_price",
-		"F": "status",
-		"G": "notes",
+	dataMapping := dto.DataMapping{
+		Headers: map[string]string{
+			"A1": "No",
+			"B1": "Tanggal",
+			"C1": "Customer",
+			"D1": "No. Handphone",
+			"E1": "Harga",
+			"F1": "Status",
+			"G1": "Keterangan",
+		},
+		Body: map[string]string{
+			"A": "excel_no",
+			"B": "created_at",
+			"C": "customer_name",
+			"D": "customer_phone",
+			"E": "final_price",
+			"F": "status",
+			"G": "notes",
+		},
 	}
 
 	return u.GenerateExcelReport(
@@ -132,7 +133,6 @@ func (u *report) FindOrderExcel(ctx context.Context, filterParam abstraction.Fil
 		dto.GenerateExcelReportInput{
 			SheetName:   "Laporan Pemesanan",
 			FileName:    "report-pemesanan-1.xlsx",
-			Headers:     headers,
 			Data:        excelData,
 			DataMapping: dataMapping,
 		},
@@ -227,69 +227,61 @@ func (u *report) FindOrderProductExcel(ctx context.Context, filterParam abstract
 		excelData = append(excelData, data)
 	}
 
-	var headers map[string]string
-	var dataMapping map[string]string
-
-	switch query.Group {
-	case constant.GROUP_BY_VARIANT:
-		headers = map[string]string{
-			"A1": "No",
-			"B1": "Brand ID",
-			"C1": "Brand Name",
-			"D1": "Packet ID",
-			"E1": "Packet Name",
-			"F1": "Variant ID",
-			"G1": "Variant Name",
-			"H1": "Quantity",
-		}
-
-		dataMapping = map[string]string{
-			"A": "excel_no",
-			"B": "packet_id",
-			"C": "packet_name",
-			"D": "brand_id",
-			"E": "brand_name",
-			"F": "variant_id",
-			"G": "variant_name",
-			"H": "count",
-		}
-
-	case constant.GROUP_BY_PACKET:
-		headers = map[string]string{
-			"A1": "No",
-			"B1": "Packet ID",
-			"C1": "Packet Name",
-			"D1": "Quantity",
-		}
-
-		dataMapping = map[string]string{
-			"A": "excel_no",
-			"B": "brand_id",
-			"C": "brand_name",
-			"D": "count",
-		}
-	default:
-		headers = map[string]string{
-			"A1": "No",
-			"B1": "Brand ID",
-			"C1": "Brand Name",
-			"D1": "Packet ID",
-			"E1": "Packet Name",
-			"F1": "Variant ID",
-			"G1": "Variant Name",
-			"H1": "Quantity",
-		}
-
-		dataMapping = map[string]string{
-			"A": "excel_no",
-			"B": "packet_id",
-			"C": "packet_name",
-			"D": "brand_id",
-			"E": "brand_name",
-			"F": "variant_id",
-			"G": "variant_name",
-			"H": "count",
-		}
+	dataMappers := map[string]dto.DataMapping{
+		constant.GROUP_BY_VARIANT: {
+			Headers: map[string]string{
+				"A1": "No",
+				"B1": "Brand ID",
+				"C1": "Brand Name",
+				"D1": "Packet ID",
+				"E1": "Packet Name",
+				"F1": "Variant ID",
+				"G1": "Variant Name",
+				"H1": "Quantity",
+			},
+			Body: map[string]string{
+				"A": "excel_no",
+				"B": "brand_id",
+				"C": "brand_name",
+				"D": "packet_id",
+				"E": "packet_name",
+				"F": "variant_id",
+				"G": "variant_name",
+				"H": "count",
+			},
+		},
+		constant.GROUP_BY_PACKET: {
+			Headers: map[string]string{
+				"A1": "No",
+				"B1": "Packet ID",
+				"C1": "Packet Name",
+				"D1": "Quantity",
+			},
+			Body: map[string]string{
+				"A": "excel_no",
+				"B": "packet_id",
+				"C": "packet_name",
+				"D": "count",
+			},
+		},
+		constant.GROUP_BY_BRAND: {
+			Headers: map[string]string{
+				"A1": "No",
+				"B1": "Brand ID",
+				"C1": "Brand Name",
+				"D1": "Packet ID",
+				"E1": "Packet Name",
+				"F1": "Quantity",
+			},
+			Body: map[string]string{
+				"A": "excel_no",
+				"B": "brand_id",
+				"C": "brand_name",
+				"D": "packet_id",
+				"E": "packet_name",
+				"F": "count",
+			},
+		},
 	}
 
 	return u.GenerateExcelReport(
@@ -297,9 +289,8 @@ func (u *report) FindOrderProductExcel(ctx context.Context, filterParam abstract
 		dto.GenerateExcelReportInput{
 			SheetName:   "Laporan Produk",
 			FileName:    "laporan-produk-1.xlsx",
-			Headers:     headers,
 			Data:        excelData,
-			DataMapping: dataMapping,
+			DataMapping: dataMappers[query.Group],
 		},
 	)
 }
@@ -320,7 +311,7 @@ func (u *report) GenerateExcelReport(ctx context.Context, excel dto.GenerateExce
 	}
 
 	// set headers
-	for ax, v := range excel.Headers {
+	for ax, v := range excel.DataMapping.Headers {
 		xlsx.SetCellValue(sheet, ax, v)
 		xlsx.SetCellStyle(sheet, ax, ax, headerStyle)
 	}
@@ -328,7 +319,7 @@ func (u *report) GenerateExcelReport(ctx context.Context, excel dto.GenerateExce
 	// set content
 	for i, d := range excel.Data {
 		r := i + 2 //start from second row
-		for k, v := range excel.DataMapping {
+		for k, v := range excel.DataMapping.Body {
 			ax := fmt.Sprintf("%s%d", k, r)
 			xlsx.SetCellValue(sheet, ax, d[v])
 			xlsx.SetCellStyle(sheet, ax, ax, bodyStyle)
