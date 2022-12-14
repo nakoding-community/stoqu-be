@@ -20,10 +20,15 @@ type (
 	}
 
 	GenerateExcelReportInput struct {
-		SheetName string            `query:"sheet_name"`
-		FileName  string            `query:"file_name"`
-		Headers   map[string]string `json:"headers"`
-		Data      interface{}       `json:"data"`
+		SheetName   string                   `query:"sheet_name"`
+		FileName    string                   `query:"file_name"`
+		Data        []map[string]interface{} `json:"data"`
+		DataMapping DataMapping              `json:"data_mapping"`
+	}
+
+	DataMapping struct {
+		Headers map[string]string `json:"headers"`
+		Body    map[string]string `json:"body"`
 	}
 )
 
