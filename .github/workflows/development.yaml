@@ -42,4 +42,4 @@ jobs:
         username: ${{ secrets.SSH_USERNAME }}
         host: ${{ secrets.HOST_SERVER }}
         password: ${{ secrets.SSH_PASSWORD }}
-        script: 'cat /etc/centos-release'
+        script: 'cd development && ls'
