@@ -2,7 +2,7 @@ name: Stoqu
 
 on:
   push:
-    branches: [ setup-devops ]
+    branches: [ development ]
 
 env:
   REGISTRY: ghcr.io
