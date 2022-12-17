@@ -31,7 +31,7 @@ jobs:
       with:
         context: .
         push: true
-        tags: ${{ env.GITHUB_SHA }}
+        tags: ${{ GITHUB_SHA }}
         labels: ${{ steps.meta.outputs.labels }}
   deploy:
     runs-on: ubuntu-latest
