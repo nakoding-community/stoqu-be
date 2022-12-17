@@ -19,7 +19,7 @@ jobs:
     - name: Deploy
       uses: appleboy/ssh-action@master
       with:
-        username: root
+        username: ${{ secrets.SSH_USERNAME }}
         host: ${{ secrets.HOST_SERVER }}
         password: ${{ secrets.SSH_PASSWORD }}
         script: 'cat /etc/centos-release'
