@@ -1,0 +1,25 @@
+name: Stoqu
+
+on:
+  push:
+    branches: [ setup-devops ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Build and push image
+      uses: actions/checkout@v3
+    - run: ls
+    - run: echo 'Building image...'
+    - run: echo 'Pushing image...'
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Deploy
+      uses: appleboy/ssh-action@master
+      with:
+        username: root
+        host: ${{ secrets.HOST_SERVER }}
+        password: ${{ secrets.SSH_PASSWORD }}
+        script: 'cat /etc/centos-release'
