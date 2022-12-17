@@ -1,7 +1,7 @@
 # build stage
 FROM golang:alpine AS build
 WORKDIR /go/src/app
-COPY ../deployments/docker .
+COPY . .
 
 # extra stage
 # RUN go mod init eclaim-api
