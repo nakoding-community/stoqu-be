@@ -29,7 +29,7 @@ driver:
   cron:
     enabled: true
   firestore:
-    credentials: "./firebase-admin-sdk.json"
+    credentials: "./config/firebase-admin-sdk.json"
     projectid: "inamawangi-revamp-dev"
   elasticsearch:
     credentials: ""
