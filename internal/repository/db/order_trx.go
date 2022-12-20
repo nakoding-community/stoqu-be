@@ -247,7 +247,19 @@ func (m *orderTrx) FindDetailByID(ctx context.Context, id string) (*model.OrderD
 		Joins(`left join users as pics on pics.id = order_trxs.pic_id`).
 		Where("order_trxs.id = ?", id)
 
-	query = query.Preload("OrderTrxItems").Preload("OrderTrxReceipts").Preload("OrderTrxItems.OrderTrxItemLookups")
+	preloadFields := []string{
+		"OrderTrxItems",
+		"OrderTrxReceipts",
+		"OrderTrxItems.OrderTrxItemLookups",
+		"OrderTrxItems.Product",
+		"OrderTrxItems.Product.Brand",
+		"OrderTrxItems.Product.Variant",
+		"OrderTrxItems.Product.Packet",
+	}
+
+	for _, p := range preloadFields {
+		query = query.Preload(p)
+	}
 
 	result := new(model.OrderDetailView)
 	err := query.WithContext(ctx).First(result).Error
