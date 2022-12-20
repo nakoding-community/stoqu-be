@@ -30,6 +30,7 @@ func NewOrder(f factory.Factory) Order {
 func (h *order) Route(g *echo.Group) {
 	g.GET("", h.Get, middleware.Authentication)
 	g.GET("/:id", h.GetByID, middleware.Authentication)
+	g.GET("/:id/detail", h.GetDetailByID, middleware.Authentication)
 	g.PUT("", h.Upsert, middleware.Authentication)
 }
 
@@ -88,6 +89,38 @@ func (h *order) GetByID(c echo.Context) error {
 	}
 
 	result, err := h.Factory.Usecase.Order.FindByID(ctx, *payload)
+	if err != nil {
+		return res.ErrorResponse(err).Send(c)
+	}
+	return res.SuccessResponse(result).Send(c)
+}
+
+// Get order detail by id
+// @Summary Get order detail by id
+// @Description Get order detail by id
+// @Tags order
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "id path"
+// @Success 200 {object} dto.OrderViewDetailResponse
+// @Failure 400 {object} res.errorResponse
+// @Failure 404 {object} res.errorResponse
+// @Failure 500 {object} res.errorResponse
+// @Router /api/orders/{id}/detail [get]
+func (h *order) GetDetailByID(c echo.Context) error {
+	ctx := c.Request().Context()
+
+	payload := new(dto.ByIDRequest)
+	if err := c.Bind(payload); err != nil {
+		return res.ErrorBuilder(res.Constant.Error.BadRequest, err).Send(c)
+	}
+	if err := c.Validate(payload); err != nil {
+		response := res.ErrorBuilder(res.Constant.Error.Validation, err)
+		return response.Send(c)
+	}
+
+	result, err := h.Factory.Usecase.Order.FindDetailByID(ctx, *payload)
 	if err != nil {
 		return res.ErrorResponse(err).Send(c)
 	}

@@ -30,6 +30,7 @@ type (
 		// Custom
 		Find(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.OrderView, *abstraction.PaginationInfo, error)
 		FindByID(ctx context.Context, id string) (*model.OrderView, error)
+		FindDetailByID(ctx context.Context, id string) (*model.OrderDetailView, error)
 		CountLastWeek(ctx context.Context) ([]dto.DashboardOrderDailyResponse, error)
 		CountIncome(ctx context.Context) (int64, error)
 		FindGroupByBrand(ctx context.Context, filterParam abstraction.Filter, search *abstraction.Search) ([]model.OrderViewProduct, int64, *abstraction.PaginationInfo, error)
@@ -226,6 +227,29 @@ func (m *orderTrx) FindByID(ctx context.Context, id string) (*model.OrderView, e
 		Joins(`left join users as pics on pics.id = order_trxs.pic_id`).
 		Where("order_trxs.id = ?", id)
 	result := new(model.OrderView)
+	err := query.WithContext(ctx).First(result).Error
+	if err != nil {
+		return nil, m.MaskError(err)
+	}
+	return result, nil
+}
+
+func (m *orderTrx) FindDetailByID(ctx context.Context, id string) (*model.OrderDetailView, error) {
+	query := m.GetConn(ctx).Model(m.entity).
+		Select(`
+			order_trxs.*, 
+			customers.name as customer_name, 
+			suppliers.name as supplier_name,
+			pics.name as pic_name
+		`).
+		Joins(`left join users as customers on customers.id = order_trxs.customer_id`).
+		Joins(`left join users as suppliers on suppliers.id = order_trxs.supplier_id`).
+		Joins(`left join users as pics on pics.id = order_trxs.pic_id`).
+		Where("order_trxs.id = ?", id)
+
+	query = query.Preload("OrderTrxItems").Preload("OrderTrxReceipts").Preload("OrderTrxItems.OrderTrxItemLookups")
+
+	result := new(model.OrderDetailView)
 	err := query.WithContext(ctx).First(result).Error
 	if err != nil {
 		return nil, m.MaskError(err)
