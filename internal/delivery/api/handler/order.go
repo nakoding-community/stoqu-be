@@ -87,7 +87,7 @@ func (h *order) GetByID(c echo.Context) error {
 		return response.Send(c)
 	}
 
-	result, err := h.Factory.Usecase.Order.FindByID(ctx, *payload)
+	result, err := h.Factory.Usecase.Order.FindDetailByID(ctx, *payload)
 	if err != nil {
 		return res.ErrorResponse(err).Send(c)
 	}

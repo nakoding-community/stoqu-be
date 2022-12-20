@@ -36,6 +36,23 @@ func (OrderTrxModel) TableName() string {
 	return "order_trxs"
 }
 
+type OrderDetailView struct {
+	Entity
+	OrderTrxEntity
+
+	// join
+	CustomerName  string `json:"customer_name"`
+	CustomerPhone string `json:"customer_phone"`
+	SupplierName  string `json:"supplier_name"`
+	PicName       string `json:"pic_name"`
+
+	TotalProduct int `json:"total_product" gorm:"-"`
+
+	// preload
+	OrderTrxItems    []OrderTrxItemModel    `json:"items" gorm:"foreignKey:OrderTrxID"`
+	OrderTrxReceipts []OrderTrxReceiptModel `json:"receipts" gorm:"foreignKey:OrderTrxID"`
+}
+
 type OrderView struct {
 	Entity
 	OrderTrxEntity
