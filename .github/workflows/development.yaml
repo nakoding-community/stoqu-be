@@ -43,4 +43,4 @@ jobs:
         username: ${{ secrets.SSH_USERNAME }}
         host: ${{ secrets.HOST_SERVER }}
         password: ${{ secrets.SSH_PASSWORD }}
-        script: 'cd /root/development && ls'
+        script: 'lsb_release -a'
