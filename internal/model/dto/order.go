@@ -84,6 +84,10 @@ type (
 			Data OrderUpsertResponse `json:"data"`
 		} `json:"body"`
 	}
+
+	OrderViewDetailResponse struct {
+		model.OrderDetailView
+	}
 )
 
 // mapper

@@ -20,6 +20,7 @@ import (
 type Order interface {
 	Find(ctx context.Context, filterParam abstraction.Filter) ([]dto.OrderViewResponse, abstraction.PaginationInfo, error)
 	FindByID(ctx context.Context, payload dto.ByIDRequest) (dto.OrderViewResponse, error)
+	FindDetailByID(ctx context.Context, payload dto.ByIDRequest) (dto.OrderViewDetailResponse, error)
 	Upsert(ctx context.Context, payload dto.UpsertOrderRequest) (dto.OrderUpsertResponse, error)
 }
 
@@ -96,6 +97,27 @@ func (u *order) FindByID(ctx context.Context, payload dto.ByIDRequest) (dto.Orde
 
 	result = dto.OrderViewResponse{
 		OrderView: *order,
+	}
+
+	return result, nil
+}
+
+func (u *order) FindDetailByID(ctx context.Context, payload dto.ByIDRequest) (dto.OrderViewDetailResponse, error) {
+	var result dto.OrderViewDetailResponse
+
+	order, err := u.Repo.OrderTrx.FindDetailByID(ctx, payload.ID)
+	if err != nil {
+		return result, err
+	}
+
+	totalProduct := 0
+	for _, v := range order.OrderTrxItems {
+		totalProduct += v.Total
+	}
+	order.TotalProduct = totalProduct
+
+	result = dto.OrderViewDetailResponse{
+		OrderDetailView: *order,
 	}
 
 	return result, nil
