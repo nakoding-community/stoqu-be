@@ -247,6 +247,7 @@ func (m *orderTrx) FindDetailByID(ctx context.Context, id string) (*model.OrderD
 		Joins(`left join users as pics on pics.id = order_trxs.pic_id`).
 		Where("order_trxs.id = ?", id)
 
+	// !TODO, let me know if this preload will be a problem
 	preloadFields := []string{
 		"OrderTrxItems",
 		"OrderTrxReceipts",
