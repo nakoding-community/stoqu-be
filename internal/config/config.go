@@ -31,9 +31,10 @@ func Load(path string) (*Configuration, error) {
 		path = fmt.Sprintf("%s/config/config.%s.yml", wd, os.Getenv("ENV"))
 	}
 
-	if os.Getenv("ENV") != "development" && os.Getenv("ENV") != "debug" && os.Getenv("ENV") != "local" {
-		path = fmt.Sprintf("/run/secrets/%s", os.Getenv("CONFIG"))
-	}
+	// !TODO: use run secrets in prod for the future
+	// if os.Getenv("ENV") != "development" && os.Getenv("ENV") != "debug" && os.Getenv("ENV") != "local" {
+	// 	path = fmt.Sprintf("/run/secrets/%s", os.Getenv("CONFIG"))
+	// }
 
 	err := configor.New(&configor.Config{AutoReload: true, AutoReloadInterval: time.Minute}).Load(Config, path)
 	if err != nil {
