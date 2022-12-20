@@ -110,6 +110,12 @@ func (u *order) FindDetailByID(ctx context.Context, payload dto.ByIDRequest) (dt
 		return result, err
 	}
 
+	totalProduct := 0
+	for _, v := range order.OrderTrxItems {
+		totalProduct += v.Total
+	}
+	order.TotalProduct = totalProduct
+
 	result = dto.OrderViewDetailResponse{
 		OrderDetailView: *order,
 	}

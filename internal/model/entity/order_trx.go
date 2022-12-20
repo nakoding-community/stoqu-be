@@ -41,10 +41,12 @@ type OrderDetailView struct {
 	OrderTrxEntity
 
 	// join
-	CustomerName  string `json:"customer_name" filter:"column:customers.name"`
-	CustomerPhone string `json:"customer_phone" filter:"column:customer_profiles.phone"`
-	SupplierName  string `json:"supplier_name" filter:"column:suppliers.name"`
-	PicName       string `json:"pic_name" filter:"column:pics.name"`
+	CustomerName  string `json:"customer_name"`
+	CustomerPhone string `json:"customer_phone"`
+	SupplierName  string `json:"supplier_name"`
+	PicName       string `json:"pic_name"`
+
+	TotalProduct int `json:"total_product" gorm:"-"`
 
 	// preload
 	OrderTrxItems    []OrderTrxItemModel    `json:"items" gorm:"foreignKey:OrderTrxID"`
