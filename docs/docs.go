@@ -1497,61 +1497,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/orders/{id}/detail": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Get order detail by id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "order"
-                ],
-                "summary": "Get order detail by id",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "id path",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.OrderViewDetailResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/response.errorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/response.errorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/response.errorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/api/packets": {
             "get": {
                 "security": [
@@ -2004,6 +1949,11 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "name": "variant_name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "variant_unique_code",
                         "in": "query"
                     }
                 ],
@@ -4384,16 +4334,6 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "type": "integer",
-                        "name": "price_final",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "price_usd",
-                        "in": "query"
-                    },
-                    {
                         "type": "string",
                         "description": "join",
                         "name": "product_code",
@@ -4418,6 +4358,16 @@ const docTemplate = `{
                     {
                         "type": "integer",
                         "name": "total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "total_not_seal",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "total_seal",
                         "in": "query"
                     },
                     {
@@ -5870,6 +5820,10 @@ const docTemplate = `{
                     "description": "fk",
                     "type": "string"
                 },
+                "supplier_name": {
+                    "description": "helper",
+                    "type": "string"
+                },
                 "variants": {
                     "description": "relations",
                     "type": "array",
@@ -6298,6 +6252,9 @@ const docTemplate = `{
                 "total_order": {
                     "type": "integer"
                 },
+                "total_packet": {
+                    "type": "integer"
+                },
                 "total_product": {
                     "type": "integer"
                 },
@@ -6475,97 +6432,6 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.OrderViewDetailResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "created_by": {
-                    "type": "string"
-                },
-                "customer_id": {
-                    "type": "string"
-                },
-                "customer_name": {
-                    "description": "join",
-                    "type": "string"
-                },
-                "customer_phone": {
-                    "type": "string"
-                },
-                "final_price": {
-                    "type": "number"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "is_read": {
-                    "type": "boolean"
-                },
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/entity.OrderTrxItemModel"
-                    }
-                },
-                "modified_at": {
-                    "type": "string"
-                },
-                "modified_by": {
-                    "type": "string"
-                },
-                "notes": {
-                    "type": "string"
-                },
-                "payment_status": {
-                    "type": "string"
-                },
-                "pic_id": {
-                    "description": "fk",
-                    "type": "string"
-                },
-                "pic_name": {
-                    "type": "string"
-                },
-                "price": {
-                    "type": "number"
-                },
-                "receipts": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/entity.OrderTrxReceiptModel"
-                    }
-                },
-                "shipment_number": {
-                    "type": "string"
-                },
-                "shipment_price": {
-                    "type": "integer"
-                },
-                "shipment_type": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "stock_status": {
-                    "type": "string"
-                },
-                "supplier_id": {
-                    "type": "string"
-                },
-                "supplier_name": {
-                    "type": "string"
-                },
-                "trx_type": {
-                    "type": "string"
-                }
-            }
-        },
         "dto.OrderViewResponseDoc": {
             "type": "object",
             "properties": {
@@ -6616,6 +6482,10 @@ const docTemplate = `{
                 },
                 "unit_id": {
                     "description": "fk",
+                    "type": "string"
+                },
+                "unit_name": {
+                    "description": "helper",
                     "type": "string"
                 },
                 "value": {
@@ -7178,12 +7048,6 @@ const docTemplate = `{
                 "packet_id": {
                     "type": "string"
                 },
-                "price_final": {
-                    "type": "integer"
-                },
-                "price_usd": {
-                    "type": "integer"
-                },
                 "product": {
                     "description": "relations",
                     "allOf": [
@@ -7203,6 +7067,12 @@ const docTemplate = `{
                     }
                 },
                 "total": {
+                    "type": "integer"
+                },
+                "total_not_seal": {
+                    "type": "integer"
+                },
+                "total_seal": {
                     "type": "integer"
                 },
                 "variant": {
@@ -7952,206 +7822,16 @@ const docTemplate = `{
                     "description": "fk",
                     "type": "string"
                 },
+                "supplier_name": {
+                    "description": "helper",
+                    "type": "string"
+                },
                 "variants": {
                     "description": "relations",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/entity.VariantModel"
                     }
-                }
-            }
-        },
-        "entity.OrderTrxItemLookupModel": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "created_by": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "is_seal": {
-                    "type": "boolean"
-                },
-                "modified_at": {
-                    "type": "string"
-                },
-                "modified_by": {
-                    "type": "string"
-                },
-                "order_trx_item_id": {
-                    "description": "fk",
-                    "type": "string"
-                },
-                "remaining_value": {
-                    "type": "number"
-                },
-                "remaining_value_before": {
-                    "type": "number"
-                },
-                "stock_rack_id": {
-                    "description": "fk",
-                    "type": "string"
-                },
-                "value": {
-                    "type": "number"
-                }
-            }
-        },
-        "entity.OrderTrxItemModel": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "created_by": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "modified_at": {
-                    "type": "string"
-                },
-                "modified_by": {
-                    "type": "string"
-                },
-                "order_trx": {
-                    "$ref": "#/definitions/entity.OrderTrxModel"
-                },
-                "order_trx_id": {
-                    "description": "fk",
-                    "type": "string"
-                },
-                "order_trx_item_lookups": {
-                    "description": "relations",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/entity.OrderTrxItemLookupModel"
-                    }
-                },
-                "price": {
-                    "type": "number"
-                },
-                "product": {
-                    "$ref": "#/definitions/entity.ProductModel"
-                },
-                "product_id": {
-                    "type": "string"
-                },
-                "rack": {
-                    "$ref": "#/definitions/entity.RackModel"
-                },
-                "rack_id": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "total": {
-                    "type": "integer"
-                },
-                "total_packed": {
-                    "type": "integer"
-                }
-            }
-        },
-        "entity.OrderTrxModel": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "created_by": {
-                    "type": "string"
-                },
-                "customer_id": {
-                    "type": "string"
-                },
-                "final_price": {
-                    "type": "number"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "is_read": {
-                    "type": "boolean"
-                },
-                "modified_at": {
-                    "type": "string"
-                },
-                "modified_by": {
-                    "type": "string"
-                },
-                "notes": {
-                    "type": "string"
-                },
-                "payment_status": {
-                    "type": "string"
-                },
-                "pic_id": {
-                    "description": "fk",
-                    "type": "string"
-                },
-                "price": {
-                    "type": "number"
-                },
-                "shipment_number": {
-                    "type": "string"
-                },
-                "shipment_price": {
-                    "type": "integer"
-                },
-                "shipment_type": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "stock_status": {
-                    "type": "string"
-                },
-                "supplier_id": {
-                    "type": "string"
-                },
-                "trx_type": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.OrderTrxReceiptModel": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "created_by": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "modified_at": {
-                    "type": "string"
-                },
-                "modified_by": {
-                    "type": "string"
-                },
-                "order_trx_id": {
-                    "description": "fk",
-                    "type": "string"
-                },
-                "receipt_url": {
-                    "type": "string"
                 }
             }
         },
@@ -8294,6 +7974,10 @@ const docTemplate = `{
                 },
                 "unit_id": {
                     "description": "fk",
+                    "type": "string"
+                },
+                "unit_name": {
+                    "description": "helper",
                     "type": "string"
                 },
                 "value": {
@@ -8487,12 +8171,6 @@ const docTemplate = `{
                 "packet_id": {
                     "type": "string"
                 },
-                "price_final": {
-                    "type": "integer"
-                },
-                "price_usd": {
-                    "type": "integer"
-                },
                 "product": {
                     "description": "relations",
                     "allOf": [
@@ -8512,6 +8190,12 @@ const docTemplate = `{
                     }
                 },
                 "total": {
+                    "type": "integer"
+                },
+                "total_not_seal": {
+                    "type": "integer"
+                },
+                "total_seal": {
                     "type": "integer"
                 },
                 "variant": {

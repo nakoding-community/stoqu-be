@@ -32,9 +32,10 @@ type ProductView struct {
 	ProductEntity
 
 	// join
-	BrandName    string `json:"brand_name" filter:"column:brands.name"`
-	SupplierName string `json:"supplier_name" filter:"column:users.name"`
-	VariantName  string `json:"variant_name" filter:"column:variants.name"`
-	PacketValue  int64  `json:"packet_value" filter:"column:packets.value"`
-	UnitName     string `json:"unit_name" filter:"column:units.name"`
+	BrandName         string `json:"brand_name" filter:"column:brands.name"`
+	SupplierName      string `json:"supplier_name" filter:"column:users.name"`
+	VariantName       string `json:"variant_name" filter:"column:variants.name"`
+	VariantUniqueCode string `json:"variant_unique_code" filter:"column:variants.unique_code"`
+	PacketValue       int64  `json:"packet_value" filter:"column:packets.value"`
+	UnitName          string `json:"unit_name" filter:"column:units.name"`
 }

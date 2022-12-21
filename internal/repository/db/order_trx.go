@@ -59,7 +59,7 @@ func NewOrderTrx(conn *gorm.DB) OrderTrx {
 func (m *orderTrx) CountIncome(ctx context.Context) (int64, error) {
 	query := m.GetConn(ctx).Model(m.entity).
 		Select(`
-			sum(order_trxs.price)
+			coalesce(sum(order_trxs.price), 0)
 		`)
 
 	var count int64
@@ -105,7 +105,7 @@ func (m *orderTrx) FindGroupByBrand(ctx context.Context, filterParam abstraction
 			b.name as brand_name, 
 			pt.id as packet_id, 
 			pt.name as packet_name, 
-			SUM(oti.total) as count
+			coalesce(sum(oti.total), 0) as count
 		`).
 		Joins(`join order_trx_items as oti on oti.order_trx_id = order_trxs.id`).
 		Joins(`join products p on p.id = oti.product_id`).
@@ -145,7 +145,7 @@ func (m *orderTrx) FindGroupByVariant(ctx context.Context, filterParam abstracti
 			pt.name as packet_name, 
 			v.id as variant_id, 
 			v.name as variant_name, 
-			SUM(oti.total) as count
+			coalesce(sum(oti.total), 0) as count
 		`).
 		Joins(`join order_trx_items as oti on oti.order_trx_id = order_trxs.id`).
 		Joins(`join products p on p.id = oti.product_id`).
@@ -183,7 +183,7 @@ func (m *orderTrx) FindGroupByPacket(ctx context.Context, filterParam abstractio
 		Select(`
 			pt.id as packet_id, 
 			pt.name as packet_name, 
-			SUM(oti.total) as count
+			coalesce(sum(oti.total), 0) as count
 		`).
 		Joins(`join order_trx_items as oti on oti.order_trx_id = order_trxs.id`).
 		Joins(`join products p on p.id = oti.product_id`).
