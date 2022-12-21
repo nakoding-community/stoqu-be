@@ -1,4 +1,4 @@
-name: Stoqu
+name: Stoqu Development
 
 on:
   push:
@@ -43,4 +43,7 @@ jobs:
         username: ${{ secrets.SSH_USERNAME }}
         host: ${{ secrets.HOST_SERVER }}
         password: ${{ secrets.SSH_PASSWORD }}
-        script: 'lsb_release -a'
+        script: |
+          cd stoqu
+          docker compose pull stoqu-be
+          docker compose up -d stoqu-be
