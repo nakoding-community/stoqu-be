@@ -1,4 +1,4 @@
-name: Stoqu
+name: Stoqu Production
 
 on:
   push:
