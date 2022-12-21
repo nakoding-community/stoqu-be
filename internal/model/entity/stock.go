@@ -1,8 +1,8 @@
 package entity
 
 type StockEntity struct {
-	TotalSeal    int64 `json:"price_usd" gorm:"not null"`
-	TotalNotSeal int64 `json:"price_final" gorm:"not null"`
+	TotalSeal    int64 `json:"total_seal" gorm:"not null"`
+	TotalNotSeal int64 `json:"total_not_seal" gorm:"not null"`
 	Total        int64 `json:"total" gorm:"not null"`
 
 	// fk

@@ -52,6 +52,12 @@ func (u *packet) Find(ctx context.Context, filterParam abstraction.Filter) (resu
 	pagination = *info
 
 	for _, packet := range packets {
+		unit, err := u.Repo.Unit.FindByID(ctx, packet.UnitID)
+		if err == nil {
+			packet.Unit = unit
+			packet.UnitName = unit.Name
+		}
+
 		result = append(result, dto.PacketResponse{
 			PacketModel: packet,
 		})

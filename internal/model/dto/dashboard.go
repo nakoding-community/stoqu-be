@@ -11,6 +11,7 @@ type (
 		TotalProduct int64                         `json:"total_product"`
 		TotalStock   int64                         `json:"total_stock"`
 		TotalOrder   int64                         `json:"total_order"`
+		TotalPacket  int64                         `json:"total_packet"`
 		OrderDaily   []DashboardOrderDailyResponse `json:"order_daily"`
 	}
 
