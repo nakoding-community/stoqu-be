@@ -70,6 +70,9 @@ definitions:
       supplier_id:
         description: fk
         type: string
+      supplier_name:
+        description: helper
+        type: string
       variants:
         description: relations
         items:
@@ -351,6 +354,8 @@ definitions:
         type: integer
       total_order:
         type: integer
+      total_packet:
+        type: integer
       total_product:
         type: integer
       total_stock:
@@ -466,67 +471,6 @@ definitions:
             $ref: '#/definitions/response.Meta'
         type: object
     type: object
-  dto.OrderViewDetailResponse:
-    properties:
-      code:
-        type: string
-      created_at:
-        type: string
-      created_by:
-        type: string
-      customer_id:
-        type: string
-      customer_name:
-        description: join
-        type: string
-      customer_phone:
-        type: string
-      final_price:
-        type: number
-      id:
-        type: string
-      is_read:
-        type: boolean
-      items:
-        items:
-          $ref: '#/definitions/entity.OrderTrxItemModel'
-        type: array
-      modified_at:
-        type: string
-      modified_by:
-        type: string
-      notes:
-        type: string
-      payment_status:
-        type: string
-      pic_id:
-        description: fk
-        type: string
-      pic_name:
-        type: string
-      price:
-        type: number
-      receipts:
-        items:
-          $ref: '#/definitions/entity.OrderTrxReceiptModel'
-        type: array
-      shipment_number:
-        type: string
-      shipment_price:
-        type: integer
-      shipment_type:
-        type: string
-      status:
-        type: string
-      stock_status:
-        type: string
-      supplier_id:
-        type: string
-      supplier_name:
-        type: string
-      trx_type:
-        type: string
-    type: object
   dto.OrderViewResponseDoc:
     properties:
       body:
@@ -559,6 +503,9 @@ definitions:
         description: relations
       unit_id:
         description: fk
+        type: string
+      unit_name:
+        description: helper
         type: string
       value:
         type: integer
@@ -921,10 +868,6 @@ definitions:
         $ref: '#/definitions/entity.PacketModel'
       packet_id:
         type: string
-      price_final:
-        type: integer
-      price_usd:
-        type: integer
       product:
         allOf:
         - $ref: '#/definitions/entity.ProductModel'
@@ -937,6 +880,10 @@ definitions:
           $ref: '#/definitions/entity.StockRackModel'
         type: array
       total:
+        type: integer
+      total_not_seal:
+        type: integer
+      total_seal:
         type: integer
       variant:
         $ref: '#/definitions/entity.VariantModel'
@@ -1436,141 +1383,14 @@ definitions:
       supplier_id:
         description: fk
         type: string
+      supplier_name:
+        description: helper
+        type: string
       variants:
         description: relations
         items:
           $ref: '#/definitions/entity.VariantModel'
         type: array
-    type: object
-  entity.OrderTrxItemLookupModel:
-    properties:
-      code:
-        type: string
-      created_at:
-        type: string
-      created_by:
-        type: string
-      id:
-        type: string
-      is_seal:
-        type: boolean
-      modified_at:
-        type: string
-      modified_by:
-        type: string
-      order_trx_item_id:
-        description: fk
-        type: string
-      remaining_value:
-        type: number
-      remaining_value_before:
-        type: number
-      stock_rack_id:
-        description: fk
-        type: string
-      value:
-        type: number
-    type: object
-  entity.OrderTrxItemModel:
-    properties:
-      created_at:
-        type: string
-      created_by:
-        type: string
-      id:
-        type: string
-      modified_at:
-        type: string
-      modified_by:
-        type: string
-      order_trx:
-        $ref: '#/definitions/entity.OrderTrxModel'
-      order_trx_id:
-        description: fk
-        type: string
-      order_trx_item_lookups:
-        description: relations
-        items:
-          $ref: '#/definitions/entity.OrderTrxItemLookupModel'
-        type: array
-      price:
-        type: number
-      product:
-        $ref: '#/definitions/entity.ProductModel'
-      product_id:
-        type: string
-      rack:
-        $ref: '#/definitions/entity.RackModel'
-      rack_id:
-        type: string
-      status:
-        type: string
-      total:
-        type: integer
-      total_packed:
-        type: integer
-    type: object
-  entity.OrderTrxModel:
-    properties:
-      code:
-        type: string
-      created_at:
-        type: string
-      created_by:
-        type: string
-      customer_id:
-        type: string
-      final_price:
-        type: number
-      id:
-        type: string
-      is_read:
-        type: boolean
-      modified_at:
-        type: string
-      modified_by:
-        type: string
-      notes:
-        type: string
-      payment_status:
-        type: string
-      pic_id:
-        description: fk
-        type: string
-      price:
-        type: number
-      shipment_number:
-        type: string
-      shipment_price:
-        type: integer
-      shipment_type:
-        type: string
-      status:
-        type: string
-      stock_status:
-        type: string
-      supplier_id:
-        type: string
-      trx_type:
-        type: string
-    type: object
-  entity.OrderTrxReceiptModel:
-    properties:
-      created_at:
-        type: string
-      created_by:
-        type: string
-      id:
-        type: string
-      modified_at:
-        type: string
-      modified_by:
-        type: string
-      order_trx_id:
-        description: fk
-        type: string
-      receipt_url:
-        type: string
     type: object
   entity.OrderView:
     properties:
@@ -1664,6 +1484,9 @@ definitions:
         description: relations
       unit_id:
         description: fk
+        type: string
+      unit_name:
+        description: helper
         type: string
       value:
         type: integer
@@ -1790,10 +1613,6 @@ definitions:
         $ref: '#/definitions/entity.PacketModel'
       packet_id:
         type: string
-      price_final:
-        type: integer
-      price_usd:
-        type: integer
       product:
         allOf:
         - $ref: '#/definitions/entity.ProductModel'
@@ -1806,6 +1625,10 @@ definitions:
           $ref: '#/definitions/entity.StockRackModel'
         type: array
       total:
+        type: integer
+      total_not_seal:
+        type: integer
+      total_seal:
         type: integer
       variant:
         $ref: '#/definitions/entity.VariantModel'
@@ -2955,41 +2778,6 @@ paths:
       summary: Get order by id
       tags:
       - order
-  /api/orders/{id}/detail:
-    get:
-      consumes:
-      - application/json
-      description: Get order detail by id
-      parameters:
-      - description: id path
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.OrderViewDetailResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.errorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/response.errorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.errorResponse'
-      security:
-      - BearerAuth: []
-      summary: Get order detail by id
-      tags:
-      - order
   /api/packets:
     get:
       consumes:
@@ -3269,6 +3057,9 @@ paths:
         type: string
       - in: query
         name: variant_name
+        type: string
+      - in: query
+        name: variant_unique_code
         type: string
       produces:
       - application/json
@@ -4772,12 +4563,6 @@ paths:
       - in: query
         name: packet_value
         type: integer
-      - in: query
-        name: price_final
-        type: integer
-      - in: query
-        name: price_usd
-        type: integer
       - description: join
         in: query
         name: product_code
@@ -4794,6 +4579,12 @@ paths:
         type: string
       - in: query
         name: total
+        type: integer
+      - in: query
+        name: total_not_seal
+        type: integer
+      - in: query
+        name: total_seal
         type: integer
       - in: query
         name: unit_name

@@ -55,6 +55,7 @@ func (m *product) Find(ctx context.Context, filterParam abstraction.Filter, sear
 			brands.name as brand_name, 
 			users.name as supplier_name,
 			variants.name as variant_name,
+			variants.unique_code as variant_unique_code,
 			packets.value as packet_value,
 			units.name as unit_name
 		`).
