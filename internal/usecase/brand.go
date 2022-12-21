@@ -64,6 +64,12 @@ func (u *brand) Find(ctx context.Context, filterParam abstraction.Filter) (resul
 			brand.Variants = append(brand.Variants, variants...)
 		}
 
+		supplier, err := u.Repo.User.FindByID(ctx, brand.SupplierID)
+		if err == nil {
+			brand.Supplier = supplier
+			brand.SupplierName = supplier.Name
+		}
+
 		result = append(result, dto.BrandResponse{
 			BrandModel: brand,
 		})

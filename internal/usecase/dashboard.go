@@ -39,6 +39,10 @@ func (u *dashboard) Count(ctx context.Context) (result dto.DashboardResponse, er
 	if err != nil {
 		return result, err
 	}
+	countPacket, err := u.Repo.Packet.Count(ctx)
+	if err != nil {
+		return result, err
+	}
 	countOrderDaily, err := u.Repo.OrderTrx.CountLastWeek(ctx)
 	if err != nil {
 		return result, err
@@ -49,6 +53,7 @@ func (u *dashboard) Count(ctx context.Context) (result dto.DashboardResponse, er
 		TotalProduct: countProduct,
 		TotalStock:   countStock,
 		TotalOrder:   countOrder,
+		TotalPacket:  countPacket,
 		OrderDaily:   countOrderDaily,
 	}
 

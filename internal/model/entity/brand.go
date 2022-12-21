@@ -15,6 +15,9 @@ type BrandModel struct {
 	// relations
 	Variants []VariantModel `json:"variants" table:"variants" gorm:"foreignKey:BrandID"`
 	Supplier *UserModel     `json:"supplier" table:"users" gorm:"foreignKey:SupplierID"`
+
+	// helper
+	SupplierName string `json:"supplier_name" gorm:"-"`
 }
 
 func (BrandModel) TableName() string {

@@ -15,6 +15,9 @@ type PacketModel struct {
 
 	// relations
 	Unit *UnitModel `json:"unit" gorm:"foreignKey:UnitID;"`
+
+	// helper
+	UnitName string `json:"unit_name" gorm:"-"`
 }
 
 func (PacketModel) TableName() string {
