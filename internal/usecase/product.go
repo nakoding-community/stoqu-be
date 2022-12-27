@@ -11,6 +11,7 @@ import (
 	"gitlab.com/stoqu/stoqu-be/internal/factory/repository"
 	"gitlab.com/stoqu/stoqu-be/internal/model/abstraction"
 	"gitlab.com/stoqu/stoqu-be/internal/model/dto"
+	"gitlab.com/stoqu/stoqu-be/internal/model/entity"
 	model "gitlab.com/stoqu/stoqu-be/internal/model/entity"
 	"gitlab.com/stoqu/stoqu-be/pkg/constant"
 	res "gitlab.com/stoqu/stoqu-be/pkg/util/response"
@@ -114,10 +115,23 @@ func (u *product) Create(ctx context.Context, payload dto.CreateProductRequest) 
 				PacketID:   payload.PacketID,
 			},
 		}
+		stock = entity.StockModel{
+			StockEntity: entity.StockEntity{
+				ProductID: productID,
+				BrandID:   payload.BrandID,
+				VariantID: payload.VariantID,
+				PacketID:  payload.PacketID,
+			},
+		}
 	)
 
 	if err = trxmanager.New(u.Repo.Db).WithTrx(ctx, func(ctx context.Context) error {
 		_, err = u.Repo.Product.Create(ctx, product)
+		if err != nil {
+			return err
+		}
+
+		_, err = u.Repo.Stock.Create(ctx, stock)
 		if err != nil {
 			return err
 		}
