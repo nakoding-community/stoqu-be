@@ -81,10 +81,15 @@ func (u *stock) Find(ctx context.Context, filterParam abstraction.Filter) (resul
 
 	for _, stock := range stocks {
 		stockRacks, err := u.Repo.StockRack.FindByStockID(ctx, stock.ID)
-		if err != nil {
-			return nil, pagination, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
+		if err == nil {
+			for j, stockRack := range stockRacks {
+				rack, err := u.Repo.Rack.FindByID(ctx, stockRack.RackID)
+				if err == nil {
+					stockRacks[j].Rack = rack
+				}
+			}
+			stock.StockRacks = stockRacks
 		}
-		stock.StockRacks = stockRacks
 
 		result = append(result, dto.StockViewResponse{
 			StockView: stock,

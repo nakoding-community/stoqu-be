@@ -63,10 +63,11 @@ func (m *stockRack) FindByStockAndRackID(ctx context.Context, stockID, rackID st
 
 func (m *stockRack) FindByStockID(ctx context.Context, stockID string) ([]model.StockRackModel, error) {
 	query := m.GetConn(ctx).Model(m.entity)
-	result := []model.StockRackModel{}
-	err := query.WithContext(ctx).Where("stock_id = ?", stockID).Find(&result).Error
+	results := []model.StockRackModel{}
+	err := query.WithContext(ctx).Where("stock_id = ?", stockID).Find(&results).Error
 	if err != nil {
 		return nil, m.MaskError(err)
 	}
-	return result, nil
+
+	return results, nil
 }
