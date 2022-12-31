@@ -8044,6 +8044,67 @@ const docTemplate = `{
                 }
             }
         },
+        "entity.ProductView": {
+            "type": "object",
+            "properties": {
+                "brand_id": {
+                    "description": "fk",
+                    "type": "string"
+                },
+                "brand_name": {
+                    "description": "join",
+                    "type": "string"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "created_by": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "modified_at": {
+                    "type": "string"
+                },
+                "modified_by": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "packet_id": {
+                    "type": "string"
+                },
+                "packet_value": {
+                    "type": "integer"
+                },
+                "price_final": {
+                    "type": "number"
+                },
+                "price_usd": {
+                    "type": "number"
+                },
+                "supplier_name": {
+                    "type": "string"
+                },
+                "unit_name": {
+                    "type": "string"
+                },
+                "variant_id": {
+                    "type": "string"
+                },
+                "variant_name": {
+                    "type": "string"
+                },
+                "variant_unique_code": {
+                    "type": "string"
+                }
+            }
+        },
         "entity.RackModel": {
             "type": "object",
             "properties": {
@@ -8224,12 +8285,6 @@ const docTemplate = `{
                 "modified_by": {
                     "type": "string"
                 },
-                "price_final": {
-                    "type": "integer"
-                },
-                "price_usd": {
-                    "type": "integer"
-                },
                 "rack": {
                     "description": "relations",
                     "allOf": [
@@ -8252,6 +8307,12 @@ const docTemplate = `{
                     }
                 },
                 "total": {
+                    "type": "integer"
+                },
+                "total_not_seal": {
+                    "type": "integer"
+                },
+                "total_seal": {
                     "type": "integer"
                 }
             }
@@ -8319,6 +8380,9 @@ const docTemplate = `{
                 },
                 "modified_by": {
                     "type": "string"
+                },
+                "product": {
+                    "$ref": "#/definitions/entity.ProductView"
                 },
                 "product_id": {
                     "type": "string"

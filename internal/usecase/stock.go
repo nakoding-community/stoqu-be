@@ -274,6 +274,23 @@ func (u *stock) History(ctx context.Context, filterParam abstraction.Filter) (re
 		}
 
 		for j, stockTrxItem := range stockTrxItems {
+			page, limit := 1, 1
+			products, _, err := u.Repo.Product.Find(ctx, abstraction.Filter{
+				Query: []abstraction.FilterQuery{
+					{
+						Field: "products.id",
+						Value: stockTrxItem.ProductID,
+					},
+				},
+				Pagination: abstraction.Pagination{
+					Page:  &page,
+					Limit: &limit,
+				},
+			}, search)
+			if err == nil && len(products) > 0 {
+				stockTrxItems[j].Product = &products[0]
+			}
+
 			stockTrxItemLookups, _, err := u.Repo.StockTrxItemLookup.Find(ctx, abstraction.Filter{
 				Query: []abstraction.FilterQuery{
 					{
@@ -282,10 +299,9 @@ func (u *stock) History(ctx context.Context, filterParam abstraction.Filter) (re
 					},
 				},
 			}, search)
-			if err != nil {
-				return nil, pagination, err
+			if err == nil {
+				stockTrxItems[j].StockTrxItemLookups = stockTrxItemLookups
 			}
-			stockTrxItems[j].StockTrxItemLookups = stockTrxItemLookups
 		}
 		stockTrxs[i].StockTrxItems = stockTrxItems
 

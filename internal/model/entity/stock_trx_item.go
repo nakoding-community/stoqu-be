@@ -17,6 +17,7 @@ type StockTrxItemModel struct {
 
 	// relations
 	StockTrxItemLookups []StockTrxItemLookupModel `json:"stock_trx_item_lookups" gorm:"foreignKey:StockTrxItemID;constraint:OnDelete:CASCADE;"`
+	Product             *ProductView              `json:"product"`
 }
 
 func (StockTrxItemModel) TableName() string {
