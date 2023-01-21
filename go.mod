@@ -26,7 +26,6 @@ require (
 	github.com/swaggo/swag v1.8.7
 	github.com/xuri/excelize/v2 v2.6.1
 	golang.org/x/crypto v0.0.0-20220926161630-eccd6366d1be
-	golang.org/x/exp v0.0.0-20221204150635-6dcec336b2bb
 	google.golang.org/api v0.59.0
 	gorm.io/driver/postgres v1.3.9
 	gorm.io/gorm v1.23.8
@@ -75,6 +74,7 @@ require (
 	github.com/richardlehane/mscfb v1.0.4 // indirect
 	github.com/richardlehane/msoleps v1.0.3 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
+	github.com/stretchr/objx v0.5.0 // indirect
 	github.com/swaggo/files v0.0.0-20220728132757-551d4a08d97a // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.1 // indirect
