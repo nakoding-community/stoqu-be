@@ -47,8 +47,6 @@ func (u *stock) Find(ctx context.Context, filterParam abstraction.Filter) (resul
 		searchQuery := `
 			lower(products.code) LIKE ? OR 
 			lower(products.name) LIKE ? OR 
-			products.price_usd = ? OR 
-			products.price_final = ? OR 
 			lower(brands.name) LIKE ? OR 
 			lower(users.name) LIKE ? OR 
 			lower(variants.name) LIKE ? OR 
@@ -62,8 +60,6 @@ func (u *stock) Find(ctx context.Context, filterParam abstraction.Filter) (resul
 			Args: []interface{}{
 				searchVal,
 				searchVal,
-				searchValFloat,
-				searchValFloat,
 				searchVal,
 				searchVal,
 				searchVal,

@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/sirupsen/logrus"
@@ -87,10 +86,5 @@ func GetConnection(name string) (*gorm.DB, error) {
 
 func logLevel() logger.LogLevel {
 	logLevel := logger.Info
-	env := os.Getenv("ENV")
-	if env == "production" {
-		logLevel = logger.Error
-	}
-
 	return logLevel
 }
