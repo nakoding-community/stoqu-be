@@ -203,7 +203,7 @@ func (m *base[T]) Creates(ctx context.Context, data []T) ([]T, error) {
 }
 
 func (m *base[T]) UpdateByID(ctx context.Context, id string, data T) (T, error) {
-	err := m.GetConn(ctx).Model(&data).WithContext(ctx).Omit(clause.Associations).Where("id = ?", id).Updates(&data).Error
+	err := m.GetConn(ctx).Model(&data).Select("*").WithContext(ctx).Omit(clause.Associations).Where("id = ?", id).Updates(&data).Error
 	return data, m.MaskError(err)
 }
 

@@ -3,3 +3,4 @@
 __debug_bin
 firebase-admin-sdk.json
 config.local.yml
+config.production.yml
