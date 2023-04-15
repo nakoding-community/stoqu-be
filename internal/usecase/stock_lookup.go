@@ -121,6 +121,7 @@ func (u *stockLookup) Update(ctx context.Context, payload dto.UpdateStockLookupR
 				Value:                payload.Value,
 				RemainingValue:       payload.RemainingValue,
 				RemainingValueBefore: payload.RemainingValueBefore,
+				StockRackID:          payload.StockRackID,
 			},
 		}
 	)

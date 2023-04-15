@@ -1115,10 +1115,13 @@ definitions:
         type: number
       remaining_value_before:
         type: number
+      stock_rack_id:
+        type: string
       value:
         type: number
     required:
     - id
+    - stock_rack_id
     type: object
   dto.UpdateUnitRequest:
     properties:
@@ -1969,7 +1972,8 @@ paths:
       - in: query
         name: search
         type: string
-      - example:
+      - collectionFormat: csv
+        example:
         - asc_column
         - -dsc_column
         in: query
@@ -2170,7 +2174,8 @@ paths:
       - in: query
         name: search
         type: string
-      - example:
+      - collectionFormat: csv
+        example:
         - asc_column
         - -dsc_column
         in: query
@@ -2377,7 +2382,8 @@ paths:
       - in: query
         name: search
         type: string
-      - example:
+      - collectionFormat: csv
+        example:
         - asc_column
         - -dsc_column
         in: query
@@ -2645,7 +2651,8 @@ paths:
       - in: query
         name: search
         type: string
-      - example:
+      - collectionFormat: csv
+        example:
         - asc_column
         - -dsc_column
         in: query
@@ -2836,7 +2843,8 @@ paths:
       - in: query
         name: search
         type: string
-      - example:
+      - collectionFormat: csv
+        example:
         - asc_column
         - -dsc_column
         in: query
@@ -3040,7 +3048,8 @@ paths:
       - in: query
         name: search
         type: string
-      - example:
+      - collectionFormat: csv
+        example:
         - asc_column
         - -dsc_column
         in: query
@@ -3287,7 +3296,8 @@ paths:
       - in: query
         name: search
         type: string
-      - example:
+      - collectionFormat: csv
+        example:
         - asc_column
         - -dsc_column
         in: query
@@ -3484,7 +3494,8 @@ paths:
       - in: query
         name: search
         type: string
-      - example:
+      - collectionFormat: csv
+        example:
         - asc_column
         - -dsc_column
         in: query
@@ -3859,7 +3870,8 @@ paths:
       - in: query
         name: search
         type: string
-      - example:
+      - collectionFormat: csv
+        example:
         - asc_column
         - -dsc_column
         in: query
@@ -3918,7 +3930,8 @@ paths:
       - in: query
         name: search
         type: string
-      - example:
+      - collectionFormat: csv
+        example:
         - asc_column
         - -dsc_column
         in: query
@@ -3974,7 +3987,8 @@ paths:
       - in: query
         name: search
         type: string
-      - example:
+      - collectionFormat: csv
+        example:
         - asc_column
         - -dsc_column
         in: query
@@ -4030,7 +4044,8 @@ paths:
       - in: query
         name: search
         type: string
-      - example:
+      - collectionFormat: csv
+        example:
         - asc_column
         - -dsc_column
         in: query
@@ -4086,7 +4101,8 @@ paths:
       - in: query
         name: search
         type: string
-      - example:
+      - collectionFormat: csv
+        example:
         - asc_column
         - -dsc_column
         in: query
@@ -4142,7 +4158,8 @@ paths:
       - in: query
         name: search
         type: string
-      - example:
+      - collectionFormat: csv
+        example:
         - asc_column
         - -dsc_column
         in: query
@@ -4339,7 +4356,8 @@ paths:
       - in: query
         name: search
         type: string
-      - example:
+      - collectionFormat: csv
+        example:
         - asc_column
         - -dsc_column
         in: query
@@ -4571,7 +4589,8 @@ paths:
       - in: query
         name: search
         type: string
-      - example:
+      - collectionFormat: csv
+        example:
         - asc_column
         - -dsc_column
         in: query
@@ -4748,7 +4767,8 @@ paths:
       - in: query
         name: search
         type: string
-      - example:
+      - collectionFormat: csv
+        example:
         - asc_column
         - -dsc_column
         in: query
@@ -4891,7 +4911,8 @@ paths:
       - in: query
         name: search
         type: string
-      - example:
+      - collectionFormat: csv
+        example:
         - asc_column
         - -dsc_column
         in: query
@@ -5088,7 +5109,8 @@ paths:
       - in: query
         name: search
         type: string
-      - example:
+      - collectionFormat: csv
+        example:
         - asc_column
         - -dsc_column
         in: query
@@ -5292,7 +5314,8 @@ paths:
       - in: query
         name: search
         type: string
-      - example:
+      - collectionFormat: csv
+        example:
         - asc_column
         - -dsc_column
         in: query
