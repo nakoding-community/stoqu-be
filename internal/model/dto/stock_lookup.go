@@ -21,6 +21,7 @@ type (
 		Value                float64 `json:"value"`
 		RemainingValue       float64 `json:"remaining_value"`
 		RemainingValueBefore float64 `json:"remaining_value_before"`
+		StockRackID          string  `json:"stock_rack_id" validate:"required"`
 	}
 )
 
