@@ -42,5 +42,5 @@ type StockView struct {
 	UnitName     string `json:"unit_name" filter:"column:units.name"`
 
 	// relations
-	StockRacks []StockRackModel `json:"stock_racks"`
+	StockRacks []StockRackModel `json:"stock_racks" gorm:"-"`
 }

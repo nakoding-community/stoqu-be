@@ -10,7 +10,6 @@ import (
 	"gitlab.com/stoqu/stoqu-be/internal/config"
 	"gitlab.com/stoqu/stoqu-be/pkg/util/gracefull"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 )
 
 type (
@@ -47,8 +46,9 @@ func Init(cfg *config.Configuration) (gracefull.ProcessStopper, error) {
 				Pass: v.DBPass,
 				User: v.DBUser,
 			},
-			SslMode: v.DBSSL,
-			Tz:      v.DBTZ,
+			SslMode:  v.DBSSL,
+			Tz:       v.DBTZ,
+			LogLevel: v.DBLogLevel,
 		}
 	}
 
@@ -82,9 +82,4 @@ func GetConnection(name string) (*gorm.DB, error) {
 		return nil, errors.New("connection is undefined")
 	}
 	return dbConnections[name], nil
-}
-
-func logLevel() logger.LogLevel {
-	logLevel := logger.Info
-	return logLevel
 }

@@ -114,27 +114,20 @@ func (u *stockLookup) Create(ctx context.Context, payload dto.CreateStockLookupR
 }
 
 func (u *stockLookup) Update(ctx context.Context, payload dto.UpdateStockLookupRequest) (result dto.StockLookupResponse, err error) {
-	var (
-		stockLookupData = &model.StockLookupModel{
-			StockLookupEntity: model.StockLookupEntity{
-				IsSeal:               payload.IsSeal,
-				Value:                payload.Value,
-				RemainingValue:       payload.RemainingValue,
-				RemainingValueBefore: payload.RemainingValueBefore,
-				StockRackID:          payload.StockRackID,
-			},
-		}
-	)
+	stockLookupData, err := u.Repo.StockLookup.FindByID(ctx, payload.ID)
+	if err != nil {
+		return result, res.ErrorBuilder(res.Constant.Error.NotFound, err)
+	}
+	stockLookupData.IsSeal = false
+	stockLookupData.Value = payload.Value
+	stockLookupData.RemainingValue = payload.RemainingValue
+	stockLookupData.RemainingValueBefore = payload.RemainingValueBefore
+	stockLookupData.StockRackID = payload.StockRackID
 
 	if err = trxmanager.New(u.Repo.Db).WithTrx(ctx, func(ctx context.Context) error {
 		_, err = u.Repo.StockLookup.UpdateByID(ctx, payload.ID, *stockLookupData)
 		if err != nil {
 			return err
-		}
-
-		stockLookupData, err = u.Repo.StockLookup.FindByID(ctx, payload.ID)
-		if err != nil {
-			return res.ErrorBuilder(res.Constant.Error.NotFound, err)
 		}
 
 		return nil
