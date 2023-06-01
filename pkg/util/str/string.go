@@ -48,3 +48,7 @@ func FormatAmountIDR(amount float64) string {
 	stringValue := strings.Replace(humanizeValue, ",", ".", -1)
 	return "Rp " + stringValue
 }
+
+func FillPtrString(s string) *string {
+	return &s
+}

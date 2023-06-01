@@ -117,7 +117,7 @@ func (a *FilterBuilder[T]) ConstructSort(structType reflect.Type, value string) 
 		field := value
 		if strings.Contains(value, "-") {
 			isAsc = false
-			field = value[:1]
+			field = value[1:]
 		}
 
 		jsonTag := structType.Field(i).Tag.Get("json")

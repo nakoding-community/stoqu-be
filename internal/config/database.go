@@ -11,4 +11,5 @@ type Database struct {
 	DBTZ          string `json:"db_tz"`
 	DBAutoMigrate bool   `json:"db_automigrate"`
 	DBSeeder      bool   `json:"db_seeder"`
+	DBLogLevel    int    `json:"db_loglevel"`
 }
