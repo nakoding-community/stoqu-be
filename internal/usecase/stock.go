@@ -154,13 +154,9 @@ func (u *stock) Convertion(ctx context.Context, payload dto.ConvertionStockReque
 		return result, err
 	}
 
-	lookupCodes := []string{}
-	for _, stockLookup := range wrapper.destination.stockLookups {
-		lookupCodes = append(lookupCodes, stockLookup.Code)
-	}
 	result.Products = append(result.Products, dto.StockConvertionProductResponse{
 		ID:          wrapper.destination.product.ID,
-		LookupCodes: lookupCodes,
+		LookupCodes: []string{wrapper.destination.product.Code},
 	})
 
 	result.Status = constant.STATUS_SUCCESS
@@ -373,6 +369,10 @@ func (u *stock) TransactionProcess(ctx context.Context, payload dto.TransactionS
 	for _, v := range payload.Products {
 		stockTrxItemID := uuid.New().String()
 
+		product, err := u.Repo.Product.FindByID(ctx, v.ID)
+		if err != nil {
+			return result, res.ErrorBuilder(res.Constant.Error.BadRequest, err, "find product by id error")
+		}
 		stock, err := u.Repo.Stock.FindByProductID(ctx, v.ID)
 		if err != nil {
 			return result, res.ErrorBuilder(res.Constant.Error.BadRequest, err, "find stock by product id error")
@@ -429,10 +429,8 @@ func (u *stock) TransactionProcess(ctx context.Context, payload dto.TransactionS
 		stockTrxItemLookups = append(stockTrxItemLookups, wrapper.stockTrxItemLookups...)
 
 		resultProduct := dto.StockTransactionProductResponse{
-			ID: v.ID,
-		}
-		for _, v2 := range wrapper.stockTrxItemLookups {
-			resultProduct.LookupCodes = append(resultProduct.LookupCodes, v2.Code)
+			ID:          v.ID,
+			LookupCodes: []string{product.Code},
 		}
 		result.Products = append(result.Products, resultProduct)
 	}
