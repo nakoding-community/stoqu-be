@@ -2,6 +2,4 @@
 .vscode
 __debug_bin
 firebase-admin-sdk.json
-config.local.yml
-config.production.yml
-config.development.yml
+config
