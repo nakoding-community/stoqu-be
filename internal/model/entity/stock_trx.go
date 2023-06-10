@@ -17,3 +17,14 @@ type StockTrxModel struct {
 func (StockTrxModel) TableName() string {
 	return "stock_trxs"
 }
+
+type StockTrxView struct {
+	Entity
+	StockTrxEntity
+
+	// join
+	OrderCode string `json:"order_code" filter:"column:order_trxs.code"`
+
+	// relations
+	StockTrxItems []StockTrxItemModel `json:"stock_lookups" gorm:"foreignKey:StockTrxID;constraint:OnDelete:CASCADE;"`
+}
