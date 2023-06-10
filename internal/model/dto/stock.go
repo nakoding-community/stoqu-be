@@ -116,7 +116,7 @@ type (
 	}
 
 	StockHistoryResponse struct {
-		model.StockTrxModel
+		model.StockTrxView
 	}
 	StockHistoryResponseDoc struct {
 		Body struct {

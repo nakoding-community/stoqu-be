@@ -234,12 +234,14 @@ func (u *stock) History(ctx context.Context, filterParam abstraction.Filter) (re
 	if filterParam.Search != "" {
 		searchQuery := `
 			lower(stock_trxs.code) LIKE ? OR 
-			lower(stock_trxs.trx_type) LIKE ? OR 
+			lower(order_trxs.code) LIKE ? OR 
+			lower(stock_trxs.trx_type) LIKE ?
 		`
 		searchVal := "%" + strings.ToLower(filterParam.Search) + "%"
 		search = &abstraction.Search{
 			Query: searchQuery,
 			Args: []interface{}{
+				searchVal,
 				searchVal,
 				searchVal,
 			},
@@ -260,7 +262,7 @@ func (u *stock) History(ctx context.Context, filterParam abstraction.Filter) (re
 					Value: stockTrx.ID,
 				},
 			},
-		}, search)
+		}, nil)
 		if err != nil {
 			return nil, pagination, err
 		}
@@ -278,7 +280,7 @@ func (u *stock) History(ctx context.Context, filterParam abstraction.Filter) (re
 					Page:  &page,
 					Limit: &limit,
 				},
-			}, search)
+			}, nil)
 			if err == nil && len(products) > 0 {
 				stockTrxItems[j].Product = &products[0]
 			}
@@ -290,7 +292,7 @@ func (u *stock) History(ctx context.Context, filterParam abstraction.Filter) (re
 						Value: stockTrxItem.ID,
 					},
 				},
-			}, search)
+			}, nil)
 			if err == nil {
 				stockTrxItems[j].StockTrxItemLookups = stockTrxItemLookups
 			}
@@ -298,7 +300,7 @@ func (u *stock) History(ctx context.Context, filterParam abstraction.Filter) (re
 		stockTrxs[i].StockTrxItems = stockTrxItems
 
 		result = append(result, dto.StockHistoryResponse{
-			StockTrxModel: stockTrxs[i],
+			StockTrxView: stockTrxs[i],
 		})
 	}
 
