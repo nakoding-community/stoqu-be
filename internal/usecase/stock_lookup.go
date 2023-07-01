@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"strconv"
 	"strings"
 
 	"github.com/google/uuid"
@@ -38,12 +37,13 @@ func NewStockLookup(cfg *config.Configuration, f repository.Factory) StockLookup
 func (u *stockLookup) Find(ctx context.Context, filterParam abstraction.Filter) (result []dto.StockLookupViewResponse, pagination abstraction.PaginationInfo, err error) {
 	var search *abstraction.Search
 	if filterParam.Search != "" {
-		searchQuery := "lower(code) LIKE ? OR value = ? OR remaining_value = ? OR remaining_value_before = ?"
+		// searchQuery := "lower(code) LIKE ? OR value = ? OR remaining_value = ? OR remaining_value_before = ?"
+		searchQuery := "lower(code) LIKE ?"
 		searchVal := "%" + strings.ToLower(filterParam.Search) + "%"
-		searchValFloat, _ := strconv.ParseFloat(filterParam.Search, 64)
+		// searchValFloat, _ := strconv.ParseFloat(filterParam.Search, 64)
 		search = &abstraction.Search{
 			Query: searchQuery,
-			Args:  []interface{}{searchVal, searchValFloat, searchValFloat, searchValFloat},
+			Args:  []interface{}{searchVal},
 		}
 	}
 
