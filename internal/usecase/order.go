@@ -192,19 +192,35 @@ func (u *order) Upsert(ctx context.Context, payload dto.UpsertOrderRequest) (res
 // helper
 func (u *order) buildMapStockLookups(ctx context.Context, payload dto.UpsertOrderRequest) (map[string]entity.StockLookupModel, error) {
 	mapStockLookups := make(map[string]entity.StockLookupModel)
+	insertIDs := []string{}
 	ids := []string{}
 	for _, item := range payload.Items {
 		for _, lookup := range item.StockLookups {
-			ids = append(ids, lookup.ID)
+			if lookup.Action == constant.ACTION_INSERT {
+				insertIDs = append(insertIDs, lookup.ID)
+			} else {
+				ids = append(ids, lookup.ID)
+			}
 		}
 	}
 
-	stockLookups, err := u.Repo.StockLookup.FindByIDs(ctx, ids, "")
+	stockLookups, err := u.Repo.StockLookup.FindByIDs(ctx, insertIDs, "")
 	if err != nil {
 		return mapStockLookups, err
 	}
 	for _, stockLookup := range stockLookups {
 		mapStockLookups[stockLookup.ID] = stockLookup
+	}
+
+	orderTrxItemLookups, err := u.Repo.OrderTrxItemLookup.FindByIDs(ctx, ids, "")
+	if err != nil {
+		return mapStockLookups, err
+	}
+	for _, orderTrxItemLookup := range orderTrxItemLookups {
+		mapStockLookups[orderTrxItemLookup.ID] = entity.StockLookupModel{
+			Entity:            orderTrxItemLookup.Entity,
+			StockLookupEntity: orderTrxItemLookup.StockLookupEntity,
+		}
 	}
 
 	return mapStockLookups, nil
