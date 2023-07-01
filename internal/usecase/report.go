@@ -147,7 +147,7 @@ func (u *report) FindOrderProduct(ctx context.Context, filterParam abstraction.F
 		info   *abstraction.PaginationInfo
 		count  int64
 	)
-	switch query.Group {
+	switch query.Category {
 	case constant.GROUP_BY_VARIANT:
 		orders, count, info, err = u.Repo.OrderTrx.FindGroupByVariant(ctx, filterParam, search)
 	case constant.GROUP_BY_PACKET:
@@ -189,7 +189,7 @@ func (u *report) orderProductExcelData(ctx context.Context, filterParam abstract
 
 	var info *abstraction.PaginationInfo
 
-	switch query.Group {
+	switch query.Category {
 	case constant.GROUP_BY_VARIANT:
 		orders, _, info, err = u.Repo.OrderTrx.FindGroupByVariant(ctx, filterParam, search)
 	case constant.GROUP_BY_PACKET:
@@ -290,7 +290,7 @@ func (u *report) FindOrderProductExcel(ctx context.Context, filterParam abstract
 			SheetName:   "Laporan Produk",
 			FileName:    "laporan-produk-1.xlsx",
 			Data:        excelData,
-			DataMapping: dataMappers[query.Group],
+			DataMapping: dataMappers[query.Category],
 		},
 	)
 }

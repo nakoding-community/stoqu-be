@@ -48,9 +48,15 @@ func (u *auth) Login(ctx context.Context, payload dto.LoginAuthRequest) (dto.Aut
 		return result, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
 	}
 
+	role, err := u.Repo.Role.FindByID(ctx, data.RoleID)
+	if err != nil {
+		return result, res.ErrorBuilder(res.Constant.Error.InternalServerError, err)
+	}
+
 	result = dto.AuthLoginResponse{
 		Token:     token,
 		UserModel: *data,
+		Role:      role.Name,
 	}
 
 	return result, nil

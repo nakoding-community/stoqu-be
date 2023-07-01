@@ -15,8 +15,8 @@ type (
 
 	ProductReportQuery struct {
 		StartDate string `json:"start_date" filter:"column:order_trxs.created_at;operator:>="`
-		EndDate   string `json:"end_date" filter:"column:order_trxs.created_at;operator:>="`
-		Group     string `query:"group"`
+		EndDate   string `json:"end_date" filter:"column:order_trxs.created_at;operator:<="`
+		Category  string `query:"category"`
 	}
 
 	GenerateExcelReportInput struct {
